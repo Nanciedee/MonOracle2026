@@ -24,7 +24,7 @@
             overflow-x: hidden;
         }
 
-        /* --- FOND ÉTOILÉ ANIMÉ --- */
+        /* --- FOND ÉTOILÉ --- */
         #star-container {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -45,7 +45,7 @@
             to { transform: translateY(-1000px); }
         }
 
-        /* --- MISE EN PAGE --- */
+        /* --- INTERFACE --- */
         #app { width: 90%; max-width: 1200px; text-align: center; padding: 40px 0; }
         
         h1 { 
@@ -64,10 +64,7 @@
             backdrop-filter: blur(10px);
         }
 
-        /* --- CHAMP D'INTENTION --- */
-        .intention-box {
-            margin-bottom: 30px;
-        }
+        .intention-box { margin-bottom: 30px; }
 
         input[type="text"] {
             background: rgba(255,255,255,0.05);
@@ -80,12 +77,6 @@
             font-size: 1.1rem;
             text-align: center;
             outline: none;
-            transition: 0.3s;
-        }
-
-        input[type="text"]:focus {
-            box-shadow: 0 0 15px var(--gold);
-            background: rgba(255,255,255,0.1);
         }
 
         .btn-main {
@@ -97,9 +88,8 @@
             cursor: pointer;
             font-size: 1.2rem;
             font-weight: bold;
-            transition: 0.5s;
             text-transform: uppercase;
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+            transition: 0.5s;
         }
 
         .btn-main:hover {
@@ -108,7 +98,6 @@
             box-shadow: 0 0 40px var(--gold);
         }
 
-        /* --- GRILLE DE CARTES --- */
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -121,13 +110,7 @@
             border: 1px solid rgba(212, 175, 55, 0.3);
             border-radius: 20px;
             padding: 25px;
-            transition: 0.4s;
             backdrop-filter: blur(5px);
-        }
-
-        .card:hover {
-            border-color: var(--gold);
-            transform: translateY(-5px);
         }
 
         .card img {
@@ -136,7 +119,6 @@
             object-fit: cover;
             border-radius: 10px;
             margin-bottom: 15px;
-            border: 1px solid rgba(255,255,255,0.1);
         }
 
         .btn-vibration {
@@ -147,17 +129,13 @@
             cursor: pointer;
             font-weight: bold;
             margin-top: 20px;
-            transition: 0.3s;
         }
-
-        .btn-vibration:hover { transform: scale(1.05); filter: brightness(1.2); }
 
         .porte-title {
             grid-column: 1 / -1;
             color: var(--gold);
             font-size: 2.2rem;
             margin-top: 60px;
-            text-transform: uppercase;
             letter-spacing: 3px;
         }
 
@@ -166,7 +144,6 @@
             font-style: italic;
             color: var(--gold);
             margin-bottom: 20px;
-            font-size: 1.2rem;
         }
     </style>
 </head>
@@ -178,14 +155,14 @@
     <h1>✨ ORACLE VIBRATOIRE 2026 ✨</h1>
 
     <div id="meteo" class="meteo-box">
-        Chargement des fréquences planétaires...
+        Synchronisation avec les éphémérides célestes...
     </div>
 
     <div class="intention-box">
-        <input type="text" id="userIntention" placeholder="Posez votre question ou posez une intention ici...">
+        <input type="text" id="userIntention" placeholder="Quelle est votre intention sacrée ?">
     </div>
 
-    <button class="btn-main" onclick="tirageRituel()">🔮 TIRER LES CARTES</button>
+    <button class="btn-main" onclick="tirageRituel()">🔮 RECEVOIR LA GUIDANCE</button>
 
     <div id="display" class="cards-grid"></div>
 </div>
@@ -194,7 +171,7 @@
     // --- ÉTOILES ---
     function initStars() {
         const container = document.getElementById('star-container');
-        for (let i = 0; i < 120; i++) {
+        for (let i = 0; i < 100; i++) {
             const star = document.createElement('div');
             star.className = 'star';
             const size = Math.random() * 2 + 1 + 'px';
@@ -202,123 +179,104 @@
             star.style.height = size;
             star.style.left = Math.random() * 100 + '%';
             star.style.top = Math.random() * 100 + '%';
-            star.style.animationDuration = (Math.random() * 40 + 20) + 's';
+            star.style.animationDuration = (Math.random() * 30 + 20) + 's';
             container.appendChild(star);
         }
     }
     initStars();
 
-    // --- BASE DE DONNÉES COMPLÈTE ---
+    // --- DONNÉES (TOUTES LES IMAGES SONT DANS img/) ---
     const archanges = {
-        "Michaël": { freq: "528Hz", pierres: "Lapis-lazuli, Sodalite", astre: "Soleil/Mars", img: "img/archanges/michael.jpg" },
-        "Raphaël": { freq: "639Hz", pierres: "Malachite, Émeraude", astre: "Mercure/Vénus", img: "img/archanges/raphael.jpg" },
-        "Gabriel": { freq: "741Hz", pierres: "Pierre de lune, Citrine", astre: "Lune/Neptune", img: "img/archanges/gabriel.jpg" },
-        "Uriel": { freq: "852Hz", pierres: "Ambre, Pyrite", astre: "Uranus/Soleil", img: "img/archanges/uriel.jpg" },
-        "Chamuel": { freq: "639Hz", pierres: "Quartz Rose", astre: "Vénus", img: "img/archanges/chamuel.jpg" },
-        "Jophiel": { freq: "963Hz", pierres: "Topaze dorée", astre: "Jupiter", img: "img/archanges/jophiel.jpg" },
-        "Zadkiel": { freq: "432Hz", pierres: "Améthyste", astre: "Saturne", img: "img/archanges/zadkiel.jpg" },
-        "Haniel": { freq: "417Hz", pierres: "Sélénite", astre: "Lune", img: "img/archanges/haniel.jpg" },
-        "Raziel": { freq: "888Hz", pierres: "Cristal de roche", astre: "Uranus", img: "img/archanges/raziel.jpg" },
-        "Azraël": { freq: "396Hz", pierres: "Rose des sables", astre: "Pluton", img: "img/archanges/azrael.jpg" },
-        "Sandalphon": { freq: "285Hz", pierres: "Turquoise", astre: "Terre", img: "img/archanges/sandalphon.jpg" },
-        "Métatron": { freq: "999Hz", pierres: "Platine", astre: "Cosmos", img: "img/archanges/metatron.jpg" }
+        "Michaël": { freq: "528Hz", pierres: "Lapis-lazuli", astre: "Soleil", img: "img/michael.jpg" },
+        "Raphaël": { freq: "639Hz", pierres: "Malachite", astre: "Mercure", img: "img/raphael.jpg" },
+        "Gabriel": { freq: "741Hz", pierres: "Pierre de lune", astre: "Lune", img: "img/gabriel.jpg" },
+        "Uriel": { freq: "852Hz", pierres: "Ambre", astre: "Uranus", img: "img/uriel.jpg" },
+        "Chamuel": { freq: "639Hz", pierres: "Quartz Rose", astre: "Vénus", img: "img/chamuel.jpg" },
+        "Jophiel": { freq: "963Hz", pierres: "Topaze dorée", astre: "Jupiter", img: "img/jophiel.jpg" },
+        "Zadkiel": { freq: "432Hz", pierres: "Améthyste", astre: "Saturne", img: "img/zadkiel.jpg" },
+        "Haniel": { freq: "417Hz", pierres: "Sélénite", astre: "Lune", img: "img/haniel.jpg" },
+        "Raziel": { freq: "888Hz", pierres: "Cristal de roche", astre: "Uranus", img: "img/raziel.jpg" },
+        "Azraël": { freq: "396Hz", pierres: "Rose des sables", astre: "Pluton", img: "img/azraël_2.jpg" },
+        "Sandalphon": { freq: "285Hz", pierres: "Turquoise", astre: "Terre", img: "img/sandalphon.jpg" },
+        "Métatron": { freq: "999Hz", pierres: "Platine", astre: "Cosmos", img: "img/metatron.jpg" }
     };
 
     const chakras = [
-        { nom: "Racine", freq: "396Hz", msg: "Ancrage & Sécurité", color: "#ff4d4d" },
-        { nom: "Sacré", freq: "417Hz", msg: "Créativité & Émotion", color: "#ffa366" },
-        { nom: "Plexus", freq: "528Hz", msg: "Force & Volonté", color: "#ffff66" },
-        { nom: "Cœur", freq: "639Hz", msg: "Amour & Compassion", color: "#66ff66" },
-        { nom: "Gorge", freq: "741Hz", msg: "Vérité & Expression", color: "#66ffff" },
-        { nom: "3e Œil", freq: "852Hz", msg: "Intuition & Lucidité", color: "#6666ff" },
-        { nom: "Couronne", freq: "963Hz", msg: "Unité & Sagesse", color: "#a366ff" }
+        { nom: "Racine", freq: "396Hz", msg: "Stabilité & Ancrage", color: "#ff4d4d", img: "img/racine.png" },
+        { nom: "Sacré", freq: "417Hz", msg: "Créativité & Joie", color: "#ffa366", img: "img/sacre.png" },
+        { nom: "Plexus", freq: "528Hz", msg: "Force & Volonté", color: "#ffff66", img: "img/plexus.png" },
+        { nom: "Cœur", freq: "639Hz", msg: "Amour & Harmonie", color: "#66ff66", img: "img/coeur.png" },
+        { nom: "Gorge", freq: "741Hz", msg: "Vérité & Expression", color: "#66ffff", img: "img/gorge.png" },
+        { nom: "3e Œil", freq: "852Hz", msg: "Intuition & Vision", color: "#6666ff", img: "img/troisieme-oeil.png" },
+        { nom: "Couronne", freq: "963Hz", msg: "Unité & Sagesse", color: "#a366ff", img: "img/couronne.png" }
     ];
 
     const portes = {
-        "protection": { titre: "Protection", freq: 417, img: "img/Vibratoire Protection.png", invoc: "Je suis entouré(e) d’un cercle de lumière, nul ne peut pénétrer sans mon accord." },
-        "guerison": { titre: "Guérison", freq: 528, img: "img/Vibratoire Guérison.png", invoc: "Je suis un temple vivant, et je choisis la régénération." },
-        "guidance": { titre: "Guidance", freq: 852, img: "img/Vibratoire Guide.png", invoc: "Je suis prêt(e) à recevoir les signes et à suivre le chemin." },
+        "protection": { titre: "Protection", freq: 417, img: "img/Vibratoire Protection.png", invoc: "Je suis entouré(e) d’un cercle de lumière." },
+        "guerison": { titre: "Guérison", freq: 528, img: "img/Vibratoire Guérison.png", invoc: "Je suis un temple vivant." },
+        "guidance": { titre: "Guidance", freq: 852, img: "img/Vibratoire Guide.png", invoc: "Je suis prêt(e) à recevoir les signes." },
         "amour": { titre: "Amour", freq: 639, img: "img/Vibratoire Amour.png", invoc: "Je suis amour, je suis lien, je suis unité." },
         "sagesse": { titre: "Sagesse", freq: 963, img: "img/Vibratoire Sagesse.png", invoc: "Je suis un canal vivant de vérité." }
     };
 
-    // --- MOTEUR AUDIO ---
+    // --- SON ---
     let audioCtx = null;
     function playTone(freq) {
         if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.type = 'sine';
         osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
         gain.gain.setValueAtTime(0, audioCtx.currentTime);
         gain.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 0.2);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 5);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 4);
         osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.start(); osc.stop(audioCtx.currentTime + 5);
+        osc.start(); osc.stop(audioCtx.currentTime + 4);
     }
 
-    // --- FONCTION DE TIRAGE ---
+    // --- TIRAGE ---
     function tirageRituel() {
         const intention = document.getElementById('userIntention').value;
         const display = document.getElementById('display');
         
-        // Tirage Aléatoire
-        const arcKeys = Object.keys(archanges);
-        const arcName = arcKeys[Math.floor(Math.random() * arcKeys.length)];
-        const arc = archanges[arcName];
-        
+        const arcNames = Object.keys(archanges);
+        const arc = archanges[arcNames[Math.floor(Math.random() * arcNames.length)]];
         const cha = chakras[Math.floor(Math.random() * chakras.length)];
-        
         const pKeys = Object.keys(portes);
-        const pKey = pKeys[Math.floor(Math.random() * pKeys.length)];
-        const porte = portes[pKey];
+        const porte = portes[pKeys[Math.floor(Math.random() * pKeys.length)]];
 
         display.innerHTML = `
-            ${intention ? `<div class="intention-rappel">Votre intention : "${intention}"</div>` : ''}
+            ${intention ? `<div class="intention-rappel">Intention : "${intention}"</div>` : ''}
 
             <div class="card">
-                <h3>Archange ${arcName}</h3>
-                <img src="${arc.img}" onerror="this.src='https://via.placeholder.com/300x400/000/d4af37?text=${arcName}'">
+                <h3>Archange</h3>
+                <img src="${arc.img}" onerror="this.src='https://via.placeholder.com/300x400/000/d4af37?text=Archange'">
                 <p><strong>Astre :</strong> ${arc.astre}</p>
                 <p><strong>Vibration :</strong> ${arc.freq}</p>
-                <small>Pierres : ${arc.pierres}</small>
             </div>
 
             <div class="card">
                 <h3 style="color:${cha.color}">Chakra ${cha.nom}</h3>
-                <div style="height:400px; display:flex; flex-direction:column; align-items:center; justify-content:center; background:radial-gradient(circle, ${cha.color}44, transparent); border-radius:10px;">
-                    <span style="font-size:6rem; color:${cha.color}">🌀</span>
-                    <h2 style="color:white; margin:10px 0;">${cha.freq}</h2>
-                </div>
+                <img src="${cha.img}" onerror="this.src='https://via.placeholder.com/300x400/000/6666ff?text=Chakra'">
+                <p><strong>Vibration :</strong> ${cha.freq}</p>
                 <p>${cha.msg}</p>
             </div>
 
-            <div class="porte-title">🚪 Scellement par la Porte Vibratoire</div>
+            <div class="porte-title">🚪 Scellement Vibratoire</div>
 
             <div class="card" style="grid-column: 1 / -1; max-width: 500px; margin: 20px auto; border: 2px solid var(--gold);">
                 <h2 style="color:var(--gold)">${porte.titre}</h2>
-                <img src="${porte.img}" onerror="this.src='https://via.placeholder.com/300x400/d4af37/000?text=${porte.titre}'">
-                <p style="font-size:1.1rem; padding:10px;"><em>"${porte.invoc}"</em></p>
-                <button class="btn-vibration" onclick="playTone(${porte.freq})">
-                    🔊 ACTIVER LA FRÉQUENCE ${porte.freq}Hz
-                </button>
+                <img src="${porte.img}" onerror="this.src='https://via.placeholder.com/300x400/d4af37/000?text=Porte'">
+                <p><em>"${porte.invoc}"</em></p>
+                <button class="btn-vibration" onclick="playTone(${porte.freq})">🔊 ACTIVER ${porte.freq}Hz</button>
             </div>
         `;
-
         window.scrollTo({ top: display.offsetTop - 50, behavior: 'smooth' });
     }
 
-    // --- MÉTÉO AUTOMATIQUE ---
     window.onload = () => {
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        const today = new Date().toLocaleDateString('fr-FR', options);
-        document.getElementById('meteo').innerHTML = `
-            <strong>${today}</strong><br>
-            Configuration céleste 2026 : Lune en Bélier ♈<br>
-            Fréquence de résonance planétaire : 528 Hz
-        `;
+        const d = new Date().toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        document.getElementById('meteo').innerHTML = `<strong>${d}</strong><br>Lune en Bélier ♈ | Résonance : 528 Hz`;
     };
 </script>
-
 </body>
 </html>

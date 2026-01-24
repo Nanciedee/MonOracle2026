@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Oracle Vibratoire 2026</title>
@@ -228,17 +229,14 @@ const messages = ["Alignement éthérique...", "Lecture des archives...", "Harmo
     
 function startAmbiance() {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (ambianceOsc) return; // Évite de lancer plusieurs fois
+        if (ambianceOsc) return; 
 
         ambianceOsc = audioCtx.createOscillator();
         const ambianceGain = audioCtx.createGain();
-        
         ambianceOsc.type = 'sine';
-        ambianceOsc.frequency.setValueAtTime(136.1, audioCtx.currentTime); // Fréquence OM (Terre)
-        
+        ambianceOsc.frequency.setValueAtTime(136.1, audioCtx.currentTime); 
         ambianceGain.gain.setValueAtTime(0, audioCtx.currentTime);
-        ambianceGain.gain.linearRampToValueAtTime(0.05, audioCtx.currentTime + 2); // Montée douce
-        
+        ambianceGain.gain.linearRampToValueAtTime(0.05, audioCtx.currentTime + 2); 
         ambianceOsc.connect(ambianceGain);
         ambianceGain.connect(audioCtx.destination);
         ambianceOsc.start();

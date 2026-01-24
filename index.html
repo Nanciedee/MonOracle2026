@@ -231,15 +231,23 @@ function startAmbiance() {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         if (ambianceOsc) return; 
 
-        ambianceOsc = audioCtx.createOscillator();
-        const ambianceGain = audioCtx.createGain();
-        ambianceOsc.type = 'sine';
-        ambianceOsc.frequency.setValueAtTime(136.1, audioCtx.currentTime); 
-        ambianceGain.gain.setValueAtTime(0, audioCtx.currentTime);
-        ambianceGain.gain.linearRampToValueAtTime(0.05, audioCtx.currentTime + 2); 
-        ambianceOsc.connect(ambianceGain);
-        ambianceGain.connect(audioCtx.destination);
-        ambianceOsc.start();
+        // Création d'une nappe plus riche (Basse profonde + Harmonique)
+        const createDrone = (freq, vol) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle'; // Son beaucoup plus doux que 'sine'
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(vol, audioCtx.currentTime + 3); // Montée très lente
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            return osc;
+        };
+
+        // On joue deux fréquences qui s'entremêlent
+        ambianceOsc = createDrone(68.05, 0.03); // Une octave en dessous de l'OM (Ancrage)
+        ambianceOsc2 = createDrone(136.1, 0.02); // Fréquence OM (Cœur)
     }
     
     // --- LOGIQUE DU PORTAIL ---

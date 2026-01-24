@@ -7,14 +7,14 @@ const OracleVibratoire = {
     // 1. BASE DE DONNÉES DES CORRESPONDANCES
     data: {
         chakras: [
-            { id: 1, nom: "Racine", freq: "396Hz", couleurs: "Rouge & Noir", img: "img/racine.jpg" },
-            { id: 2, nom: "Sacré", freq: "417Hz", couleurs: "Orange & Corail", img: "img/sacre.jpg" },
-            { id: 3, nom: "Plexus Solaire", freq: "528Hz", couleurs: "Jaune & Or", img: "img/plexus.jpg" },
-            { id: 4, nom: "Cœur", freq: "639Hz", couleurs: "Vert & Rose", img: "img/coeur.jpg" },
-            { id: 5, nom: "Gorge", freq: "741Hz", couleurs: "Bleu & Argent", img: "img/gorge.jpg" },
-            { id: 6, nom: "Troisième Œil", freq: "852Hz", couleurs: "Indigo", img: "img/3oeil.jpg" },
-            { id: 7, nom: "Couronne", freq: "963Hz", couleurs: "Violet & Blanc", img: "img/couronne.jpg" }
-        ],
+    { id: 1, nom: "Racine", freq: "396Hz", msg: "Libération de la peur", symbole: "Lotus 4 pétales" },
+    { id: 2, nom: "Sacré", freq: "417Hz", msg: "Fluidité et créativité", symbole: "Lotus 6 pétales" },
+    { id: 3, nom: "Plexus Solaire", freq: "528Hz", msg: "Affirmation de soi", symbole: "Triangle inversé" },
+    { id: 4, nom: "Cœur", freq: "639Hz", msg: "Amour inconditionnel", symbole: "Étoile à 6 branches" },
+    { id: 5, nom: "Gorge", freq: "741Hz", msg: "Authenticité", symbole: "Cercle et triangle" },
+    { id: 6, nom: "Troisième Œil", freq: "852Hz", msg: "Perception intuitive", symbole: "Œil mystique" },
+    { id: 7, nom: "Couronne", freq: "963Hz", msg: "Unité cosmique", symbole: "Lotus 1000 pétales" }
+},
         archanges: {
             "Michaël": { freq: "528Hz", pierres: ["Lapis-lazuli", "Sodalite"], img: "img/michael.jpg" },
             "Raphaël": { freq: "639Hz", pierres: ["Malachite", "Émeraude"], img: "img/raphael.jpg" },
@@ -35,48 +35,43 @@ const OracleVibratoire = {
             "Eau": { nom: "Activation du Destin", img: "img/eau.jpg", chakras: [2, 4] }
         }
     },
-    const CartesComplementaires = {
-    "Amour": {
-        qualite: "Amour Inconditionnel",
+    cartesComplementaires: {
+    "Porte_Amour": {
+        titre: "Amour",
         img: "img/Vibratoire Amour.png",
-        frequence: "639 Hz",
-        pierre: "Quartz rose, Rhodonite",
-        astre: "Vénus",
-        rituel: "Scellement du cœur et harmonie relationnelle."
+        usage: "Scellement énergétique / Méditation de l'âme",
+        frequence: "639Hz",
+        astre: "Vénus"
     },
-    "Guérison": {
-        qualite: "Régénération Sacrée",
+    "Porte_Guerison": {
+        titre: "Guérison",
         img: "img/Vibratoire Guérison.png",
-        frequence: "528 Hz",
-        pierre: "Malachite, Émeraude",
-        astre: "Soleil / Mercure",
-        rituel: "Restauration du corps temple et paix cellulaire."
+        usage: "Régénération / Soin vibratoire",
+        frequence: "528Hz",
+        astre: "Mercure"
     },
-    "Guidance": {
-        qualite: "Intuition & Vision",
+    "Porte_Guide": {
+        titre: "Guidance",
         img: "img/Vibratoire Guide.png",
-        frequence: "741 Hz",
-        pierre: "Pierre de lune, Labradorite",
-        astre: "Lune / Neptune",
-        rituel: "Ouverture des canaux de communication céleste."
+        usage: "Intuition / Message céleste",
+        frequence: "741Hz",
+        astre: "Lune"
     },
-    "Protection": {
-        qualite: "Force & Souveraineté",
+    "Porte_Protection": {
+        titre: "Protection",
         img: "img/Vibratoire Protection.png",
-        frequence: "528 Hz / 417 Hz",
-        pierre: "Lapis-lazuli, Tourmaline noire",
-        astre: "Mars / Soleil",
-        rituel: "Bouclier de lumière et transmutation des ombres."
+        usage: "Bouclier / Force souveraine",
+        frequence: "417Hz",
+        astre: "Mars"
     },
-    "Sagesse": {
-        qualite: "Connaissance Akashique",
+    "Porte_Sagesse": {
+        titre: "Sagesse",
         img: "img/Vibratoire Sagesse.png",
-        frequence: "852 Hz / 963 Hz",
-        pierre: "Améthyste, Cristal de roche",
-        astre: "Saturne / Uranus",
-        rituel: "Accès aux mémoires de l'âme et clarté divine."
+        usage: "Connaissance / Clarté divine",
+        frequence: "852Hz",
+        astre: "Jupiter"
     }
-};
+},
 
     // 2. LOGIQUE ASTRONOMIQUE SIMPLIFIÉE (Exemple pour 2026)
     getMeteoDuJour: function(date) {

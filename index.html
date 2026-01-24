@@ -229,59 +229,92 @@
         }, 900);
         setTimeout(() => { clearInterval(interval); afficherResultats(); }, 3500);
     }
+// --- AUDIO ---
+    let audioCtx = null;
+    function playFreq(f) {
+        if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.frequency.setValueAtTime(f, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 6);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 6);
+    }
+
+    // --- LOGIQUE ---
+    function toggleLivret() {
+        const overlay = document.getElementById('livret-overlay-box');
+        overlay.style.display = (overlay.style.display === 'block') ? 'none' : 'block';
+    }
+
+    function lancerRituel() {
+        document.getElementById('intro-step').style.display = 'none';
+        document.getElementById('loader').style.display = 'block';
+        setTimeout(afficherResultats, 3000);
+    }
 
     function afficherResultats() {
-        document.getElementById('loader').style.display = 'none';
-        document.getElementById('portal-result').style.display = 'block';
-
-        // Sélection aléatoire
-        const aKeys = Object.keys(archanges);
-        const arc = archanges[aKeys[Math.floor(Math.random() * aKeys.length)]];
-        
+        const arc = archanges[Math.floor(Math.random() * archanges.length)];
         const cha = chakras[Math.floor(Math.random() * chakras.length)];
-        
-        const vKeys = Object.keys(cartesVibratoires);
-        const vKey = vKeys[Math.floor(Math.random() * vKeys.length)];
+        const vKey = Object.keys(cartesVibratoires)[Math.floor(Math.random() * 3)];
         const vib = cartesVibratoires[vKey];
 
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('portal-result').style.display = 'block';
+        
         document.getElementById('cards-container').innerHTML = `
             <div class="fiche">
-                <div>
-                    <h3>🌌 ${arc.nom}</h3>
-                    <img src="${arc.img}">
-                    <p class="details-text">🌈 <b>Fréquence :</b> ${arc.freq} Hz</p>
-                    <p class="details-text">💎 <b>Pierres :</b> ${arc.pierres}</p>
-                    <p class="details-text">🌠 <b>Astres :</b> ${arc.astres}</p>
-                    <p class="details-text">🪬 <b>Symboles :</b> ${arc.symboles}</p>
-                    <p class="details-text">🧭 <b>Rôle :</b> ${arc.role}</p>
-                </div>
+                <h3>🌌 Archange ${arc.nom}</h3>
+                <img src="${arc.img}">
+                <p class="details-text">🌈 <b>Fréquence :</b> ${arc.freq} Hz</p>
+                <p class="details-text">💎 <b>Pierres :</b> ${arc.stones}</p>
+                <p class="details-text">🌠 <b>Astres :</b> ${arc.astres}</p>
+                <p class="details-text">🪬 <b>Symboles :</b> ${arc.symboles}</p>
+                <p class="details-text">🧭 <b>Rôle :</b> ${arc.role}</p>
                 <button class="audio-btn" onclick="playFreq(${arc.freq})">🔊 ACTIVER ${arc.freq}Hz</button>
             </div>
 
             <div class="fiche">
-                <div>
-                    <h3>🌀 Chakra ${cha.nom}</h3>
-                    <img src="${cha.img}">
-                    <p class="details-text">💬 <b>Mantra:</b> <i>"${cha.mantra}"</i></p>
-                    <p class="details-text">🌈 <b>Fréquence:</b> ${cha.freq}Hz</p>
-                    <p class="details-text">💎 <b>Pierres:</b> ${cha.pierres}</p>
-                </div>
+                <h3>🌀 Chakra ${cha.nom}</h3>
+                <img src="${cha.img}">
+                <p class="details-text">💬 <b>Mantra :</b> "${cha.mantra}"</p>
+                <p class="details-text">🌈 <b>Fréquence :</b> ${cha.freq} Hz</p>
+                <p class="details-text">💎 <b>Pierres :</b> ${cha.stones}</p>
+                <p class="details-text">🌠 <b>Astres :</b> ${cha.astres}</p>
                 <button class="audio-btn" onclick="playFreq(${cha.freq})">🔊 ALIGNER LE CENTRE</button>
             </div>
 
-            <div class="fiche" style="border-color: #fff;">
-                <div>
-                    <h3>✨ Carte de ${vKey}</h3>
-                    <img src="${vib.img}">
-                    <p class="details-text">🌠 <b>Astre:</b> ${vib.astre}</p>
-                    <p class="details-text">⚡ <b>Effet:</b> ${vib.effet}</p>
-                    <div style="background: rgba(255,255,255,0.05); border-left: 3px solid var(--gold); padding: 10px; margin-top: 10px; font-style: italic; font-size: 0.85rem;">
-                        <b>Invocation :</b><br>"${vib.invocation}"
-                    </div>
+            <div class="fiche">
+                <div id="livret-overlay-box" class="livret-box">
+                    <h3 style="color:var(--gold)">📖 RITUEL : ${vKey}</h3>
+                    <div class="livret-content">${vib.livret}</div>
+                    <button class="audio-btn" style="background:#fff" onclick="toggleLivret()">⬅ RETOUR</button>
                 </div>
-                <button class="audio-btn" style="background:#fff" onclick="playFreq(${vib.freq})">✨ SCELLER LE RITUEL (${vib.freq}Hz)</button>
+                <h3>${vib.icon} Carte de ${vKey}</h3>
+                <img src="${vib.img}">
+                <p class="details-text">🌠 <b>Astre :</b> ${vib.astre}</p>
+                <p class="details-text">💎 <b>Pierres :</b> ${vib.pierres}</p>
+                <p class="details-text">⚡ <b>Effet :</b> ${vib.effet}</p>
+                <p class="details-text"><i>"${vib.invocation}"</i></p>
+                <button class="audio-btn" style="background:#fff" onclick="playFreq(${vib.freq})">✨ SCELLER (${vib.freq}Hz)</button>
+                <button class="audio-btn" style="background:transparent; color:#fff; border:1px solid #fff; margin-top:10px;" onclick="toggleLivret()">📖 VOIR LE RITUEL</button>
             </div>
         `;
+        window.scrollTo(0, 0);
+    }
+
+    window.onload = () => {
+        const phases = [{n: "Nouvelle Lune", i: "🌑"}, {n: "Premier Croissant", i: "🌙"}, {n: "Premier Quartier", i: "🌓"}, {n: "Pleine Lune", i: "🌕"}];
+        const current = phases[new Date().getDate() % 4];
+        document.getElementById('moon-icon').innerText = current.i;
+        document.getElementById('moon-name').innerText = current.n.toUpperCase();
+        document.getElementById('moon-data').innerText = new Date().toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'});
+    };
+</script>
+</body>
+</html>
         window.scrollTo(0,0);
     }
 

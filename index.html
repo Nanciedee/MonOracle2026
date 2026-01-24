@@ -39,8 +39,15 @@
 <body>
 
 <div id="star-container"></div>
-
 <div id="app">
+    <div id="moon-phase-header" style="margin-bottom: 20px; padding: 15px; background: rgba(212, 175, 55, 0.1); border-radius: 15px; border: 1px solid rgba(212, 175, 55, 0.3);">
+        <span id="moon-icon" style="font-size: 2rem;">🌙</span>
+        <div id="moon-details" style="display: inline-block; vertical-align: middle; margin-left: 10px; text-align: left;">
+            <div id="moon-name" style="color: var(--gold); font-weight: bold; text-transform: uppercase; font-size: 0.8rem;">Chargement céleste...</div>
+            <div id="moon-resonance" style="font-size: 0.75rem; opacity: 0.8;">Résonance actuelle : 432Hz</div>
+        </div>
+    </div>
+
     <h1>✨ ORACLE VIBRATOIRE ✨</h1>
 
     <div id="intro-step">
@@ -57,7 +64,25 @@
         <div class="spiral"></div>
         <div id="loading-msg">Initialisation des fréquences...</div>
     </div>
+    
+<div class="section-rituel" style="border-style: dashed; border-color: rgba(212, 175, 55, 0.5); background: rgba(0,0,0,0.4);">
+    <h3 style="color:var(--gold); margin-top:0; font-size: 1.1rem;">🌌 Ton Ciel Vibratoire, Nancie</h3>
+    <p style="font-size: 0.9rem; line-height: 1.6; color: #e2e8f0;">
+        Bienvenue dans ton calendrier vibratoire, Nancie ✨🌙. <br>
+        Ton ciel natal (<b>Balance Soleil, Scorpion en progression</b>) se tisse avec les rythmes lunaires pour t’offrir un cycle de transformation douce et intuitive.
+    </p>
+    
+    <div style="margin: 15px 0; padding: 10px; border-left: 3px solid var(--gold); background: rgba(212, 175, 55, 0.05); font-style: italic; font-size: 0.85rem;">
+        "Aujourd'hui, l'énergie du 21 octobre 1967 résonne avec la phase actuelle pour favoriser ton équilibre intérieur."
+    </div>
 
+    <h3 style="color:var(--gold); font-size: 1rem;">🌿 Rituel de Connexion</h3>
+    <ul style="font-size: 0.85rem; text-align: left; padding-left: 20px; line-height: 1.6; color: #cbd5e1;">
+        <li>Inspire la lumière dorée pendant 4 secondes, expire tes doutes.</li>
+        <li>Pose tes mains sur ton cœur et connecte-toi à ta vibration Balance.</li>
+        <li>Affirme : <i>"Je suis en harmonie avec le mouvement de l'Univers."</i></li>
+    </ul>
+</div>
     <div id="portal-result" style="display:none;">
         <div class="result-grid" id="cards-container"></div>
         <button class="btn-divin" style="margin-top:40px" onclick="location.reload()">NOUVELLE CONSULTATION</button>
@@ -237,8 +262,30 @@
     }
 
     window.onload = () => {
-        document.getElementById('moon-data').innerHTML = new Date().toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long', year:'numeric'}) + "<br>Lune : Phase Vibratoire 2026 🌙";
-    };
+// Calcul simplifié de la phase lunaire pour l'affichage
+    const phases = [
+        {n: "Nouvelle Lune", i: "🌑", f: "Introspection"},
+        {n: "Premier Croissant", i: "🌙", f: "Éclosion"},
+        {n: "Premier Quartier", i: "🌓", f: "Action"},
+        {n: "Gibbeuse Croissante", i: "🌔", f: "Affinage"},
+        {n: "Pleine Lune", i: "🌕", f: "Illumination"},
+        {n: "Gibbeuse Décroissante", i: "🌖", f: "Gratitude"},
+        {n: "Dernier Quartier", i: "🌗", f: "Libération"},
+        {n: "Dernier Croissant", i: "🌘", f: "Repos"}
+    ];
+    
+    // Simulation d'une phase basée sur le jour du mois
+    const day = new Date().getDate() % 8;
+    const currentPhase = phases[day];
+
+    document.getElementById('moon-icon').innerText = currentPhase.i;
+    document.getElementById('moon-name').innerText = currentPhase.n + " • " + currentPhase.f;
+    
+    // On garde ton ancien affichage de date juste au cas où
+    if(document.getElementById('moon-data')) {
+        document.getElementById('moon-data').innerText = new Date().toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'});
+    }
+};
 </script>
 </body>
 </html>

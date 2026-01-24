@@ -231,7 +231,9 @@ let ambianceOsc = null;
         setTimeout(() => { clearInterval(interval); afficherResultats(); }, 3500);
     }
 // --- AUDIO ---
-    let audioCtx = null;
+    let audioCtx = null; 
+let ambianceOsc = null;
+    
     function playFreq(f) {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const osc = audioCtx.createOscillator();

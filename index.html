@@ -204,20 +204,21 @@
         }
     };
 
-    const messages = ["Alignement éthérique...", "Lecture des archives...", "Harmonisation sonore...", "Ouverture du portail..."];
+const messages = ["Alignement éthérique...", "Lecture des archives...", "Harmonisation sonore...", "Ouverture du portail..."];
 
-let audioCtx = null; // Déclaré UNE SEULE FOIS ici
-let ambianceOsc = null;
+    let audioCtx = null; 
+    let ambianceOsc = null;
+
     function playFreq(f) {
-        if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.frequency.setValueAtTime(f, audioCtx.currentTime);
         gain.gain.setValueAtTime(0, audioCtx.currentTime);
         gain.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 0.1);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 4);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 6);
         osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.start(); osc.stop(audioCtx.currentTime + 4);
+        osc.start(); osc.stop(audioCtx.currentTime + 6);
     }
 
     function lancerRituel() {
@@ -225,37 +226,12 @@ let ambianceOsc = null;
         document.getElementById('loader').style.display = 'block';
         let i = 0;
         const interval = setInterval(() => {
-            document.getElementById('loading-msg').innerText = messages[i % messages.length];
+            const msgEl = document.getElementById('loading-msg');
+            if(msgEl) msgEl.innerText = messages[i % messages.length];
             i++;
         }, 900);
         setTimeout(() => { clearInterval(interval); afficherResultats(); }, 3500);
     }
-// --- AUDIO ---
-    let audioCtx = null; 
-let ambianceOsc = null;
-    
-    function playFreq(f) {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.frequency.setValueAtTime(f, audioCtx.currentTime);
-    gain.gain.setValueAtTime(0, audioCtx.currentTime);
-    gain.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 0.1);
-    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 6);
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.start(); osc.stop(audioCtx.currentTime + 6);
-}
-
-function toggleLivret() {
-    const overlay = document.getElementById('livret-overlay-box');
-    if (overlay) overlay.style.display = (overlay.style.display === 'block') ? 'none' : 'block';
-}
-
-function lancerRituel() {
-    document.getElementById('intro-step').style.display = 'none';
-    document.getElementById('loader').style.display = 'block';
-    setTimeout(afficherResultats, 3000);
-}
 
 function afficherResultats() {
     const arc = archanges[Math.floor(Math.random() * archanges.length)];

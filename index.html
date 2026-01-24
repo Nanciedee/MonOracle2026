@@ -176,12 +176,32 @@
         { nom: "Couronne", freq: 963, mantra: "Je suis un avec le Tout.", img: "img/Chakra 7 Couronne.png" }
     ];
 
-    const portes = {
-        "Amour": { img: "img/Vibratoire Amour.png", freq: 639, desc: "Ouvre le portail de la compassion." },
-        "Protection": { img: "img/Vibratoire Protection.png", freq: 417, desc: "Établit un bouclier de lumière." },
-        "Guérison": { img: "img/Vibratoire Guérison.png", freq: 528, desc: "Active la régénération cellulaire." },
-        "Guide": { img: "img/Vibratoire Guide.png", freq: 852, desc: "Connexion aux lignées de lumière." },
-        "Sagesse": { img: "img/Vibratoire Sagesse.png", freq: 963, desc: "Ancre la connaissance universelle." }
+    const cartesVibratoires = {
+        "Protection": {
+            freq: 417, pierres: "Obsidienne, Tourmaline", astre: "Mars / Saturne",
+            invocation: "Je suis entouré(e) d’un cercle de lumière, nul ne peut pénétrer sans mon accord.",
+            effet: "Dissout les intrusions, renforce l'aura.", img: "img/Vibratoire Protection.png"
+        },
+        "Guérison": {
+            freq: 528, pierres: "Malachite, Chrysoprase", astre: "Lune / Chiron",
+            invocation: "Je suis un temple vivant, et je choisis la régénération.",
+            effet: "Réparation cellulaire, libération émotionnelle.", img: "img/Vibratoire Guérison.png"
+        },
+        "Guidance": {
+            freq: 852, pierres: "Labradorite, Lapis lazuli", astre: "Mercure / Uranus",
+            invocation: "Je suis prêt(e) à recevoir les signes et à suivre le chemin.",
+            effet: "Active l'intuition, éclaire les choix.", img: "img/Vibratoire Guide.png"
+        },
+        "Amour": {
+            freq: 639, pierres: "Quartz rose, Kunzite", astre: "Vénus / Terre",
+            invocation: "Je suis amour, je suis lien, je suis unité.",
+            effet: "Harmonisation relationnelle, ouverture du cœur.", img: "img/Vibratoire Amour.png"
+        },
+        "Sagesse": {
+            freq: 963, pierres: "Améthyste, Sodalite", astre: "Soleil / Neptune",
+            invocation: "Je suis un canal vivant de vérité, je reçois les enseignements.",
+            effet: "Accès aux plans supérieurs, mémoire cosmique.", img: "img/Vibratoire Sagesse.png"
+        }
     };
 
     const messages = ["Alignement éthérique...", "Lecture des archives...", "Harmonisation sonore...", "Ouverture du portail..."];
@@ -238,14 +258,24 @@
 
         // --- CARTE CHAKRA ---
         `<div class="fiche">
-            <div>
                 <h3>🌀 Chakra ${cha.nom}</h3>
                 <img src="${cha.img}">
-                <p class="details-text">💬 <b>Mantra :</b> <em>"${cha.mantra}"</em></p>
-                <p class="details-text">🌈 <b>Fréquence :</b> ${cha.freq} Hz</p>
+                <p class="details-text">💬 <b>Mantra:</b> <i>"${cha.mantra}"</i></p>
+                <p class="details-text">🌈 <b>Fréquence:</b> ${cha.freq}Hz</p>
+                <p class="details-text">💎 <b>Pierres:</b> ${cha.pierres}</p>
+                <button class="audio-btn" onclick="playFreq(${cha.freq})">ALIGNER LE CENTRE</button>
             </div>
-            <button class="audio-btn" onclick="playFreq(${cha.freq})">🔊 RÉALIGNE</button>
-        </div>` +
+
+            <div class="fiche" style="border-color: #fff;">
+                <h3>✨ Carte de ${vKey}</h3>
+                <img src="${vib.img}">
+                <p class="details-text">🌠 <b>Astre:</b> ${vib.astre}</p>
+                <p class="details-text">⚡ <b>Effet:</b> ${vib.effet}</p>
+                <div class="invocation-box">
+                    <b>Invocation :</b><br>"${vib.invocation}"
+                </div>
+                <button class="audio-btn" style="background:#fff" onclick="playFreq(${vib.freq})">SCELLER LE RITUEL (${vib.freq}Hz)</button>
+            </div>` +
 
         // --- CARTE PORTE ---
         `<div class="fiche">

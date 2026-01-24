@@ -54,17 +54,23 @@
     <h1>✨ ORACLE VIBRATOIRE ✨</h1>
 
     <div id="intro-step">
-        <div class="section-rituel">
-            <h3 style="color:var(--gold); margin-top:0;">🌌 Ton Ciel Vibratoire, Nancie</h3>
-            <p style="font-size: 0.95rem; line-height: 1.6;">
-                Balance Soleil, Scorpion en progression. <br>
-                Pose ton intention pour harmoniser tes fréquences aujourd'hui.
-            </p>
-            <textarea id="intent1" placeholder="État émotionnel actuel..."></textarea>
-            <textarea id="intent2" placeholder="Ce que tu souhaites libérer ou manifester..."></textarea>
+    <div id="moon-data" class="lune-header">Chargement...</div>
+    <div class="section-rituel" style="border-style: dashed; border-color: rgba(212, 175, 55, 0.5); background: rgba(0,0,0,0.4);">
+        <h3 style="color:var(--gold); margin-top:0; font-size: 1.1rem;">🌌 Ton Ciel Vibratoire, Nancie</h3>
+        <p style="font-size: 0.9rem; line-height: 1.6; color: #e2e8f0;">
+            Bienvenue ✨🌙. Ton ciel natal (<b>Balance Soleil, Scorpion en progression</b>) s’harmonise avec le cycle actuel pour ta transformation.
+        </p>
+        <div style="margin: 15px 0; padding: 10px; border-left: 3px solid var(--gold); background: rgba(212, 175, 55, 0.05); font-style: italic; font-size: 0.85rem;">
+            "Aujourd'hui, l'énergie de la balance favorise ton équilibre intérieur."
         </div>
-        <button class="btn-divin" onclick="lancerRituel()">✨ OUVRIR LE PORTAIL ✨</button>
+        
+        <h2>🌿 Énergie Actuelle</h2>
+        <textarea id="step1" placeholder="Ton état émotionnel..."></textarea>
+        <h2>🔥 Mouvement Intérieur</h2>
+        <textarea id="step2" placeholder="Corps, mental, intuition..."></textarea>
     </div>
+    <button class="btn-divin" onclick="lancerRituel()">✨ OUVRIR LE PORTAIL ✨</button>
+</div>
 
     <div id="loader">
         <div class="spiral"></div>
@@ -245,12 +251,28 @@
 
     // --- PHASE LUNAIRE ---
     window.onload = () => {
-        const phases = ["Nouvelle Lune", "Premier Croissant", "Premier Quartier", "Lune Gibbeuse", "Pleine Lune", "Lune Disséminatrice", "Dernier Quartier", "Dernier Croissant"];
-        const icons = ["🌑", "🌙", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘"];
-        const day = new Date().getDate() % 8;
-        document.getElementById('moon-icon').innerText = icons[day];
-        document.getElementById('moon-name').innerText = phases[day].toUpperCase();
-    };
+    const phases = [
+        {n: "Nouvelle Lune", i: "🌑", f: "Introspection"},
+        {n: "Premier Croissant", i: "🌙", f: "Éclosion"},
+        {n: "Premier Quartier", i: "🌓", f: "Action"},
+        {n: "Gibbeuse Croissante", i: "🌔", f: "Affinage"},
+        {n: "Pleine Lune", i: "🌕", f: "Illumination"},
+        {n: "Gibbeuse Décroissante", i: "🌖", f: "Gratitude"},
+        {n: "Dernier Quartier", i: "🌗", f: "Libération"},
+        {n: "Dernier Croissant", i: "🌘", f: "Repos"}
+    ];
+    
+    const day = new Date().getDate() % 8;
+    const currentPhase = phases[day];
+
+    document.getElementById('moon-icon').innerText = currentPhase.i;
+    document.getElementById('moon-name').innerText = currentPhase.n + " • " + currentPhase.f;
+    
+    // Affiche la date en français sous le titre
+    if(document.getElementById('moon-data')) {
+        document.getElementById('moon-data').innerText = new Date().toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'});
+    }
+};
 </script>
 </body>
 </html>

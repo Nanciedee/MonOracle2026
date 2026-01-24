@@ -168,7 +168,7 @@
 </div>
 
 <script>
-    // --- ÉTOILES ---
+    // --- CONFIGURATION DES ÉTOILES ---
     function initStars() {
         const container = document.getElementById('star-container');
         for (let i = 0; i < 100; i++) {
@@ -185,30 +185,30 @@
     }
     initStars();
 
-    // --- DONNÉES (TOUTES LES IMAGES SONT DANS img/) ---
+    // --- BASE DE DONNÉES AVEC TES NOMS DE FICHIERS EXACTS ---
     const archanges = {
-        "Michaël": { freq: "528Hz", pierres: "Lapis-lazuli", astre: "Soleil", img: "img/michael.jpg" },
-        "Raphaël": { freq: "639Hz", pierres: "Malachite", astre: "Mercure", img: "img/raphael.jpg" },
-        "Gabriel": { freq: "741Hz", pierres: "Pierre de lune", astre: "Lune", img: "img/gabriel.jpg" },
-        "Uriel": { freq: "852Hz", pierres: "Ambre", astre: "Uranus", img: "img/uriel.jpg" },
-        "Chamuel": { freq: "639Hz", pierres: "Quartz Rose", astre: "Vénus", img: "img/chamuel.jpg" },
-        "Jophiel": { freq: "963Hz", pierres: "Topaze dorée", astre: "Jupiter", img: "img/jophiel.jpg" },
-        "Zadkiel": { freq: "432Hz", pierres: "Améthyste", astre: "Saturne", img: "img/zadkiel.jpg" },
-        "Haniel": { freq: "417Hz", pierres: "Sélénite", astre: "Lune", img: "img/haniel.jpg" },
-        "Raziel": { freq: "888Hz", pierres: "Cristal de roche", astre: "Uranus", img: "img/raziel.jpg" },
-        "Azraël": { freq: "396Hz", pierres: "Rose des sables", astre: "Pluton", img: "img/azraël_2.jpg" },
-        "Sandalphon": { freq: "285Hz", pierres: "Turquoise", astre: "Terre", img: "img/sandalphon.jpg" },
-        "Métatron": { freq: "999Hz", pierres: "Platine", astre: "Cosmos", img: "img/metatron.jpg" }
+        "Michaël": { freq: "528Hz", pierres: "Lapis-lazuli", astre: "Soleil", img: "img/Michael.png" },
+        "Raphaël": { freq: "639Hz", pierres: "Malachite", astre: "Mercure", img: "img/Raphael.png" },
+        "Gabriel": { freq: "741Hz", pierres: "Pierre de lune", astre: "Lune", img: "img/Gabriel.png" },
+        "Uriel": { freq: "852Hz", pierres: "Ambre", astre: "Uranus", img: "img/Uriel.png" },
+        "Chamuel": { freq: "639Hz", pierres: "Quartz Rose", astre: "Vénus", img: "img/Chamuel.png" },
+        "Jophiel": { freq: "963Hz", pierres: "Topaze dorée", astre: "Jupiter", img: "img/Jophiel.png" },
+        "Zadkiel": { freq: "432Hz", pierres: "Améthyste", astre: "Saturne", img: "img/Zadkiel.png" },
+        "Haniel": { freq: "417Hz", pierres: "Sélénite", astre: "Lune", img: "img/Haniel.png" },
+        "Raziel": { freq: "888Hz", pierres: "Cristal de roche", astre: "Uranus", img: "img/Raziel.png" },
+        "Azraël": { freq: "396Hz", pierres: "Rose des sables", astre: "Pluton", img: "img/Azraël_2.png" },
+        "Sandalphon": { freq: "285Hz", pierres: "Turquoise", astre: "Terre", img: "img/Sandalphon.png" },
+        "Métatron": { freq: "999Hz", pierres: "Platine", astre: "Cosmos", img: "img/Métatron.png" }
     };
 
     const chakras = [
-        { nom: "Racine", freq: "396Hz", msg: "Stabilité & Ancrage", color: "#ff4d4d", img: "img/racine.png" },
-        { nom: "Sacré", freq: "417Hz", msg: "Créativité & Joie", color: "#ffa366", img: "img/sacre.png" },
-        { nom: "Plexus", freq: "528Hz", msg: "Force & Volonté", color: "#ffff66", img: "img/plexus.png" },
-        { nom: "Cœur", freq: "639Hz", msg: "Amour & Harmonie", color: "#66ff66", img: "img/coeur.png" },
-        { nom: "Gorge", freq: "741Hz", msg: "Vérité & Expression", color: "#66ffff", img: "img/gorge.png" },
-        { nom: "3e Œil", freq: "852Hz", msg: "Intuition & Vision", color: "#6666ff", img: "img/troisieme-oeil.png" },
-        { nom: "Couronne", freq: "963Hz", msg: "Unité & Sagesse", color: "#a366ff", img: "img/couronne.png" }
+        { nom: "Racine", freq: "396Hz", msg: "Stabilité", color: "#ff4d4d", img: "img/Chakra 1 Racine.png" },
+        { nom: "Sacré", freq: "417Hz", msg: "Créativité", color: "#ffa366", img: "img/Chakra 2 Sacré.png" },
+        { nom: "Plexus Solaire", freq: "528Hz", msg: "Force", color: "#ffff66", img: "img/Chakra 3 Plexus Solaire.png" },
+        { nom: "Coeur", freq: "639Hz", msg: "Amour", color: "#66ff66", img: "img/Chakra 4 Coeur.png" },
+        { nom: "Gorge", freq: "741Hz", msg: "Vérité", color: "#66ffff", img: "img/Chakra 5 Gorge.png" },
+        { nom: "Troisieme Oeil", freq: "852Hz", msg: "Vision", color: "#6666ff", img: "img/Chakra 6 Troisieme Oeil.png" },
+        { nom: "Couronne", freq: "963Hz", msg: "Unité", color: "#a366ff", img: "img/Chakra 7 Couronne.png" }
     ];
 
     const portes = {
@@ -219,7 +219,7 @@
         "sagesse": { titre: "Sagesse", freq: 963, img: "img/Vibratoire Sagesse.png", invoc: "Je suis un canal vivant de vérité." }
     };
 
-    // --- SON ---
+    // --- LOGIQUE AUDIO ---
     let audioCtx = null;
     function playTone(freq) {
         if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -249,14 +249,14 @@
 
             <div class="card">
                 <h3>Archange</h3>
-                <img src="${arc.img}" onerror="this.src='https://via.placeholder.com/300x400/000/d4af37?text=Archange'">
+                <img src="${arc.img}" alt="Archange">
                 <p><strong>Astre :</strong> ${arc.astre}</p>
                 <p><strong>Vibration :</strong> ${arc.freq}</p>
             </div>
 
             <div class="card">
                 <h3 style="color:${cha.color}">Chakra ${cha.nom}</h3>
-                <img src="${cha.img}" onerror="this.src='https://via.placeholder.com/300x400/000/6666ff?text=Chakra'">
+                <img src="${cha.img}" alt="Chakra">
                 <p><strong>Vibration :</strong> ${cha.freq}</p>
                 <p>${cha.msg}</p>
             </div>
@@ -265,7 +265,7 @@
 
             <div class="card" style="grid-column: 1 / -1; max-width: 500px; margin: 20px auto; border: 2px solid var(--gold);">
                 <h2 style="color:var(--gold)">${porte.titre}</h2>
-                <img src="${porte.img}" onerror="this.src='https://via.placeholder.com/300x400/d4af37/000?text=Porte'">
+                <img src="${porte.img}" alt="Porte">
                 <p><em>"${porte.invoc}"</em></p>
                 <button class="btn-vibration" onclick="playTone(${porte.freq})">🔊 ACTIVER ${porte.freq}Hz</button>
             </div>
@@ -275,7 +275,7 @@
 
     window.onload = () => {
         const d = new Date().toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-        document.getElementById('meteo').innerHTML = `<strong>${d}</strong><br>Lune en Bélier ♈ | Résonance : 528 Hz`;
+        document.getElementById('meteo').innerHTML = `<strong>${d}</strong><br>Vibration du jour : 528 Hz`;
     };
 </script>
 </body>

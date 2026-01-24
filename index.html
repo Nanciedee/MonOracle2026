@@ -280,12 +280,24 @@ const messages = ["Alignement éthérique...", "Lecture des archives...", "Harmo
 
             <div class="fiche" style="position: relative;">
                 <div id="livret-overlay-box" class="livret-box" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10; padding: 15px; box-sizing: border-box; border-radius: 15px;">
-                    <h3 style="color:var(--gold); margin-top: 0;">📖 RITUEL DE ${vKey.toUpperCase()}</h3>
-                    <div class="livret-content" style="font-size: 0.9rem; line-height: 1.4;">
-                        ${vib.livret || "<i>Infusion du rituel...</i>"}
-                    </div>
-                    <button class="audio-btn" style="background:#fff; color:#000; margin-top: 20px;" onclick="toggleLivret()">⬅ RETOUR</button>
-                </div>
+                    <h3 style="color:var(--gold); margin-top: 0; border-bottom: 1px solid var(--gold); padding-bottom: 10px;">
+    📖 LIVRET DE GUIDANCE : ${vKey.toUpperCase()}
+</h3>
+<div class="livret-content" style="font-size: 0.9rem; line-height: 1.5; text-align: left;">
+    <p style="color: var(--gold); font-style: italic; margin-bottom: 15px;">
+        "${vib.invocation}"
+    </p>
+    
+    <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+        <b style="color: #4CAF50;">⚡ Action Vibratoire :</b><br>
+        ${vib.effet}
+    </div>
+
+    <div style="border-left: 3px solid var(--gold); padding-left: 10px;">
+        <b style="color: var(--gold);">🔮 Protocole de Rituel :</b><br>
+        ${vib.livret || "Infusion en cours..."}
+    </div>
+</div>
 
                 <h3>✨ Carte de ${vKey}</h3>
                 <img src="${vib.img}" style="width: 100%; border-radius: 10px;">

@@ -16,12 +16,127 @@ const OracleVibratoire = {
     { id: 7, nom: "Couronne", freq: "963Hz", msg: "Unité cosmique", symbole: "Lotus 1000 pétales" }
 },
         archanges: {
-            "Michaël": { freq: "528Hz", pierres: ["Lapis-lazuli", "Sodalite"], img: "img/michael.jpg" },
-            "Raphaël": { freq: "639Hz", pierres: ["Malachite", "Émeraude"], img: "img/raphael.jpg" },
-            "Gabriel": { freq: "741Hz", pierres: ["Pierre de lune", "Citrine"], img: "img/gabriel.jpg" },
-            "Uriel": { freq: "852Hz", pierres: ["Ambre", "Pyrite"], img: "img/uriel.jpg" }
-            // ... Ajoutez les autres selon votre liste
-        },
+    "Michaël": { 
+        nom_hebreu: "מִיכָאֵל",
+        signification: "Qui est comme Dieu ?",
+        freq: "528Hz", 
+        pierres: ["Lapis-lazuli", "Sodalite", "Tourmaline noire"], 
+        astres: ["Soleil", "Mars"],
+        symboles: ["Épée flamboyante", "Bouclier solaire", "Balance cosmique"],
+        role: "Protecteur des justes, chef des armées célestes",
+        img: "img/archanges/michael.jpg" // Image d'archange, pas la carte vibratoire
+    },
+    "Raphaël": { 
+        nom_hebreu: "רְפָאֵל",
+        signification: "Dieu guérit",
+        freq: "639Hz", 
+        pierres: ["Malachite", "Émeraude", "Fluorite verte"], 
+        astres: ["Mercure", "Vénus"],
+        symboles: ["Bâton de soin", "Temple de jade", "Tatouages floraux"],
+        role: "Guérisseur divin, protecteur des voyageurs",
+        img: "img/archanges/raphael.jpg" 
+    },
+    "Gabriel": { 
+        nom_hebreu: "גַּבְרִיאֵל",
+        signification: "Force de Dieu",
+        freq: "741Hz", 
+        pierres: ["Pierre de lune", "Citrine", "Cornaline"], 
+        astres: ["Lune", "Neptune"],
+        symboles: ["Harpe lunaire", "Perles marines", "Robe nacrée"],
+        role: "Messager divin, porteur de révélations",
+        img: "img/archanges/gabriel.jpg" 
+    },
+    "Uriel": { 
+        nom_hebreu: "אוּרִיאֵל",
+        signification: "Lumière de Dieu",
+        freq: "852Hz", 
+        pierres: ["Ambre", "Pyrite", "Hématite"], 
+        astres: ["Uranus", "Soleil"],
+        symboles: ["Sphère incandescente", "Forge céleste", "Glyphes alchimiques"],
+        role: "Porteur de sagesse divine, juge cosmique",
+        img: "img/archanges/uriel.jpg" 
+    },
+    "Chamuel": { 
+        nom: "Chamuel (Camael)",
+        signification: "Celui qui voit Dieu",
+        freq: "639Hz", 
+        pierres: ["Quartz rose", "Rhodonite", "Chrysoprase"], 
+        astres: ["Vénus", "Lune"],
+        symboles: ["Cœur rayonnant", "Colombe", "Vortex rose"],
+        role: "Archange de l'amour inconditionnel",
+        img: "img/archanges/chamuel.jpg"
+    },
+    "Jophiel": { 
+        nom: "Jophiel",
+        signification: "Beauté de Dieu",
+        freq: "963Hz", 
+        pierres: ["Topaze dorée", "Rubellite", "Kunzite"], 
+        astres: ["Jupiter", "Soleil"],
+        symboles: ["Plume dorée", "Fleur cosmique"],
+        role: "Archange de la beauté et de l'inspiration",
+        img: "img/archanges/jophiel.jpg"
+    },
+    "Zadkiel": { 
+        nom: "Zadkiel",
+        signification: "Justice de Dieu",
+        freq: "432Hz", 
+        pierres: ["Améthyste", "Sugilite"], 
+        astres: ["Saturne", "Pluton"],
+        symboles: ["Flamme violette", "Livre des âmes"],
+        role: "Archange de la transmutation et du pardon",
+        img: "img/archanges/zadkiel.jpg"
+    },
+    "Haniel": { 
+        nom: "Haniel",
+        signification: "Grâce de Dieu",
+        freq: "417Hz", 
+        pierres: ["Pierre de lune", "Sélénite"], 
+        astres: ["Lune", "Vénus"],
+        symboles: ["Croissant lunaire", "Éventail nacré"],
+        role: "Archange de la féminité sacrée",
+        img: "img/archanges/haniel.jpg"
+    },
+    "Raziel": { 
+        nom: "Raziel",
+        signification: "Secret de Dieu",
+        freq: "888Hz", 
+        pierres: ["Cristal de roche", "Moldavite"], 
+        astres: ["Uranus", "Mercure"],
+        symboles: ["Livre scellé", "Spirale dorée"],
+        role: "Gardien des mystères",
+        img: "img/archanges/raziel.jpg"
+    },
+    "Azraël": { 
+        nom: "Azraël",
+        signification: "Celui que Dieu aide",
+        freq: "396Hz", 
+        pierres: ["Calcite crème", "Rose des sables"], 
+        astres: ["Saturne", "Pluton"],
+        symboles: ["Sablier", "Voile"],
+        role: "Guide des âmes",
+        img: "img/archanges/azrael.jpg"
+    },
+    "Sandalphon": { 
+        nom: "Sandalphon",
+        signification: "Co-créateur",
+        freq: "285Hz", 
+        pierres: ["Turquoise", "Rhodonite"], 
+        astres: ["Terre", "Neptune"],
+        symboles: ["Tambour cosmique", "Racines lumineuses"],
+        role: "Archange de l'ancrage",
+        img: "img/archanges/sandalphon.jpg"
+    },
+    "Métatron": { 
+        nom: "Métatron",
+        signification: "Trône de Dieu",
+        freq: "999Hz", 
+        pierres: ["Tourmaline melon d’eau", "Platine"], 
+        astres: ["Pléiades", "Sirius"],
+        symboles: ["Cube de Métatron", "Vortex arc-en-ciel"],
+        role: "Maître de l'ascension",
+        img: "img/archanges/metatron.jpg"
+    }
+}
         archetypes: [
             { nom: "Le Visionnaire", element: "Air", msg: "Je vois au-delà du présent.", img: "img/visionnaire.jpg" },
             { nom: "Le Guérisseur", element: "Eau", msg: "Mon cœur connaît la voie.", img: "img/guerisseur.jpg" },

@@ -35,6 +35,10 @@
         
         .audio-btn { background: var(--gold); border: none; padding: 12px 20px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 15px; color: black; }
         .lune-header { font-style: italic; color: var(--gold); margin-bottom: 20px; font-size: 1.1rem; }
+        @keyframes pulse {
+    from { opacity: 0.8; transform: scale(1); }
+    to { opacity: 1; transform: scale(1.05); }
+}
     </style>
 </head>
 <body>
@@ -54,42 +58,45 @@
     <div id="intro-step">
         <div class="lune-header" id="moon-data">Chargement...</div>
         <div class="section-rituel" style="border-style: dashed; border-color: rgba(212, 175, 55, 0.5); background: rgba(0,0,0,0.4);">
-    <h3 style="color:var(--gold); margin-top:0; font-size: 1.1rem;">🌌 Ton Ciel Vibratoire, Nancie</h3>
-    <p id="daily-intro" style="font-size: 0.9rem; line-height: 1.6; color: #e2e8f0;"></p>
-    
-    <div id="daily-resonance" style="margin: 15px 0; padding: 10px; border-left: 3px solid var(--gold); background: rgba(212, 175, 55, 0.05); font-style: italic; font-size: 0.85rem;"></div>
+            <h3 style="color:var(--gold); margin-top:0; font-size: 1.1rem;">🌌 Ton Ciel Vibratoire, Nancie</h3>
+            <p id="daily-intro" style="font-size: 0.9rem; line-height: 1.6; color: #e2e8f0;"></p>
+            
+            <div id="daily-resonance" style="margin: 15px 0; padding: 10px; border-left: 3px solid var(--gold); background: rgba(212, 175, 55, 0.05); font-style: italic; font-size: 0.85rem;"></div>
+            
+            <div id="angel-number" style="text-align: center; color: var(--gold); font-size: 1.8rem; font-weight: bold; margin: 15px 0 5px 0; text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); letter-spacing: 5px; animation: pulse 2s infinite alternate;"></div>
+            <p id="angel-message" style="text-align: center; color: var(--gold); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; opacity: 0.9;"></p>
+            
+            <h3 style="color:var(--gold); font-size: 1rem;">🌿 Rituel du Jour</h3>
+            <div id="daily-rituel" style="font-size: 0.85rem; text-align: left; line-height: 1.6; color: #cbd5e1;"></div>
+        </div>
 
-    <h3 style="color:var(--gold); font-size: 1rem;">🌿 Rituel du Jour</h3>
-    <ul id="daily-rituel" style="font-size: 0.85rem; text-align: left; padding-left: 20px; line-height: 1.6; color: #cbd5e1;"></ul>
-</div>
+        <button class="btn-divin" onclick="lancerRituel()">Ouvrir le Portail</button>
 
     <div id="loader">
         <div class="spiral"></div>
         <div id="loading-msg">Initialisation des fréquences...</div>
     </div>
     
-<div class="section-rituel" style="border-style: dashed; border-color: rgba(212, 175, 55, 0.5); background: rgba(0,0,0,0.4);">
-    <h3 style="color:var(--gold); margin-top:0; font-size: 1.1rem;">🌌 Ton Ciel Vibratoire, Nancie</h3>
-    <p style="font-size: 0.9rem; line-height: 1.6; color: #e2e8f0;">
-        Bienvenue dans ton calendrier vibratoire, Nancie ✨🌙. <br>
-        Ton ciel natal (<b>Balance Soleil, Scorpion en progression</b>) se tisse avec les rythmes lunaires pour t’offrir un cycle de transformation douce et intuitive.
-    </p>
+<div class="section-rituel" style="...">
+    <h3 ...>🌌 Ton Ciel Vibratoire, Nancie</h3>
+    <p id="daily-intro" ...></p>
     
-    <div style="margin: 15px 0; padding: 10px; border-left: 3px solid var(--gold); background: rgba(212, 175, 55, 0.05); font-style: italic; font-size: 0.85rem;">
-        "Aujourd'hui, l'énergie de la balance résonne avec la phase actuelle pour favoriser ton équilibre intérieur."
-    </div>
+    <div id="daily-resonance" ...></div>
 
-    <h3 style="color:var(--gold); font-size: 1rem;">🌿 Rituel de Connexion</h3>
-    <ul style="font-size: 0.85rem; text-align: left; padding-left: 20px; line-height: 1.6; color: #cbd5e1;">
-        <li>Inspire la lumière dorée pendant 4 secondes, expire tes doutes.</li>
-        <li>Pose tes mains sur ton cœur et connecte-toi à ta vibration Balance.</li>
-        <li>Affirme : <i>"Je suis en harmonie avec le mouvement de l'Univers."</i></li>
-    </ul>
+    <div id="angel-number" style="text-align: center; color: var(--gold); font-size: 1.8rem; font-weight: bold; margin: 15px 0 5px 0; text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); letter-spacing: 5px;"></div>
+    <p id="angel-message" style="text-align: center; color: var(--gold); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; opacity: 0.9;"></p>
+
+    <h3 style="color:var(--gold); font-size: 1rem; margin-bottom: 10px;">🌿 Rituel de Connexion</h3>
+    <div id="daily-rituel" ...></div>
 </div>
-    <div id="portal-result" style="display:none;">
-        <div class="result-grid" id="cards-container"></div>
-        <button class="btn-divin" style="margin-top:40px" onclick="location.reload()">NOUVELLE CONSULTATION</button>
-    </div>
+
+<div id="portal-result" style="display:none;">
+    <div class="result-grid" id="cards-container"></div>
+    
+    <button class="btn-divin" style="margin-top:40px; border-color: #4CAF50; color: #4CAF50;" onclick="window.print()">📥 SAUVEGARDER LA GUIDANCE</button>
+    
+    <button class="btn-divin" style="margin-top:10px" onclick="location.reload()">NOUVELLE CONSULTATION</button>
+</div>
 </div>
 
 <script>
@@ -216,6 +223,7 @@ const messages = ["Alignement éthérique...", "Lecture des archives...", "Harmo
 
     let audioCtx = null; 
     let ambianceOsc = null;
+    let ambianceOsc2 = null;
 
    function playFreq(f) {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -228,6 +236,54 @@ const messages = ["Alignement éthérique...", "Lecture des archives...", "Harmo
         osc.connect(gain); gain.connect(audioCtx.destination);
         osc.start(); osc.stop(audioCtx.currentTime + 6);
     }
+    
+function genererGuidanceQuotidienne(phaseLune) {
+    const jour = new Date().getDate();
+    
+    const intros = [
+        "L'énergie du Scorpion en progression t'invite à sonder tes profondeurs.",
+        "Ta vibration Balance cherche l'harmonie parfaite dans tes échanges.",
+        "Le ciel tisse un lien entre ton intuition et tes actions concrètes.",
+        "Ton Soleil en Balance brille aujourd'hui avec une clarté nouvelle."
+    ];
+    
+    const resonances = [
+        `Sous cette ${phaseLune}, ta diplomatie naturelle est ta plus grande force.`,
+        `Le mouvement céleste active ta transformation intérieure. Ose muer.`,
+        `L'équilibre entre donner et recevoir est la clé de ta paix aujourd'hui.`,
+        `Une résonance cristalline favorise ton discernement spirituel.`
+    ];
+
+    const rituels = [
+        "✨ Inspire la lumière dorée (4s), expire tes doutes.<br>✨ Pose tes mains sur ton cœur.<br>✨ Affirmation : 'Je suis en harmonie.'",
+        "✨ Allume une bougie virtuelle dans ton esprit.<br>✨ Visualise une lumière bleue de protection.<br>✨ Affirmation : 'Mon espace est sacré.'",
+        "✨ Masse doucement tes tempes avec une intention de paix.<br>✨ Respire l'élément Air (Balance).<br>✨ Affirmation : 'Mes pensées sont fluides.'",
+        "✨ Ancre tes pieds au sol et sens l'énergie remonter.<br>✨ Visualise un quartz rose sur ton plexus.<br>✨ Affirmation : 'Je rayonne l'Amour.'"
+    ];
+
+    const i = jour % 4; // Alterne selon le jour du mois
+// --- Logique des Nombres Angéliques ---
+    const nombresAngeliques = [
+        { num: "000", msg: "Infini : Un nouveau départ s'offre à toi." },
+        { num: "111", msg: "Alignement : Tes pensées se manifestent rapidement." },
+        { num: "222", msg: "Confiance : Tu es au bon endroit, au bon moment." },
+        { num: "333", msg: "Protection : Les Maîtres Ascensionnés t'entourent." },
+        { num: "444", msg: "Soutien : Tes guides t'offrent leur force et leur aide." },
+        { num: "555", msg: "Changement : Une transformation positive arrive." },
+        { num: "666", msg: "Équilibre : Recentres tes pensées sur le spirituel." },
+        { num: "777", msg: "Miracles : La chance divine t'accompagne." },
+        { num: "888", msg: "Abondance : Un flux d'énergie financière s'ouvre." },
+        { num: "999", msg: "Accomplissement : Un cycle se termine pour un renouveau." }
+    ];
+    const indexAngel = jour % nombresAngeliques.length;
+    const angel = nombresAngeliques[indexAngel];
+
+    document.getElementById('angel-number').innerText = angel.num;
+    document.getElementById('angel-message').innerText = angel.msg;
+    document.getElementById('daily-intro').innerHTML = `Bienvenue dans ton calendrier vibratoire, Nancie ✨🌙.<br>Ton ciel natal se tisse avec les rythmes lunaires pour t’offrir un cycle de transformation douce.`;
+    document.getElementById('daily-resonance').innerHTML = `"${resonances[i]}"`;
+    document.getElementById('daily-rituel').innerHTML = rituels[i];
+}
     
 function startAmbiance() {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -374,6 +430,8 @@ function startAmbiance() {
         if(document.getElementById('moon-data')) {
             document.getElementById('moon-data').innerText = new Date().toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'});
         }
+        // Appel de la guidance personnalisée pour Nancie
+        genererGuidanceQuotidienne(currentPhase.n);
     };
 </script>
 </body>

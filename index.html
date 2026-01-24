@@ -231,91 +231,80 @@
     }
 
     function afficherResultats() {
-    document.getElementById('loader').style.display = 'none';
-    document.getElementById('portal-result').style.display = 'block';
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('portal-result').style.display = 'block';
 
-    const aKey = Object.keys(archanges)[Math.floor(Math.random() * Object.keys(archanges).length)];
-    const arc = archanges[aKey];
-    const cha = chakras[Math.floor(Math.random() * chakras.length)];
-    const pKey = Object.keys(portes)[Math.floor(Math.random() * Object.keys(portes).length)];
-    const porte = portes[pKey];
+        // Sélection aléatoire
+        const aKeys = Object.keys(archanges);
+        const arc = archanges[aKeys[Math.floor(Math.random() * aKeys.length)]];
+        
+        const cha = chakras[Math.floor(Math.random() * chakras.length)];
+        
+        const vKeys = Object.keys(cartesVibratoires);
+        const vKey = vKeys[Math.floor(Math.random() * vKeys.length)];
+        const vib = cartesVibratoires[vKey];
 
-    document.getElementById('cards-container').innerHTML = 
-        // --- CARTE ARCHANGE ---
-        `<div class="fiche">
-            <div>
-                <h3>🌌 ${aKey} – ${arc.signif}</h3>
-                <img src="${arc.img}">
-                <p class="details-text">🔤 <b>Nom :</b> ${arc.nom}</p>
-        <p class="details-text">🌈 <b>Fréquence :</b> ${arc.freq} Hz</p>
-        <p class="details-text">💎 <b>Pierres :</b> ${arc.pierres}</p>
-        <p class="details-text">🌠 <b>Astres :</b> ${arc.astres}</p>
-        <p class="details-text">🪬 <b>Symboles :</b> ${arc.symboles}</p>
-        <p class="details-text">🧭 <b>Rôle :</b> ${arc.role}</p>
+        document.getElementById('cards-container').innerHTML = `
+            <div class="fiche">
+                <div>
+                    <h3>🌌 ${arc.nom}</h3>
+                    <img src="${arc.img}">
+                    <p class="details-text">🌈 <b>Fréquence :</b> ${arc.freq} Hz</p>
+                    <p class="details-text">💎 <b>Pierres :</b> ${arc.pierres}</p>
+                    <p class="details-text">🌠 <b>Astres :</b> ${arc.astres}</p>
+                    <p class="details-text">🪬 <b>Symboles :</b> ${arc.symboles}</p>
+                    <p class="details-text">🧭 <b>Rôle :</b> ${arc.role}</p>
+                </div>
+                <button class="audio-btn" onclick="playFreq(${arc.freq})">🔊 ACTIVER ${arc.freq}Hz</button>
             </div>
-            <button class="audio-btn" onclick="playFreq(${arc.freq})">🔊 ${arc.freq}Hz</button>
-        </div>` +
 
-        // --- CARTE CHAKRA ---
-        `<div class="fiche">
-                <h3>🌀 Chakra ${cha.nom}</h3>
-                <img src="${cha.img}">
-                <p class="details-text">💬 <b>Mantra:</b> <i>"${cha.mantra}"</i></p>
-                <p class="details-text">🌈 <b>Fréquence:</b> ${cha.freq}Hz</p>
-                <p class="details-text">💎 <b>Pierres:</b> ${cha.pierres}</p>
-                <button class="audio-btn" onclick="playFreq(${cha.freq})">ALIGNER LE CENTRE</button>
+            <div class="fiche">
+                <div>
+                    <h3>🌀 Chakra ${cha.nom}</h3>
+                    <img src="${cha.img}">
+                    <p class="details-text">💬 <b>Mantra:</b> <i>"${cha.mantra}"</i></p>
+                    <p class="details-text">🌈 <b>Fréquence:</b> ${cha.freq}Hz</p>
+                    <p class="details-text">💎 <b>Pierres:</b> ${cha.pierres}</p>
+                </div>
+                <button class="audio-btn" onclick="playFreq(${cha.freq})">🔊 ALIGNER LE CENTRE</button>
             </div>
 
             <div class="fiche" style="border-color: #fff;">
-                <h3>✨ Carte de ${vKey}</h3>
-                <img src="${vib.img}">
-                <p class="details-text">🌠 <b>Astre:</b> ${vib.astre}</p>
-                <p class="details-text">⚡ <b>Effet:</b> ${vib.effet}</p>
-                <div class="invocation-box">
-                    <b>Invocation :</b><br>"${vib.invocation}"
+                <div>
+                    <h3>✨ Carte de ${vKey}</h3>
+                    <img src="${vib.img}">
+                    <p class="details-text">🌠 <b>Astre:</b> ${vib.astre}</p>
+                    <p class="details-text">⚡ <b>Effet:</b> ${vib.effet}</p>
+                    <div style="background: rgba(255,255,255,0.05); border-left: 3px solid var(--gold); padding: 10px; margin-top: 10px; font-style: italic; font-size: 0.85rem;">
+                        <b>Invocation :</b><br>"${vib.invocation}"
+                    </div>
                 </div>
-                <button class="audio-btn" style="background:#fff" onclick="playFreq(${vib.freq})">SCELLER LE RITUEL (${vib.freq}Hz)</button>
-            </div>` +
-
-        // --- CARTE PORTE ---
-        `<div class="fiche">
-            <div>
-                <h3>🚪 Porte ${pKey}</h3>
-                <img src="${porte.img}">
-                <p class="details-text">✨ <b>Action :</b> ${porte.desc}</p>
-                <p class="details-text">🌈 <b>Fréquence :</b> ${porte.freq} Hz</p>
+                <button class="audio-btn" style="background:#fff" onclick="playFreq(${vib.freq})">✨ SCELLER LE RITUEL (${vib.freq}Hz)</button>
             </div>
-            <button class="audio-btn" style="background:var(--gold);" onclick="playFreq(${porte.freq})">✨ SCELLER</button>
-        </div>`;
-        
+        `;
         window.scrollTo(0,0);
     }
 
     window.onload = () => {
-// Calcul simplifié de la phase lunaire pour l'affichage
-    const phases = [
-        {n: "Nouvelle Lune", i: "🌑", f: "Introspection"},
-        {n: "Premier Croissant", i: "🌙", f: "Éclosion"},
-        {n: "Premier Quartier", i: "🌓", f: "Action"},
-        {n: "Gibbeuse Croissante", i: "🌔", f: "Affinage"},
-        {n: "Pleine Lune", i: "🌕", f: "Illumination"},
-        {n: "Gibbeuse Décroissante", i: "🌖", f: "Gratitude"},
-        {n: "Dernier Quartier", i: "🌗", f: "Libération"},
-        {n: "Dernier Croissant", i: "🌘", f: "Repos"}
-    ];
-    
-    // Simulation d'une phase basée sur le jour du mois
-    const day = new Date().getDate() % 8;
-    const currentPhase = phases[day];
-
-    document.getElementById('moon-icon').innerText = currentPhase.i;
-    document.getElementById('moon-name').innerText = currentPhase.n + " • " + currentPhase.f;
-    
-    // On garde ton ancien affichage de date juste au cas où
-    if(document.getElementById('moon-data')) {
-        document.getElementById('moon-data').innerText = new Date().toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'});
-    }
-};
+        const phases = [
+            {n: "Nouvelle Lune", i: "🌑", f: "Introspection"},
+            {n: "Premier Croissant", i: "🌙", f: "Éclosion"},
+            {n: "Premier Quartier", i: "🌓", f: "Action"},
+            {n: "Gibbeuse Croissante", i: "🌔", f: "Affinage"},
+            {n: "Pleine Lune", i: "🌕", f: "Illumination"},
+            {n: "Gibbeuse Décroissante", i: "🌖", f: "Gratitude"},
+            {n: "Dernier Quartier", i: "🌗", f: "Libération"},
+            {n: "Dernier Croissant", i: "🌘", f: "Repos"}
+        ];
+        const day = new Date().getDate() % 8;
+        const currentPhase = phases[day];
+        document.getElementById('moon-icon').innerText = currentPhase.i;
+        document.getElementById('moon-name').innerText = currentPhase.n + " • " + currentPhase.f;
+        
+        if(document.getElementById('moon-data')) {
+            document.getElementById('moon-data').innerText = new Date().toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'});
+        }
+    };
 </script>
 </body>
 </html>

@@ -273,20 +273,29 @@ const messages = ["Alignement éthérique...", "Lecture des archives...", "Harmo
                 <button class="audio-btn" onclick="playFreq(${cha.freq})">🔊 ALIGNER</button>
             </div>
 
-            <div class="fiche">
-                <div id="livret-overlay-box" class="livret-box">
-                    <h3 style="color:var(--gold)">📖 RITUEL : ${vKey}</h3>
-                    <p class="livret-content">${vib.invocation}</p>
-                    <button class="audio-btn" onclick="toggleLivret()">⬅ RETOUR</button>
+            <div class="fiche" style="border-color: #fff;">
+            <div id="livret-overlay-box" class="livret-box">
+                <h3 style="color:var(--gold)">📖 RITUEL DE ${vKey.toUpperCase()}</h3>
+                <div class="livret-content">
+                    ${vib.livret || "<i>Rituel en cours d'infusion...</i>"}
                 </div>
-                <h3>Carte de ${vKey}</h3>
-                <img src="${vib.img}">
-                <p class="details-text">🌠 <b>Astre :</b> ${vib.astre}</p>
-                <p class="details-text">💎 <b>Pierres :</b> ${vib.pierres}</p>
-                <p class="details-text">⚡ <b>Effet :</b> ${vib.effet}</p>
-                <button class="audio-btn" style="background:#fff" onclick="playFreq(${vib.freq})">✨ SCELLER</button>
-                <button class="audio-btn" style="background:transparent; color:#fff; border:1px solid #fff; margin-top:10px;" onclick="toggleLivret()">📖 VOIR LE RITUEL</button>
+                <button class="audio-btn" style="background:#fff; margin-top:20px;" onclick="toggleLivret()">⬅ RETOUR</button>
             </div>
+
+            <h3>${vib.icon || '✨'} Carte de ${vKey}</h3>
+            <img src="${vib.img}">
+            <p class="details-text">🌠 <b>Astre :</b> ${vib.astre}</p>
+            <p class="details-text">💎 <b>Pierres :</b> ${vib.pierres}</p>
+            <p class="details-text">⚡ <b>Effet :</b> ${vib.effet}</p>
+            
+            <button class="audio-btn" style="background:#fff; margin-top:auto;" onclick="playFreq(${vib.freq})">
+                ✨ SCELLER LE RITUEL (${vib.freq}Hz)
+            </button>
+            
+            <button class="audio-btn" style="background:transparent; color:#fff; border:1px solid #fff; margin-top:10px;" onclick="toggleLivret()">
+                📖 VOIR LE RITUEL
+            </button>
+        </div>
         `;
     }
 

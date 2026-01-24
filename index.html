@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oracle Vibratoire 2026</title>
+    <title>Oracle Vibratoire 2026 - Nancie</title>
     <style>
         :root { --gold: #d4af37; --glass: rgba(255, 255, 255, 0.08); --text: #e2e8f0; }
         body { background: #000; color: var(--text); font-family: 'Georgia', serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
+        
         #star-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%); }
         .star { position: absolute; background: white; border-radius: 50%; opacity: 0.4; animation: moveStar linear infinite; }
         @keyframes moveStar { from { transform: translateY(0px); } to { transform: translateY(-1000px); } }
         
         #app { width: 95%; max-width: 1100px; text-align: center; padding: 40px 0; }
-        h1 { color: var(--gold); letter-spacing: 5px; text-shadow: 0 0 20px rgba(212, 175, 55, 0.6); }
+        h1 { color: var(--gold); letter-spacing: 5px; text-shadow: 0 0 20px rgba(212, 175, 55, 0.6); margin-bottom: 30px; }
         
         .section-rituel { background: var(--glass); border: 1px solid var(--gold); padding: 25px; border-radius: 20px; margin-bottom: 25px; backdrop-filter: blur(10px); text-align: left; }
         textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--gold); color: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; font-family: inherit; box-sizing: border-box; }
@@ -23,75 +24,62 @@
         #loader { display: none; padding: 100px 20px; }
         .spiral { width: 80px; height: 80px; border: 4px solid var(--gold); border-top: 4px solid transparent; border-radius: 50%; animation: spin 1.5s linear infinite; margin: 0 auto 30px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        #loading-msg { font-style: italic; font-size: 1.5rem; color: var(--gold); text-shadow: 0 0 10px var(--gold); }
 
-        .result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-top: 30px; justify-content: center; }
-        .fiche { background: rgba(0,0,0,0.85); border: 1px solid var(--gold); border-radius: 20px; padding: 25px; text-align: left; display: flex; flex-direction: column; justify-content: space-between; }
-        .fiche img { width: 100%; height: 250px; object-fit: contain; border-radius: 10px; margin-bottom: 15px; background: rgba(255,255,255,0.03); }
+        .result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-top: 30px; }
+        .fiche { background: rgba(0,0,0,0.85); border: 1px solid var(--gold); border-radius: 20px; padding: 25px; text-align: left; position: relative; min-height: 600px; display: flex; flex-direction: column; }
+        .fiche img { width: 100%; height: 230px; object-fit: contain; margin-bottom: 15px; border-radius: 10px; }
         
-        .highlight { color: var(--gold); font-weight: bold; font-size: 0.85rem; text-transform: uppercase; display: block; margin-top: 10px; }
-        .details-text { font-size: 0.95rem; line-height: 1.4; margin-bottom: 5px; color: #cbd5e1; }
+        .audio-btn { background: var(--gold); border: none; padding: 12px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 8px; color: black; transition: 0.3s; }
+        .audio-btn:hover { transform: scale(1.02); opacity: 0.9; }
         
-        .audio-btn { background: var(--gold); border: none; padding: 12px 20px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 15px; color: black; }
-        .lune-header { font-style: italic; color: var(--gold); margin-bottom: 20px; font-size: 1.1rem; }
+        .livret-box { display: none; background: #0a0a0c; position: absolute; top: 0; left: 0; width: 100%; height: 100%; padding: 25px; border-radius: 20px; box-sizing: border-box; overflow-y: auto; z-index: 10; border: 2px solid #fff; }
+        .livret-content { font-size: 0.85rem; line-height: 1.6; color: #e2e8f0; }
+        .livret-content b { color: var(--gold); text-transform: uppercase; font-size: 0.8rem; }
+        .highlight-box { background: rgba(212, 175, 55, 0.1); border-left: 3px solid var(--gold); padding: 10px; margin: 15px 0; font-style: italic; }
     </style>
 </head>
 <body>
 
 <div id="star-container"></div>
+
 <div id="app">
-    <div id="moon-phase-header" style="margin-bottom: 20px; padding: 15px; background: rgba(212, 175, 55, 0.1); border-radius: 15px; border: 1px solid rgba(212, 175, 55, 0.3);">
-        <span id="moon-icon" style="font-size: 2rem;">🌙</span>
-        <div id="moon-details" style="display: inline-block; vertical-align: middle; margin-left: 10px; text-align: left;">
-            <div id="moon-name" style="color: var(--gold); font-weight: bold; text-transform: uppercase; font-size: 0.8rem;">Chargement céleste...</div>
-            <div id="moon-resonance" style="font-size: 0.75rem; opacity: 0.8;">Résonance actuelle : 432Hz</div>
+    <div id="moon-phase-header" style="margin-bottom: 25px; padding: 15px; background: rgba(212,175,55,0.1); border-radius: 20px; border: 1px solid rgba(212,175,55,0.4);">
+        <span id="moon-icon" style="font-size: 2.5rem;">🌙</span>
+        <div style="display: inline-block; vertical-align: middle; margin-left: 15px; text-align: left;">
+            <div id="moon-name" style="color: var(--gold); font-weight: bold; letter-spacing: 1px;">INITIALISATION CÉLESTE...</div>
+            <div id="moon-resonance" style="font-size: 0.8rem; opacity: 0.7;">Fréquence de synchronisation : 432Hz</div>
         </div>
     </div>
 
     <h1>✨ ORACLE VIBRATOIRE ✨</h1>
 
     <div id="intro-step">
-        <div class="lune-header" id="moon-data">Chargement...</div>
         <div class="section-rituel">
-            <h2>🌿 Énergie Actuelle</h2><textarea id="step1" placeholder="Ton état émotionnel..."></textarea>
-            <h2>🔥 Mouvement Intérieur</h2><textarea id="step2" placeholder="Corps, mental, intuition..."></textarea>
-            <h2>🌌 Influence Céleste</h2><textarea id="step3" placeholder="Ressentis lunaires..."></textarea>
+            <h3 style="color:var(--gold); margin-top:0;">🌌 Ton Ciel Vibratoire, Nancie</h3>
+            <p style="font-size: 0.95rem; line-height: 1.6;">
+                Balance Soleil, Scorpion en progression. <br>
+                Pose ton intention pour harmoniser tes fréquences aujourd'hui.
+            </p>
+            <textarea id="intent1" placeholder="État émotionnel actuel..."></textarea>
+            <textarea id="intent2" placeholder="Ce que tu souhaites libérer ou manifester..."></textarea>
         </div>
         <button class="btn-divin" onclick="lancerRituel()">✨ OUVRIR LE PORTAIL ✨</button>
     </div>
 
     <div id="loader">
         <div class="spiral"></div>
-        <div id="loading-msg">Initialisation des fréquences...</div>
-    </div>
-    
-<div class="section-rituel" style="border-style: dashed; border-color: rgba(212, 175, 55, 0.5); background: rgba(0,0,0,0.4);">
-    <h3 style="color:var(--gold); margin-top:0; font-size: 1.1rem;">🌌 Ton Ciel Vibratoire, Nancie</h3>
-    <p style="font-size: 0.9rem; line-height: 1.6; color: #e2e8f0;">
-        Bienvenue dans ton calendrier vibratoire, Nancie ✨🌙. <br>
-        Ton ciel natal (<b>Balance Soleil, Scorpion en progression</b>) se tisse avec les rythmes lunaires pour t’offrir un cycle de transformation douce et intuitive.
-    </p>
-    
-    <div style="margin: 15px 0; padding: 10px; border-left: 3px solid var(--gold); background: rgba(212, 175, 55, 0.05); font-style: italic; font-size: 0.85rem;">
-        "Aujourd'hui, l'énergie de la balance résonne avec la phase actuelle pour favoriser ton équilibre intérieur."
+        <div id="loading-msg" style="color:var(--gold); font-size: 1.2rem; font-style: italic;">Alignement des corps subtils...</div>
     </div>
 
-    <h3 style="color:var(--gold); font-size: 1rem;">🌿 Rituel de Connexion</h3>
-    <ul style="font-size: 0.85rem; text-align: left; padding-left: 20px; line-height: 1.6; color: #cbd5e1;">
-        <li>Inspire la lumière dorée pendant 4 secondes, expire tes doutes.</li>
-        <li>Pose tes mains sur ton cœur et connecte-toi à ta vibration Balance.</li>
-        <li>Affirme : <i>"Je suis en harmonie avec le mouvement de l'Univers."</i></li>
-    </ul>
-</div>
     <div id="portal-result" style="display:none;">
         <div class="result-grid" id="cards-container"></div>
-        <button class="btn-divin" style="margin-top:40px" onclick="location.reload()">NOUVELLE CONSULTATION</button>
+        <button class="btn-divin" style="margin-top:40px;" onclick="location.reload()">NOUVELLE CONSULTATION</button>
     </div>
 </div>
 
 <script>
     // --- ÉTOILES ---
-    const container = document.getElementById('star-container');
+    const starContainer = document.getElementById('star-container');
     for (let i = 0; i < 100; i++) {
         const star = document.createElement('div');
         star.className = 'star';
@@ -99,211 +87,169 @@
         star.style.height = star.style.width;
         star.style.left = Math.random() * 100 + '%';
         star.style.top = Math.random() * 100 + '%';
-        star.style.animationDuration = (Math.random() * 30 + 20) + 's';
-        container.appendChild(star);
+        star.style.animationDuration = (Math.random() * 30 + 15) + 's';
+        starContainer.appendChild(star);
     }
 
     // --- BASE DE DONNÉES COMPLÈTE ---
-    const archanges = {
-    "Michaël": { 
-        signif: "Guerrier de Lumière flamboyant", nom: "Michaël — “Qui est comme Dieu ?”", 
-        freq: 528, pierres: "Lapis-lazuli, Sodalite", astres: "Soleil, Mars", 
-        symboles: "Épée flamboyante, Bouclier bleu", role: "Protection & Souveraineté", img: "img/Michael.png" 
-    },
-    "Gabriel": { 
-        signif: "Messager des visions claires", nom: "Gabriel — “Force de Dieu”", 
-        freq: 741, pierres: "Pierre de lune, Citrine", astres: "Lune, Neptune", 
-        symboles: "Trompette d'argent, Lys blanc", role: "Communication & Clarté", img: "img/Gabriel.png" 
-    },
-    "Raphaël": { 
-        signif: "Guide du voyageur et du soin", nom: "Raphaël — “Dieu guérit”", 
-        freq: 639, pierres: "Malachite, Émeraude", astres: "Mercure, Vénus", 
-        symboles: "Bâton d'émeraude, Poisson sacré", role: "Guérison & Équilibre", img: "img/Raphael.png" 
-    },
-    "Uriel": { 
-        signif: "Pilier de la connaissance terrestre", nom: "Uriel — “Lumière de Dieu”", 
-        freq: 852, pierres: "Ambre, Pyrite", astres: "Uranus, Soleil", 
-        symboles: "Sphère de feu, Parchemin d'or", role: "Sagesse & Ancrage", img: "img/Uriel.png" 
-    },
-    "Métatron": { 
-        signif: "Scribe des mondes supérieurs", nom: "Métatron — “Trône Divin”", 
-        freq: 999, pierres: "Platine, Diamant", astres: "Sirius, Cosmos", 
-        symboles: "Cube sacré, Rayon blanc", role: "Ascension & Géométrie Sacrée", img: "img/Métatron.png" 
-    },
-    "Azraël": { 
-        signif: "Guide des passages invisibles", nom: "Azraël — “Aide de Dieu”", 
-        freq: 396, pierres: "Rose des sables", astres: "Pluton", 
-        symboles: "Ombre lumineuse", role: "Transition & Paix de l'âme", img: "img/Azraël_2.png" 
-    },
-    "Raziel": { 
-        signif: "Gardien des mystères cachés", nom: "Raziel — “Secret de Dieu”", 
-        freq: 888, pierres: "Labradorite, Cristal", astres: "Uranus", 
-        symboles: "Arc-en-ciel, Livre des secrets", role: "Ésotérisme & Intuition profonde", img: "img/Raziel.png" 
-    },
-    "Sandalphon": { 
-        signif: "Vibration de la Terre nourricière", nom: "Sandalphon — “Frère céleste”", 
-        freq: 285, pierres: "Turquoise, Quartz fumé", astres: "Terre", 
-        symboles: "Notes de musique, Racines d'argent", role: "Prière & Manifestation", img: "img/Sandalphon.png" 
-    },
-    "Chamuel": { 
-        signif: "Rayon de l'amour inconditionnel", nom: "Chamuel — “Vision de Dieu”", 
-        freq: 639, pierres: "Quartz Rose, Kunzite", astres: "Vénus", 
-        symboles: "Colombe de paix, Cœur ailé", role: "Relations & Paix intérieure", img: "img/Chamuel.png" 
-    },
-    "Haniel": { 
-        signif: "Reine lunaire intuitive", nom: "Haniel — “Grâce de Dieu”", 
-        freq: 417, pierres: "Pierre de lune, Sélénite", astres: "Lune, Vénus", 
-        symboles: "Croissant lunaire, Miroir d’eau", role: "Féminité sacrée", img: "img/Haniel.png" 
-    },
-    "Jophiel": { 
-        signif: "Illumination de la pensée juste", nom: "Jophiel — “Beauté de Dieu”", 
-        freq: 963, pierres: "Citrine, Topaze jaune", astres: "Jupiter", 
-        symboles: "Lumière dorée, Miroir d'or", role: "Éveil & Clarté mentale", img: "img/Jophiel.png" 
-    },
-    "Zadkiel": { 
-        signif: "Alchimiste de la flamme violette", nom: "Zadkiel — “Justice de Dieu”", 
-        freq: 432, pierres: "Améthyste", astres: "Saturne, Jupiter", 
-        symboles: "Flamme violette, Calice d'argent", role: "Transformation & Pardon", img: "img/Zadkiel.png" 
-    }
-};
+    const archanges = [
+        { nom: "Michaël", signif: "Guerrier de Lumière", freq: 528, stones: "Lapis-lazuli, Sodalite", role: "Protection & Souveraineté", img: "img/Michael.png" },
+        { nom: "Gabriel", signif: "Messager des Visions", freq: 741, stones: "Pierre de lune, Citrine", role: "Communication & Clarté", img: "img/Gabriel.png" },
+        { nom: "Raphaël", signif: "Guide du Soin", freq: 639, stones: "Malachite, Émeraude", role: "Guérison & Équilibre", img: "img/Raphael.png" },
+        { nom: "Haniel", signif: "Grâce Lunaire", freq: 417, stones: "Sélénite, Pierre de lune", role: "Féminité Sacrée", img: "img/Haniel.png" },
+        { nom: "Jophiel", signif: "Beauté Divine", freq: 963, stones: "Citrine, Topaze", role: "Éveil & Clarté Mentale", img: "img/Jophiel.png" }
+    ];
+
     const chakras = [
-        { nom: "Racine", freq: 396, mantra: "Je suis en sécurité, je suis ancré.", img: "img/Chakra 1 Racine.png" },
-        { nom: "Sacré", freq: 417, mantra: "Je suis créatif, je coule avec la vie.", img: "img/Chakra 2 Sacré.png" },
-        { nom: "Plexus Solaire", freq: 528, mantra: "Je suis puissant, j'agis avec volonté.", img: "img/Chakra 3 Plexus Solaire.png" },
+        { nom: "Racine", freq: 396, mantra: "Je suis ancré et en sécurité.", img: "img/Chakra 1 Racine.png" },
+        { nom: "Sacré", freq: 417, mantra: "Je coule avec la créativité de la vie.", img: "img/Chakra 2 Sacré.png" },
         { nom: "Cœur", freq: 639, mantra: "Je suis amour, je donne et je reçois.", img: "img/Chakra 4 Coeur.png" },
-        { nom: "Gorge", freq: 741, mantra: "Je parle ma vérité avec clarté.", img: "img/Chakra 5 Gorge.png" },
         { nom: "3e Œil", freq: 852, mantra: "Je vois au-delà des apparences.", img: "img/Chakra 6 Troisieme Oeil.png" },
-        { nom: "Couronne", freq: 963, mantra: "Je suis un avec le Tout.", img: "img/Chakra 7 Couronne.png" }
+        { nom: "Couronne", freq: 963, mantra: "Je suis un avec l'Univers.", img: "img/Chakra 7 Couronne.png" }
     ];
 
     const cartesVibratoires = {
         "Protection": {
-            freq: 417, pierres: "Obsidienne, Tourmaline", astre: "Mars / Saturne",
+            freq: 417, astre: "Mars / Saturne", pierres: "Obsidienne, Tourmaline, Hématite",
             invocation: "Je suis entouré(e) d’un cercle de lumière, nul ne peut pénétrer sans mon accord.",
-            effet: "Dissout les intrusions, renforce l'aura.", img: "img/Vibratoire Protection.png"
+            effet: "Dissout les intrusions, renforce l’aura, stabilise les champs.",
+            livret: "<b>Rituel de Protection :</b> Allume une bougie noire ou rouge. Trace un cercle de sel au sol. Respire 7 fois en visualisant un bouclier doré. <br><br><b>Intention :</b> Créer un bouclier énergétique inviolable et renforcer ton ancrage à la Terre.",
+            img: "img/Vibratoire Protection.png"
         },
         "Guérison": {
-            freq: 528, pierres: "Malachite, Chrysoprase", astre: "Lune / Chiron",
+            freq: 528, astre: "Lune / Chiron", pierres: "Malachite, Chrysoprase, Fluorite verte",
             invocation: "Je suis un temple vivant, et je choisis la régénération.",
-            effet: "Réparation cellulaire, libération émotionnelle.", img: "img/Vibratoire Guérison.png"
+            effet: "Réparation cellulaire, libération émotionnelle, harmonisation.",
+            livret: "<b>Rituel de Guérison :</b> Bougie verte ou blanche. Respire 9 fois en visualisant une lumière émeraude entrant par ton sommet. <br><br><b>Intention :</b> Activer la régénération cellulaire et purifier les mémoires émotionnelles stagnantes.",
+            img: "img/Vibratoire Guérison.png"
         },
         "Guidance": {
-            freq: 852, pierres: "Labradorite, Lapis lazuli", astre: "Mercure / Uranus",
+            freq: 852, astre: "Mercure / Uranus", pierres: "Labradorite, Lapis lazuli, Apatite bleue",
             invocation: "Je suis prêt(e) à recevoir les signes et à suivre le chemin.",
-            effet: "Active l'intuition, éclaire les choix.", img: "img/Vibratoire Guide.png"
+            effet: "Active l’intuition, éclaire les choix, ouvre les voies invisibles.",
+            livret: "<b>Rituel de Guidance :</b> Bougie bleue ou argentée. Pose une question claire. Respire 11 fois en visualisant une lumière indigo sur ton front. <br><br><b>Intention :</b> Recevoir une orientation claire du Soi supérieur et activer ta clairvoyance.",
+            img: "img/Vibratoire Guide.png"
         },
         "Amour": {
-            freq: 639, pierres: "Quartz rose, Kunzite", astre: "Vénus / Terre",
+            freq: 639, astre: "Vénus / Terre", pierres: "Quartz rose, Kunzite, Rhodonite",
             invocation: "Je suis amour, je suis lien, je suis unité.",
-            effet: "Harmonisation relationnelle, ouverture du cœur.", img: "img/Vibratoire Amour.png"
+            effet: "Harmonisation relationnelle, ouverture du cœur, compassion.",
+            livret: "<b>Rituel d'Amour :</b> Bougie rose. Dispose des pétales de fleurs. Respire 12 fois une lumière rose dorée dans ton cœur. <br><br><b>Intention :</b> Dissoudre les blocages affectifs et te relier à la source d'amour universel.",
+            img: "img/Vibratoire Amour.png"
         },
         "Sagesse": {
-            freq: 963, pierres: "Améthyste, Sodalite", astre: "Soleil / Neptune",
-            invocation: "Je suis un canal vivant de vérité, je reçois les enseignements.",
-            effet: "Accès aux plans supérieurs, mémoire cosmique.", img: "img/Vibratoire Sagesse.png"
+            freq: 963, astre: "Soleil / Neptune", pierres: "Améthyste, Sodalite, Cristal de roche",
+            invocation: "Je suis un canal vivant de vérité, et je reçois les enseignements.",
+            effet: "Accès aux plans supérieurs, éveil spirituel, mémoire cosmique.",
+            livret: "<b>Rituel de Sagesse :</b> Bougie violette. Respire 13 fois en visualisant une lumière blanche descendant du cosmos vers ta couronne. <br><br><b>Intention :</b> Accéder aux archives célestes et intégrer les enseignements de ton âme.",
+            img: "img/Vibratoire Sagesse.png"
         }
     };
 
-    const messages = ["Alignement éthérique...", "Lecture des archives...", "Harmonisation sonore...", "Ouverture du portail..."];
-
+    // --- MOTEUR AUDIO ---
     let audioCtx = null;
+    let ambianceOsc = null;
+
+    function startAmbiance() {
+        if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if(ambianceOsc) return;
+        ambianceOsc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        ambianceOsc.type = 'sine';
+        ambianceOsc.frequency.setValueAtTime(136.1, audioCtx.currentTime); // Fréquence OM
+        gain.gain.setValueAtTime(0.015, audioCtx.currentTime);
+        ambianceOsc.connect(gain); gain.connect(audioCtx.destination);
+        ambianceOsc.start();
+    }
+
     function playFreq(f) {
+        // Arrêt de l'ambiance pour la vibration pure
+        if(ambianceOsc) { ambianceOsc.stop(); ambianceOsc = null; }
+        
         if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
+        
         osc.frequency.setValueAtTime(f, audioCtx.currentTime);
         gain.gain.setValueAtTime(0, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 0.1);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 4);
+        gain.gain.linearRampToValueAtTime(0.12, audioCtx.currentTime + 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 6); // DUREE 6 SECONDES
+        
         osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.start(); osc.stop(audioCtx.currentTime + 4);
+        osc.start(); osc.stop(audioCtx.currentTime + 6);
+    }
+
+    // --- NAVIGATION ---
+    function toggleLivret() {
+        const overlay = document.getElementById('livret-overlay');
+        overlay.style.display = (overlay.style.display === 'block') ? 'none' : 'block';
     }
 
     function lancerRituel() {
+        startAmbiance();
         document.getElementById('intro-step').style.display = 'none';
         document.getElementById('loader').style.display = 'block';
-        let i = 0;
-        const interval = setInterval(() => {
-            document.getElementById('loading-msg').innerText = messages[i % messages.length];
-            i++;
-        }, 900);
-        setTimeout(() => { clearInterval(interval); afficherResultats(); }, 3500);
+        setTimeout(afficherResultats, 3500);
     }
 
     function afficherResultats() {
         document.getElementById('loader').style.display = 'none';
         document.getElementById('portal-result').style.display = 'block';
 
-        // Sélection aléatoire
-        const aKeys = Object.keys(archanges);
-        const arc = archanges[aKeys[Math.floor(Math.random() * aKeys.length)]];
-        
+        const arc = archanges[Math.floor(Math.random() * archanges.length)];
         const cha = chakras[Math.floor(Math.random() * chakras.length)];
-        
         const vKeys = Object.keys(cartesVibratoires);
-        const vKey = vKeys[Math.floor(Math.random() * vKeys.length)];
-        const vib = cartesVibratoires[vKey];
+        const vName = vKeys[Math.floor(Math.random() * vKeys.length)];
+        const vib = cartesVibratoires[vName];
 
         document.getElementById('cards-container').innerHTML = `
             <div class="fiche">
-                <div>
-                    <h3>🌌 ${arc.nom}</h3>
-                    <img src="${arc.img}">
-                    <p class="details-text">🌈 <b>Fréquence :</b> ${arc.freq} Hz</p>
-                    <p class="details-text">💎 <b>Pierres :</b> ${arc.pierres}</p>
-                    <p class="details-text">🌠 <b>Astres :</b> ${arc.astres}</p>
-                    <p class="details-text">🪬 <b>Symboles :</b> ${arc.symboles}</p>
-                    <p class="details-text">🧭 <b>Rôle :</b> ${arc.role}</p>
-                </div>
+                <h3>🌌 Archange ${arc.nom}</h3>
+                <img src="${arc.img}">
+                <p class="livret-content"><b>Qualité :</b> ${arc.signif}<br><b>Rôle :</b> ${arc.role}<br><b>Pierres :</b> ${arc.stones}</p>
                 <button class="audio-btn" onclick="playFreq(${arc.freq})">🔊 ACTIVER ${arc.freq}Hz</button>
             </div>
 
             <div class="fiche">
-                <div>
-                    <h3>🌀 Chakra ${cha.nom}</h3>
-                    <img src="${cha.img}">
-                    <p class="details-text">💬 <b>Mantra:</b> <i>"${cha.mantra}"</i></p>
-                    <p class="details-text">🌈 <b>Fréquence:</b> ${cha.freq}Hz</p>
-                    <p class="details-text">💎 <b>Pierres:</b> ${cha.pierres}</p>
-                </div>
-                <button class="audio-btn" onclick="playFreq(${cha.freq})">🔊 ALIGNER LE CENTRE</button>
+                <h3>🌀 Chakra ${cha.nom}</h3>
+                <img src="${cha.img}">
+                <div class="highlight-box">"${cha.mantra}"</div>
+                <p class="livret-content">Équilibre du centre énergétique par la fréquence sacrée.</p>
+                <button class="audio-btn" onclick="playFreq(${cha.freq})">🔊 HARMONISER CENTRE</button>
             </div>
 
-            <div class="fiche" style="border-color: #fff;">
-                <div>
-                    <h3>✨ Carte de ${vKey}</h3>
-                    <img src="${vib.img}">
-                    <p class="details-text">🌠 <b>Astre:</b> ${vib.astre}</p>
-                    <p class="details-text">⚡ <b>Effet:</b> ${vib.effet}</p>
-                    <div style="background: rgba(255,255,255,0.05); border-left: 3px solid var(--gold); padding: 10px; margin-top: 10px; font-style: italic; font-size: 0.85rem;">
-                        <b>Invocation :</b><br>"${vib.invocation}"
+            <div class="fiche" style="border-color: #fff; box-shadow: 0 0 15px rgba(255,255,255,0.1);">
+                <div id="livret-overlay" class="livret-box">
+                    <h3 style="color:var(--gold); margin-top:0;">📖 RITUEL DE ${vName.toUpperCase()}</h3>
+                    <div class="livret-content">
+                        <p><b>Fréquence Sacrée :</b> ${vib.freq}Hz</p>
+                        <p><b>Pierres de Soutien :</b> ${vib.pierres}</p>
+                        <hr style="opacity:0.2; margin:15px 0;">
+                        <p>${vib.livret}</p>
+                        <p style="margin-top:15px; font-size:0.75rem; opacity:0.7;"><i>* Ce rituel peut être répété pendant 3 jours pour sceller l'énergie.</i></p>
                     </div>
+                    <button class="audio-btn" style="background:#fff; margin-top:20px;" onclick="toggleLivret()">⬅ RETOUR À LA CARTE</button>
                 </div>
-                <button class="audio-btn" style="background:#fff" onclick="playFreq(${vib.freq})">✨ SCELLER LE RITUEL (${vib.freq}Hz)</button>
+
+                <h3>✨ Carte de ${vName}</h3>
+                <img src="${vib.img}">
+                <p class="livret-content"><b>Astre Régent :</b> ${vib.astre}<br><b>Effet :</b> ${vib.effet}</p>
+                <div class="highlight-box">"${vib.invocation}"</div>
+                
+                <button class="audio-btn" style="background:#fff" onclick="playFreq(${vib.freq})">✨ SCELLER LE RITUEL (6s)</button>
+                <button class="audio-btn" style="background:transparent; color:#fff; border:1px solid #fff;" onclick="toggleLivret()">📖 VOIR LE LIVRET COMPLET</button>
             </div>
         `;
-        window.scrollTo(0,0);
+        window.scrollTo(0, 0);
     }
 
+    // --- PHASE LUNAIRE ---
     window.onload = () => {
-        const phases = [
-            {n: "Nouvelle Lune", i: "🌑", f: "Introspection"},
-            {n: "Premier Croissant", i: "🌙", f: "Éclosion"},
-            {n: "Premier Quartier", i: "🌓", f: "Action"},
-            {n: "Gibbeuse Croissante", i: "🌔", f: "Affinage"},
-            {n: "Pleine Lune", i: "🌕", f: "Illumination"},
-            {n: "Gibbeuse Décroissante", i: "🌖", f: "Gratitude"},
-            {n: "Dernier Quartier", i: "🌗", f: "Libération"},
-            {n: "Dernier Croissant", i: "🌘", f: "Repos"}
-        ];
+        const phases = ["Nouvelle Lune", "Premier Croissant", "Premier Quartier", "Lune Gibbeuse", "Pleine Lune", "Lune Disséminatrice", "Dernier Quartier", "Dernier Croissant"];
+        const icons = ["🌑", "🌙", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘"];
         const day = new Date().getDate() % 8;
-        const currentPhase = phases[day];
-        document.getElementById('moon-icon').innerText = currentPhase.i;
-        document.getElementById('moon-name').innerText = currentPhase.n + " • " + currentPhase.f;
-        
-        if(document.getElementById('moon-data')) {
-            document.getElementById('moon-data').innerText = new Date().toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'});
-        }
+        document.getElementById('moon-icon').innerText = icons[day];
+        document.getElementById('moon-name').innerText = phases[day].toUpperCase();
     };
 </script>
 </body>

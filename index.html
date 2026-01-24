@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Oracle Vibratoire 2026</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="app">
+        <h1>✨ Oracle Vibratoire 2026 ✨</h1>
+        
+        <div id="oracle-display">
+            <p>Cliquez sur le bouton pour recevoir votre guidance...</p>
+        </div>
+
+        <button id="btn-tirage">🔮 Tirer les cartes du jour</button>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // On lie le bouton au code
+        document.getElementById('btn-tirage').addEventListener('click', () => {
+            OracleVibratoire.afficherTirage();
+        });
+    </script>
+</body>
+</html>

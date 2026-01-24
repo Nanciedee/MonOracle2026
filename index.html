@@ -246,6 +246,7 @@ function startAmbiance() {
     
     // --- LOGIQUE DU PORTAIL ---
     function lancerRituel() {
+        startAmbiance();
         document.getElementById('intro-step').style.display = 'none';
         document.getElementById('loader').style.display = 'block';
         let i = 0;

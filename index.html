@@ -194,38 +194,55 @@
             document.getElementById('loading-msg').innerText = messages[i % messages.length];
             i++;
         }, 900);
-
-        setTimeout(() => {
-            clearInterval(interval);
-            afficherResultats();
-        }, 3500);
+        setTimeout(() => { clearInterval(interval); afficherResultats(); }, 3500);
     }
 
     function afficherResultats() {
-        document.getElementById('loader').style.display = 'none';
-        document.getElementById('portal-result').style.display = 'block';
+    document.getElementById('loader').style.display = 'none';
+    document.getElementById('portal-result').style.display = 'block';
 
-        const arcKeys = Object.keys(archanges);
-        const aKey = arcKeys[Math.floor(Math.random() * arcKeys.length)];
-        const arc = archanges[aKey];
-        const cha = chakras[Math.floor(Math.random() * chakras.length)];
-        const pKeys = Object.keys(portes);
-        const pKey = pKeys[Math.floor(Math.random() * pKeys.length)];
-        const porte = portes[pKey];
+    const aKey = Object.keys(archanges)[Math.floor(Math.random() * Object.keys(archanges).length)];
+    const arc = archanges[aKey];
+    const cha = chakras[Math.floor(Math.random() * chakras.length)];
+    const pKey = Object.keys(portes)[Math.floor(Math.random() * Object.keys(portes).length)];
+    const porte = portes[pKey];
 
-        document.getElementById('cards-container').innerHTML = 
-            `<div class="fiche"><div><h3>🛡️ ${aKey}</h3><img src="${arc.img}">` +
-            `<span class="highlight">Signification:</span><p class="details-text">${arc.signif}</p>` +
-            `<span class="highlight">Pierres:</span><p class="details-text">${arc.pierres}</p></div>` +
-            `<button class="audio-btn" onclick="playFreq(${arc.freq})">🔊 ${arc.freq}Hz</button></div>` +
+    document.getElementById('cards-container').innerHTML = 
+        // --- CARTE ARCHANGE ---
+        `<div class="fiche">
+            <div>
+                <h3>🌌 ${aKey} – ${arc.signif}</h3>
+                <img src="${arc.img}">
+                <p class="details-text">🔤 <b>Nom :</b> ${arc.nom}</p>
+                <p class="details-text">💎 <b>Pierres :</b> ${arc.pierres}</p>
+                <p class="details-text">🌠 <b>Astres :</b> ${arc.astres}</p>
+                <p class="details-text">🪬 <b>Symboles :</b> ${arc.symboles}</p>
+                <p class="details-text">🧭 <b>Rôle :</b> ${arc.role}</p>
+            </div>
+            <button class="audio-btn" onclick="playFreq(${arc.freq})">🔊 ${arc.freq}Hz</button>
+        </div>` +
 
-            `<div class="fiche"><div><h3>🌀 Chakra ${cha.nom}</h3><img src="${cha.img}">` +
-            `<span class="highlight">Mantra:</span><p style="font-style:italic;color:var(--gold);">"${cha.mantra}"</p></div>` +
-            `<button class="audio-btn" onclick="playFreq(${cha.freq})">🔊 ${cha.freq}Hz</button></div>` +
+        // --- CARTE CHAKRA ---
+        `<div class="fiche">
+            <div>
+                <h3>🌀 Chakra ${cha.nom}</h3>
+                <img src="${cha.img}">
+                <p class="details-text">💬 <b>Mantra :</b> <em>"${cha.mantra}"</em></p>
+                <p class="details-text">🌈 <b>Fréquence :</b> ${cha.freq} Hz</p>
+            </div>
+            <button class="audio-btn" onclick="playFreq(${cha.freq})">🔊 RÉALIGNE</button>
+        </div>` +
 
-            `<div class="fiche"><div><h3>🚪 Porte ${pKey}</h3><img src="${porte.img}">` +
-            `<span class="highlight">Action:</span><p class="details-text">${porte.desc}</p></div>` +
-            `<button class="audio-btn" style="background:var(--gold);" onclick="playFreq(${porte.freq})">✨ SCELLER</button></div>`;
+        // --- CARTE PORTE ---
+        `<div class="fiche">
+            <div>
+                <h3>🚪 Porte ${pKey}</h3>
+                <img src="${porte.img}">
+                <p class="details-text">✨ <b>Action :</b> ${porte.desc}</p>
+                <p class="details-text">🌈 <b>Fréquence :</b> ${porte.freq} Hz</p>
+            </div>
+            <button class="audio-btn" style="background:var(--gold);" onclick="playFreq(${porte.freq})">✨ SCELLER</button>
+        </div>`;
         
         window.scrollTo(0,0);
     }

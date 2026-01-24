@@ -97,6 +97,16 @@ h1 {
     opacity: 0.8;
     line-height: 1.4;
 }
+.card-porte {
+    border: 2px solid var(--gold);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+    filter: sepia(0.2) saturate(1.2); /* Donne un aspect plus mystique */
+}
+
+.card-porte:active {
+    transform: scale(0.95);
+    filter: brightness(1.5); /* Effet d'activation lumineuse au clic */
+}
 
 /* --- Bouton de Tirage --- */
 #btn-tirage {

@@ -80,79 +80,67 @@
 
     // --- BASE DE DONNÉES COMPLÈTE ---
     const archanges = {
-        "Michaël": { 
-            nom: "Mikhaël (מִיכָאֵל)", signif: "Qui est comme Dieu ?", freq: 528, 
-            pierres: "Lapis-lazuli, Sodalite", astres: "Soleil, Mars", 
-            symboles: "Épée flamboyante, Bouclier", role: "Protecteur des justes, Chef céleste", 
-            trad: "Combattant de l'Apocalypse", img: "img/Michael.png" 
-        },
-        "Gabriel": { 
-            nom: "Gabriel (גַּבְרִיאֵל)", signif: "Force de Dieu", freq: 741, 
-            pierres: "Pierre de lune, Citrine", astres: "Lune, Neptune", 
-            symboles: "Trompette, Lys blanc", role: "Messager divin, Clarté de vision", 
-            trad: "Guide des prophètes", img: "img/Gabriel.png" 
-        },
-        "Raphaël": { 
-            nom: "Raphaël (רְפָאÉל)", signif: "Dieu guérit", freq: 639, 
-            pierres: "Malachite, Émeraude", astres: "Mercure, Vénus", 
-            symboles: "Bâton de soin, Poisson", role: "Guérisseur divin, Voyageurs", 
-            trad: "Archange de la santé", img: "img/Raphael.png" 
-        },
-        "Uriel": { 
-            nom: "Uriel (אוּרִיאֵל)", signif: "Lumière de Dieu", freq: 852, 
-            pierres: "Ambre, Pyrite", astres: "Uranus, Soleil", 
-            symboles: "Sphère de feu, Parchemin", role: "Sagesse et Vérité", 
-            trad: "Gardien du savoir sacré", img: "img/Uriel.png" 
-        },
-        "Métatron": { 
-            nom: "Métatron", signif: "Petit YHWH", freq: 999, 
-            pierres: "Platine, Diamant", astres: "Sirius, Cosmos", 
-            symboles: "Cube de Métatron", role: "Scribe céleste, Ascension", 
-            trad: "Géométrie sacrée", img: "img/Métatron.png" 
-        },
-        "Azraël": { 
-            nom: "Azraël", signif: "Aide de Dieu", freq: 396, 
-            pierres: "Rose des sables", astres: "Pluton", 
-            symboles: "Ombre lumineuse", role: "Transitions et passages", 
-            trad: "Ange du réconfort", img: "img/Azraël_2.png" 
-        },
-        "Raziel": { 
-            nom: "Raziel", signif: "Secret de Dieu", freq: 888, 
-            pierres: "Labradorite", astres: "Uranus", 
-            symboles: "Arc-en-ciel, Livre", role: "Mystères ésotériques", 
-            trad: "Gardien des secrets", img: "img/Raziel.png" 
-        },
-        "Sandalphon": { 
-            nom: "Sandalphon", signif: "Frère", freq: 285, 
-            pierres: "Turquoise", astres: "Terre", 
-            symboles: "Musique, Fleurs", role: "Ancrage et Prières", 
-            trad: "Archange de la Nature", img: "img/Sandalphon.png" 
-        },
-        "Chamuel": { 
-            nom: "Chamuel", signif: "Vision de Dieu", freq: 639, 
-            pierres: "Quartz Rose", astres: "Vénus", 
-            symboles: "Colombe, Coeur", role: "Amour et Relations", 
-            trad: "Paix intérieure", img: "img/Chamuel.png" 
-        },
-        "Haniel": { 
-            nom: "Haniel", signif: "Grâce de Dieu", freq: 417, 
-            pierres: "Sélénite", astres: "Lune", 
-            symboles: "Étoile d'argent", role: "Intuition et Grâce", 
-            trad: "Cycles lunaires", img: "img/Haniel.png" 
-        },
-        "Jophiel": { 
-            nom: "Jophiel", signif: "Beauté de Dieu", freq: 963, 
-            pierres: "Citrine", astres: "Jupiter", 
-            symboles: "Miroir d'or", role: "Clarté mentale", 
-            trad: "Éveil spirituel", img: "img/Jophiel.png" 
-        },
-        "Zadkiel": { 
-            nom: "Zadkiel", signif: "Justice de Dieu", freq: 432, 
-            pierres: "Améthyste", astres: "Saturne", 
-            symboles: "Flamme violette", role: "Pardon et Mutation", 
-            trad: "Libération karmique", img: "img/Zadkiel.png" }
-    };
-
+    "Michaël": { 
+        signif: "Guerrier de Lumière flamboyant", nom: "Michaël — “Qui est comme Dieu ?”", 
+        freq: 528, pierres: "Lapis-lazuli, Sodalite", astres: "Soleil, Mars", 
+        symboles: "Épée flamboyante, Bouclier bleu", role: "Protection & Souveraineté", img: "img/Michael.png" 
+    },
+    "Gabriel": { 
+        signif: "Messager des visions claires", nom: "Gabriel — “Force de Dieu”", 
+        freq: 741, pierres: "Pierre de lune, Citrine", astres: "Lune, Neptune", 
+        symboles: "Trompette d'argent, Lys blanc", role: "Communication & Clarté", img: "img/Gabriel.png" 
+    },
+    "Raphaël": { 
+        signif: "Guide du voyageur et du soin", nom: "Raphaël — “Dieu guérit”", 
+        freq: 639, pierres: "Malachite, Émeraude", astres: "Mercure, Vénus", 
+        symboles: "Bâton d'émeraude, Poisson sacré", role: "Guérison & Équilibre", img: "img/Raphael.png" 
+    },
+    "Uriel": { 
+        signif: "Pilier de la connaissance terrestre", nom: "Uriel — “Lumière de Dieu”", 
+        freq: 852, pierres: "Ambre, Pyrite", astres: "Uranus, Soleil", 
+        symboles: "Sphère de feu, Parchemin d'or", role: "Sagesse & Ancrage", img: "img/Uriel.png" 
+    },
+    "Métatron": { 
+        signif: "Scribe des mondes supérieurs", nom: "Métatron — “Trône Divin”", 
+        freq: 999, pierres: "Platine, Diamant", astres: "Sirius, Cosmos", 
+        symboles: "Cube sacré, Rayon blanc", role: "Ascension & Géométrie Sacrée", img: "img/Métatron.png" 
+    },
+    "Azraël": { 
+        signif: "Guide des passages invisibles", nom: "Azraël — “Aide de Dieu”", 
+        freq: 396, pierres: "Rose des sables", astres: "Pluton", 
+        symboles: "Ombre lumineuse", role: "Transition & Paix de l'âme", img: "img/Azraël_2.png" 
+    },
+    "Raziel": { 
+        signif: "Gardien des mystères cachés", nom: "Raziel — “Secret de Dieu”", 
+        freq: 888, pierres: "Labradorite, Cristal", astres: "Uranus", 
+        symboles: "Arc-en-ciel, Livre des secrets", role: "Ésotérisme & Intuition profonde", img: "img/Raziel.png" 
+    },
+    "Sandalphon": { 
+        signif: "Vibration de la Terre nourricière", nom: "Sandalphon — “Frère céleste”", 
+        freq: 285, pierres: "Turquoise, Quartz fumé", astres: "Terre", 
+        symboles: "Notes de musique, Racines d'argent", role: "Prière & Manifestation", img: "img/Sandalphon.png" 
+    },
+    "Chamuel": { 
+        signif: "Rayon de l'amour inconditionnel", nom: "Chamuel — “Vision de Dieu”", 
+        freq: 639, pierres: "Quartz Rose, Kunzite", astres: "Vénus", 
+        symboles: "Colombe de paix, Cœur ailé", role: "Relations & Paix intérieure", img: "img/Chamuel.png" 
+    },
+    "Haniel": { 
+        signif: "Reine lunaire intuitive", nom: "Haniel — “Grâce de Dieu”", 
+        freq: 417, pierres: "Pierre de lune, Sélénite", astres: "Lune, Vénus", 
+        symboles: "Croissant lunaire, Miroir d’eau", role: "Féminité sacrée", img: "img/Haniel.png" 
+    },
+    "Jophiel": { 
+        signif: "Illumination de la pensée juste", nom: "Jophiel — “Beauté de Dieu”", 
+        freq: 963, pierres: "Citrine, Topaze jaune", astres: "Jupiter", 
+        symboles: "Lumière dorée, Miroir d'or", role: "Éveil & Clarté mentale", img: "img/Jophiel.png" 
+    },
+    "Zadkiel": { 
+        signif: "Alchimiste de la flamme violette", nom: "Zadkiel — “Justice de Dieu”", 
+        freq: 432, pierres: "Améthyste", astres: "Saturne, Jupiter", 
+        symboles: "Flamme violette, Calice d'argent", role: "Transformation & Pardon", img: "img/Zadkiel.png" 
+    }
+};
     const chakras = [
         { nom: "Racine", freq: 396, mantra: "Je suis en sécurité, je suis ancré.", img: "img/Chakra 1 Racine.png" },
         { nom: "Sacré", freq: 417, mantra: "Je suis créatif, je coule avec la vie.", img: "img/Chakra 2 Sacré.png" },
@@ -214,10 +202,11 @@
                 <h3>🌌 ${aKey} – ${arc.signif}</h3>
                 <img src="${arc.img}">
                 <p class="details-text">🔤 <b>Nom :</b> ${arc.nom}</p>
-                <p class="details-text">💎 <b>Pierres :</b> ${arc.pierres}</p>
-                <p class="details-text">🌠 <b>Astres :</b> ${arc.astres}</p>
-                <p class="details-text">🪬 <b>Symboles :</b> ${arc.symboles}</p>
-                <p class="details-text">🧭 <b>Rôle :</b> ${arc.role}</p>
+        <p class="details-text">🌈 <b>Fréquence :</b> ${arc.freq} Hz</p>
+        <p class="details-text">💎 <b>Pierres :</b> ${arc.pierres}</p>
+        <p class="details-text">🌠 <b>Astres :</b> ${arc.astres}</p>
+        <p class="details-text">🪬 <b>Symboles :</b> ${arc.symboles}</p>
+        <p class="details-text">🧭 <b>Rôle :</b> ${arc.role}</p>
             </div>
             <button class="audio-btn" onclick="playFreq(${arc.freq})">🔊 ${arc.freq}Hz</button>
         </div>` +

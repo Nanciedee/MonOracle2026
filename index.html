@@ -53,13 +53,15 @@
 
     <div id="intro-step">
         <div class="lune-header" id="moon-data">Chargement...</div>
-        <div class="section-rituel">
-            <h2>🌿 Énergie Actuelle</h2><textarea id="step1" placeholder="Ton état émotionnel..."></textarea>
-            <h2>🔥 Mouvement Intérieur</h2><textarea id="step2" placeholder="Corps, mental, intuition..."></textarea>
-            <h2>🌌 Influence Céleste</h2><textarea id="step3" placeholder="Ressentis lunaires..."></textarea>
-        </div>
-        <button class="btn-divin" onclick="lancerRituel()">✨ OUVRIR LE PORTAIL ✨</button>
-    </div>
+        <div class="section-rituel" style="border-style: dashed; border-color: rgba(212, 175, 55, 0.5); background: rgba(0,0,0,0.4);">
+    <h3 style="color:var(--gold); margin-top:0; font-size: 1.1rem;">🌌 Ton Ciel Vibratoire, Nancie</h3>
+    <p id="daily-intro" style="font-size: 0.9rem; line-height: 1.6; color: #e2e8f0;"></p>
+    
+    <div id="daily-resonance" style="margin: 15px 0; padding: 10px; border-left: 3px solid var(--gold); background: rgba(212, 175, 55, 0.05); font-style: italic; font-size: 0.85rem;"></div>
+
+    <h3 style="color:var(--gold); font-size: 1rem;">🌿 Rituel du Jour</h3>
+    <ul id="daily-rituel" style="font-size: 0.85rem; text-align: left; padding-left: 20px; line-height: 1.6; color: #cbd5e1;"></ul>
+</div>
 
     <div id="loader">
         <div class="spiral"></div>

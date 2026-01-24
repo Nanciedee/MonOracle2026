@@ -334,7 +334,12 @@ function startAmbiance() {
                 </div>
             </div>
         `; // Fermeture du innerHTML
+        
+        // Remonte automatiquement en haut pour voir les cartes
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+    // --- INITIALISATION ---
     window.onload = () => {
         const phases = [
             {n: "Nouvelle Lune", i: "🌑", f: "Introspection"},
@@ -348,8 +353,11 @@ function startAmbiance() {
         ];
         const day = new Date().getDate() % 8;
         const currentPhase = phases[day];
-        document.getElementById('moon-icon').innerText = currentPhase.i;
-        document.getElementById('moon-name').innerText = currentPhase.n + " • " + currentPhase.f;
+        
+        if(document.getElementById('moon-icon')) {
+            document.getElementById('moon-icon').innerText = currentPhase.i;
+            document.getElementById('moon-name').innerText = currentPhase.n + " • " + currentPhase.f;
+        }
         
         if(document.getElementById('moon-data')) {
             document.getElementById('moon-data').innerText = new Date().toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'});

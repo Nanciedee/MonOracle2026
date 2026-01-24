@@ -200,14 +200,18 @@
     }
 
     function afficherResultats() {
-    document.getElementById('loader').style.display = 'none';
-    document.getElementById('portal-result').style.display = 'block';
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('portal-result').style.display = 'block';
 
-    const arc = archanges[Math.floor(Math.random()*archanges.length)];
-    const cha = chakras[Math.floor(Math.random()*chakras.length)];
-    const vKeys = Object.keys(cartesVibratoires);
-    const vKey = vKeys[Math.floor(Math.random()*vKeys.length)];
-    const vib = cartesVibratoires[vKey];
+        // Sélection aléatoire
+        const aKeys = Object.keys(archanges);
+        const arc = archanges[aKeys[Math.floor(Math.random() * aKeys.length)]];
+        
+        const cha = chakras[Math.floor(Math.random() * chakras.length)];
+        
+        const vKeys = Object.keys(cartesVibratoires);
+        const vKey = vKeys[Math.floor(Math.random() * vKeys.length)];
+        const vib = cartesVibratoires[vKey];
 
     document.getElementById('cards-container').innerHTML = `
         <div class="fiche">

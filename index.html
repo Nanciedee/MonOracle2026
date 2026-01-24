@@ -232,6 +232,12 @@ const messages = ["Alignement éthérique...", "Lecture des archives...", "Harmo
         }, 900);
         setTimeout(() => { clearInterval(interval); afficherResultats(); }, 3500);
     }
+    function toggleLivret() {
+        const box = document.getElementById('livret-overlay-box');
+        if (box) {
+            box.style.display = (box.style.display === 'block') ? 'none' : 'block';
+        }
+    }
 
 function afficherResultats() {
     // 1. Sécurisation des données : on choisit les éléments

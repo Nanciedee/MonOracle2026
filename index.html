@@ -1,81 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oracle Vibratoire 2026</title>
+    <style>
+        :root { --gold: #d4af37; --glass: rgba(255, 255, 255, 0.08); --text: #e2e8f0; }
+        body { background: #000; color: var(--text); font-family: 'Georgia', serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
+        #star-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%); }
+        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.4; animation: moveStar linear infinite; }
+        @keyframes moveStar { from { transform: translateY(0px); } to { transform: translateY(-1000px); } }
+        
+        #app { width: 95%; max-width: 1100px; text-align: center; padding: 40px 0; }
+        h1 { color: var(--gold); letter-spacing: 5px; text-shadow: 0 0 20px rgba(212, 175, 55, 0.6); }
+        
+        .section-rituel { background: var(--glass); border: 1px solid var(--gold); padding: 25px; border-radius: 20px; margin-bottom: 25px; backdrop-filter: blur(10px); text-align: left; }
+        textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--gold); color: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; font-family: inherit; box-sizing: border-box; }
+        
+        .btn-divin { background: transparent; border: 2px solid var(--gold); color: var(--gold); padding: 18px 45px; border-radius: 50px; cursor: pointer; font-size: 1.2rem; font-weight: bold; text-transform: uppercase; transition: 0.5s; margin: 20px 0; }
+        .btn-divin:hover { background: var(--gold); color: #000; box-shadow: 0 0 50px var(--gold); }
+
+        .result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-top: 30px; }
+        .fiche { background: rgba(0,0,0,0.85); border: 1px solid var(--gold); border-radius: 20px; padding: 25px; text-align: left; transition: 0.3s; }
+        .fiche img { width: 100%; border-radius: 10px; border: 1px solid rgba(212, 175, 55, 0.3); margin-bottom: 15px; }
+        
+        .highlight { color: var(--gold); font-weight: bold; font-size: 0.85rem; text-transform: uppercase; display: block; margin-top: 10px; }
+        .details-text { font-size: 0.95rem; line-height: 1.4; margin-bottom: 5px; color: #cbd5e1; }
+        
+        .audio-btn { background: var(--gold); border: none; padding: 12px 20px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 15px; transition: 0.3s; }
+        .audio-btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
+        
+        .lune-header { font-style: italic; color: var(--gold); margin-bottom: 20px; font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+
+<div id="star-container"></div>
+
+<div id="app">
+    <h1>✨ ORACLE VIBRATOIRE 2026 ✨</h1>
+
+    <div id="intro-step">
+        <div class="lune-header" id="moon-data">Chargement des éphémérides célestes...</div>
+        
+        <div class="section-rituel">
+            <h2>🌿 Étape 1 : Énergie Actuelle</h2>
+            <textarea id="step1" placeholder="État émotionnel, besoins du moment..."></textarea>
+            
+            <h2>🔥 Étape 2 : Mouvement Intérieur</h2>
+            <textarea id="step2" placeholder="Corps, mental, intuition..."></textarea>
+            
+            <h2>🌌 Étape 3 : Porte Astrologique</h2>
+            <textarea id="step3" placeholder="Ressentis liés à la Lune ou aux transits..."></textarea>
+        </div>
+        <button class="btn-divin" onclick="ouvrirPortail()">✨ ACTIVER LE PORTAIL ✨</button>
+    </div>
+
+    <div id="portal-result" style="display:none;">
+        <div class="result-grid" id="cards-container"></div>
+        <button class="btn-divin" style="margin-top:40px" onclick="location.reload()">NOUVELLE CONSULTATION</button>
+    </div>
+</div>
+
 <script>
-    // --- DATA : ARCHANGES (Détails complets) ---
+    // --- ÉTOILES ---
+    const container = document.getElementById('star-container');
+    for (let i = 0; i < 100; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.width = Math.random() * 2 + 'px';
+        star.style.height = star.style.width;
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.animationDuration = (Math.random() * 30 + 20) + 's';
+        container.appendChild(star);
+    }
+
+    // --- BASE DE DONNÉES COMPLÈTE ---
     const archanges = {
         "Michaël": { 
             nom: "Mikhaël (מִיכָאֵל)", signif: "Qui est comme Dieu ?", freq: 528, 
             pierres: "Lapis-lazuli, Sodalite", astres: "Soleil, Mars", 
             symboles: "Épée flamboyante, Bouclier", role: "Protecteur des justes, Chef céleste", 
-            trad: "Apocalypse, Protecteur d'Israël", img: "img/Michael.png" 
+            trad: "Combattant de l'Apocalypse", img: "img/Michael.png" 
         },
         "Gabriel": { 
             nom: "Gabriel (גַּבְרִיאֵל)", signif: "Force de Dieu", freq: 741, 
             pierres: "Pierre de lune, Citrine", astres: "Lune, Neptune", 
             symboles: "Trompette, Lys blanc", role: "Messager divin, Clarté de vision", 
-            trad: "Annonciation, Guide prophétique", img: "img/Gabriel.png" 
+            trad: "Guide des prophètes", img: "img/Gabriel.png" 
         },
         "Raphaël": { 
-            nom: "Raphaël (רְפָאֵל)", signif: "Dieu guérit", freq: 639, 
+            nom: "Raphaël (רְפָאÉל)", signif: "Dieu guérit", freq: 639, 
             pierres: "Malachite, Émeraude", astres: "Mercure, Vénus", 
-            symboles: "Bâton de soin, Poisson", role: "Guérisseur divin, Guide des voyageurs", 
-            trad: "Ange de la providence", img: "img/Raphael.png" 
+            symboles: "Bâton de soin, Poisson", role: "Guérisseur divin, Voyageurs", 
+            trad: "Archange de la santé", img: "img/Raphael.png" 
         },
         "Uriel": { 
             nom: "Uriel (אוּרִיאֵל)", signif: "Lumière de Dieu", freq: 852, 
             pierres: "Ambre, Pyrite", astres: "Uranus, Soleil", 
-            symboles: "Sphère de feu, Parchemin", role: "Porteur de sagesse et de vérité", 
+            symboles: "Sphère de feu, Parchemin", role: "Sagesse et Vérité", 
             trad: "Gardien du savoir sacré", img: "img/Uriel.png" 
         },
-        "Chamuel": { 
-            nom: "Chamuel", signif: "Vision de Dieu", freq: 639, 
-            pierres: "Quartz Rose", astres: "Vénus", 
-            symboles: "Colombe, Cœur ailé", role: "Amour inconditionnel, Paix des relations", 
-            trad: "Ange du réconfort", img: "img/Chamuel.png" 
-        },
-        "Jophiel": { 
-            nom: "Jophiel", signif: "Beauté de Dieu", freq: 963, 
-            pierres: "Citrine, Topaze", astres: "Jupiter", 
-            symboles: "Miroir, Lumière dorée", role: "Illumination, Pensées positives", 
-            trad: "Éveil de la conscience", img: "img/Jophiel.png" 
-        },
-        "Zadkiel": { 
-            nom: "Zadkiel", signif: "Justice de Dieu", freq: 432, 
-            pierres: "Améthyste", astres: "Saturne", 
-            symboles: "Flamme violette", role: "Pardon, Transformation, Liberté", 
-            trad: "Libération karmique", img: "img/Zadkiel.png" 
-        },
-        "Haniel": { 
-            nom: "Haniel", signif: "Grâce de Dieu", freq: 417, 
-            pierres: "Sélénite, Pierre de lune", astres: "Lune", 
-            symboles: "Étoile argentée", role: "Intuition, Grâce féminine, Cycles", 
-            trad: "Gardien des énergies lunaires", img: "img/Haniel.png" 
-        },
-        "Raziel": { 
-            nom: "Raziel", signif: "Secret de Dieu", freq: 888, 
-            pierres: "Labradorite, Cristal", astres: "Uranus", 
-            symboles: "Livre des secrets", role: "Mystères ésotériques, Connaissance", 
-            trad: "Auteur du Sefer Raziel", img: "img/Raziel.png" 
+        "Métatron": { 
+            nom: "Métatron", signif: "Petit YHWH", freq: 999, 
+            pierres: "Platine, Diamant", astres: "Sirius, Cosmos", 
+            symboles: "Cube de Métatron", role: "Scribe céleste, Ascension", 
+            trad: "Géométrie sacrée", img: "img/Métatron.png" 
         },
         "Azraël": { 
             nom: "Azraël", signif: "Aide de Dieu", freq: 396, 
             pierres: "Rose des sables", astres: "Pluton", 
-            symboles: "Ombre lumineuse", role: "Accompagnateur des transitions", 
-            trad: "Ange du passage et du deuil", img: "img/Azraël_2.png" 
+            symboles: "Ombre lumineuse", role: "Transitions et passages", 
+            trad: "Ange du réconfort", img: "img/Azraël_2.png" 
+        },
+        "Raziel": { 
+            nom: "Raziel", signif: "Secret de Dieu", freq: 888, 
+            pierres: "Labradorite", astres: "Uranus", 
+            symboles: "Arc-en-ciel, Livre", role: "Mystères ésotériques", 
+            trad: "Gardien des secrets", img: "img/Raziel.png" 
         },
         "Sandalphon": { 
             nom: "Sandalphon", signif: "Frère", freq: 285, 
             pierres: "Turquoise", astres: "Terre", 
-            symboles: "Notes de musique, Fleurs", role: "Ancrage, Musique, Prières", 
-            trad: "Archange de la Terre", img: "img/Sandalphon.png" 
+            symboles: "Musique, Fleurs", role: "Ancrage et Prières", 
+            trad: "Archange de la Nature", img: "img/Sandalphon.png" 
         },
-        "Métatron": { 
-            nom: "Métatron", signif: "Trône Divin", freq: 999, 
-            pierres: "Platine, Diamant", astres: "Sirius, Cosmos", 
-            symboles: "Cube de Métatron", role: "Scribe céleste, Géométrie sacrée", 
-            trad: "Guide de l'ascension", img: "img/Métatron.png" 
-        }
+        "Chamuel": { 
+            nom: "Chamuel", signif: "Vision de Dieu", freq: 639, 
+            pierres: "Quartz Rose", astres: "Vénus", 
+            symboles: "Colombe, Coeur", role: "Amour et Relations", 
+            trad: "Paix intérieure", img: "img/Chamuel.png" 
+        },
+        "Haniel": { 
+            nom: "Haniel", signif: "Grâce de Dieu", freq: 417, 
+            pierres: "Sélénite", astres: "Lune", 
+            symboles: "Étoile d'argent", role: "Intuition et Grâce", 
+            trad: "Cycles lunaires", img: "img/Haniel.png" 
+        },
+        "Jophiel": { 
+            nom: "Jophiel", signif: "Beauté de Dieu", freq: 963, 
+            pierres: "Citrine", astres: "Jupiter", 
+            symboles: "Miroir d'or", role: "Clarté mentale", 
+            trad: "Éveil spirituel", img: "img/Jophiel.png" 
+        },
+        "Zadkiel": { 
+            nom: "Zadkiel", signif: "Justice de Dieu", freq: 432, 
+            pierres: "Améthyste", astres: "Saturne", 
+            symboles: "Flamme violette", role: "Pardon et Mutation", 
+            trad: "Libération karmique", img: "img/Zadkiel.png" }
     };
 
-    // --- DATA : CHAKRAS (Alignement) ---
     const chakras = [
         { nom: "Racine", freq: 396, mantra: "Je suis en sécurité, je suis ancré.", img: "img/Chakra 1 Racine.png" },
         { nom: "Sacré", freq: 417, mantra: "Je suis créatif, je coule avec la vie.", img: "img/Chakra 2 Sacré.png" },
@@ -86,50 +161,69 @@
         { nom: "Couronne", freq: 963, mantra: "Je suis un avec le Tout.", img: "img/Chakra 7 Couronne.png" }
     ];
 
-    // --- DATA : PORTES (Scellement) ---
     const portes = {
         "Amour": { img: "img/Vibratoire Amour.png", freq: 639, desc: "Ouvre le portail de la compassion et des liens sacrés." },
-        "Protection": { img: "img/Vibratoire Protection.png", freq: 417, desc: "Établit un bouclier de lumière impénétrable autour de votre aura." },
-        "Guérison": { img: "img/Vibratoire Guérison.png", freq: 528, desc: "Active les codes de régénération cellulaire et émotionnelle." },
-        "Guide": { img: "img/Vibratoire Guide.png", freq: 852, desc: "Établit une connexion directe avec vos lignées de lumière." },
-        "Sagesse": { img: "img/Vibratoire Sagesse.png", freq: 963, desc: "Ancre la connaissance universelle dans votre structure mentale." }
+        "Protection": { img: "img/Vibratoire Protection.png", freq: 417, desc: "Établit un bouclier de lumière impénétrable." },
+        "Guérison": { img: "img/Vibratoire Guérison.png", freq: 528, desc: "Active les codes de régénération cellulaire." },
+        "Guide": { img: "img/Vibratoire Guide.png", freq: 852, desc: "Établit une connexion avec vos lignées de lumière." },
+        "Sagesse": { img: "img/Vibratoire Sagesse.png", freq: 963, desc: "Ancre la connaissance universelle en vous." }
     };
 
+    // --- LOGIQUE SONORE ---
+    let audioCtx = null;
+    function playFreq(f) {
+        if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.frequency.setValueAtTime(f, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 4);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 4);
+    }
+
+    // --- TIRAGE ---
     function ouvrirPortail() {
         document.getElementById('intro-step').style.display = 'none';
         document.getElementById('portal-result').style.display = 'block';
 
-        const arcKey = Object.keys(archanges)[Math.floor(Math.random() * 12)];
-        const arc = archanges[arcKey];
-        const cha = chakras[Math.floor(Math.random() * 7)];
-        const pKey = Object.keys(portes)[Math.floor(Math.random() * 5)];
-        const porte = portes[pKey];
+        const arcKeys = Object.keys(archanges);
+        const arcName = arcKeys[Math.floor(Math.random() * arcKeys.length)];
+        const arc = archanges[arcName];
+        const cha = chakras[Math.floor(Math.random() * chakras.length)];
+        const pKeys = Object.keys(portes);
+        const pName = pKeys[Math.floor(Math.random() * pKeys.length)];
+        const porte = portes[pName];
 
         document.getElementById('cards-container').innerHTML = 
-            // CARTE ARCHANGE
-            '<div class="fiche"><h3>🛡️ Archange ' + arcKey + '</h3>' +
+            '<div class="fiche"><h3>🛡️ Archange ' + arcName + '</h3>' +
             '<img src="' + arc.img + '">' +
-            '<div class="details">' +
-            '<span class="highlight">Hébreu :</span> ' + arc.nom + 
-            '<span class="highlight">Signification :</span> ' + arc.signif + 
-            '<span class="highlight">Fréquence :</span> ' + arc.freq + ' Hz' +
-            '<span class="highlight">Astres & Pierres :</span> ' + arc.astres + ' | ' + arc.pierres + 
-            '<span class="highlight">Symboles :</span> ' + arc.symboles + 
-            '<span class="highlight">Rôle :</span> ' + arc.role + 
-            '</div><button class="audio-btn" onclick="playFreq(' + arc.freq + ')">🔊 ACTIVER L\'ONDE</button></div>' +
+            '<span class="highlight">Hébreu :</span><p class="details-text">' + arc.nom + '</p>' +
+            '<span class="highlight">Signification :</span><p class="details-text">' + arc.signif + '</p>' +
+            '<span class="highlight">Astres & Pierres :</span><p class="details-text">' + arc.astres + ' | ' + arc.pierres + '</p>' +
+            '<span class="highlight">Symboles :</span><p class="details-text">' + arc.symboles + '</p>' +
+            '<button class="audio-btn" onclick="playFreq(' + arc.freq + ')">🔊 ACTIVER ' + arc.freq + 'Hz</button></div>' +
 
-            // CARTE CHAKRA
             '<div class="fiche"><h3>🌀 Chakra ' + cha.nom + '</h3>' +
             '<img src="' + cha.img + '">' +
-            '<p style="font-style:italic; margin-top:10px;">"' + cha.mantra + '"</p>' +
-            '<span class="highlight">Vibration :</span> ' + cha.freq + ' Hz' +
-            '<button class="audio-btn" onclick="playFreq(' + cha.freq + ')">🔊 RÉALIGNER</button></div>' +
+            '<span class="highlight">Mantra d\'Alignement :</span>' +
+            '<p style="font-style:italic; color:var(--gold);">"' + cha.mantra + '"</p>' +
+            '<button class="audio-btn" onclick="playFreq(' + cha.freq + ')">🔊 VIBRER ' + cha.freq + 'Hz</button></div>' +
 
-            // CARTE PORTE
             '<div class="fiche" style="grid-column: 1 / -1; max-width: 500px; margin: auto; border: 2px solid var(--gold);">' +
-            '<h3>🚪 Porte de ' + pKey + '</h3>' +
+            '<h3>🚪 Porte de ' + pName + '</h3>' +
             '<img src="' + porte.img + '">' +
-            '<p>' + porte.desc + '</p>' +
+            '<p class="details-text">' + porte.desc + '</p>' +
             '<button class="audio-btn" style="background:var(--gold); color:black;" onclick="playFreq(' + porte.freq + ')">✨ SCELLER LE RITUEL (' + porte.freq + 'Hz)</button></div>';
+        
+        window.scrollTo(0,0);
     }
+
+    window.onload = () => {
+        const d = new Date();
+        document.getElementById('moon-data').innerHTML = d.toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long', year:'numeric'}) + "<br>Lune : Premier Quartier en Bélier ♈ | Résonance : 528Hz";
+    };
 </script>
+</body>
+</html>

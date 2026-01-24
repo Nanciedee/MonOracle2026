@@ -20,16 +20,19 @@
         .btn-divin { background: transparent; border: 2px solid var(--gold); color: var(--gold); padding: 18px 45px; border-radius: 50px; cursor: pointer; font-size: 1.2rem; font-weight: bold; text-transform: uppercase; transition: 0.5s; margin: 20px 0; }
         .btn-divin:hover { background: var(--gold); color: #000; box-shadow: 0 0 50px var(--gold); }
 
-        .result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-top: 30px; }
-        .fiche { background: rgba(0,0,0,0.85); border: 1px solid var(--gold); border-radius: 20px; padding: 25px; text-align: left; transition: 0.3s; }
-        .fiche img { width: 100%; border-radius: 10px; border: 1px solid rgba(212, 175, 55, 0.3); margin-bottom: 15px; }
+        #loader { display: none; padding: 100px 20px; }
+        .spiral { width: 80px; height: 80px; border: 4px solid var(--gold); border-top: 4px solid transparent; border-radius: 50%; animation: spin 1.5s linear infinite; margin: 0 auto 30px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #loading-msg { font-style: italic; font-size: 1.5rem; color: var(--gold); text-shadow: 0 0 10px var(--gold); }
+
+        .result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-top: 30px; justify-content: center; }
+        .fiche { background: rgba(0,0,0,0.85); border: 1px solid var(--gold); border-radius: 20px; padding: 25px; text-align: left; display: flex; flex-direction: column; justify-content: space-between; }
+        .fiche img { width: 100%; height: 250px; object-fit: contain; border-radius: 10px; margin-bottom: 15px; background: rgba(255,255,255,0.03); }
         
         .highlight { color: var(--gold); font-weight: bold; font-size: 0.85rem; text-transform: uppercase; display: block; margin-top: 10px; }
         .details-text { font-size: 0.95rem; line-height: 1.4; margin-bottom: 5px; color: #cbd5e1; }
         
-        .audio-btn { background: var(--gold); border: none; padding: 12px 20px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 15px; transition: 0.3s; }
-        .audio-btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
-        
+        .audio-btn { background: var(--gold); border: none; padding: 12px 20px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 15px; color: black; }
         .lune-header { font-style: italic; color: var(--gold); margin-bottom: 20px; font-size: 1.1rem; }
     </style>
 </head>
@@ -38,22 +41,21 @@
 <div id="star-container"></div>
 
 <div id="app">
-    <h1>✨ ORACLE VIBRATOIRE 2026 ✨</h1>
+    <h1>✨ ORACLE VIBRATOIRE ✨</h1>
 
     <div id="intro-step">
-        <div class="lune-header" id="moon-data">Chargement des éphémérides célestes...</div>
-        
+        <div class="lune-header" id="moon-data">Chargement...</div>
         <div class="section-rituel">
-            <h2>🌿 Étape 1 : Énergie Actuelle</h2>
-            <textarea id="step1" placeholder="État émotionnel, besoins du moment..."></textarea>
-            
-            <h2>🔥 Étape 2 : Mouvement Intérieur</h2>
-            <textarea id="step2" placeholder="Corps, mental, intuition..."></textarea>
-            
-            <h2>🌌 Étape 3 : Porte Astrologique</h2>
-            <textarea id="step3" placeholder="Ressentis liés à la Lune ou aux transits..."></textarea>
+            <h2>🌿 Énergie Actuelle</h2><textarea id="step1" placeholder="Ton état émotionnel..."></textarea>
+            <h2>🔥 Mouvement Intérieur</h2><textarea id="step2" placeholder="Corps, mental, intuition..."></textarea>
+            <h2>🌌 Influence Céleste</h2><textarea id="step3" placeholder="Ressentis lunaires..."></textarea>
         </div>
-        <button class="btn-divin" onclick="ouvrirPortail()">✨ ACTIVER LE PORTAIL ✨</button>
+        <button class="btn-divin" onclick="lancerRituel()">✨ OUVRIR LE PORTAIL ✨</button>
+    </div>
+
+    <div id="loader">
+        <div class="spiral"></div>
+        <div id="loading-msg">Initialisation des fréquences...</div>
     </div>
 
     <div id="portal-result" style="display:none;">
@@ -162,14 +164,15 @@
     ];
 
     const portes = {
-        "Amour": { img: "img/Vibratoire Amour.png", freq: 639, desc: "Ouvre le portail de la compassion et des liens sacrés." },
-        "Protection": { img: "img/Vibratoire Protection.png", freq: 417, desc: "Établit un bouclier de lumière impénétrable." },
-        "Guérison": { img: "img/Vibratoire Guérison.png", freq: 528, desc: "Active les codes de régénération cellulaire." },
-        "Guide": { img: "img/Vibratoire Guide.png", freq: 852, desc: "Établit une connexion avec vos lignées de lumière." },
-        "Sagesse": { img: "img/Vibratoire Sagesse.png", freq: 963, desc: "Ancre la connaissance universelle en vous." }
+        "Amour": { img: "img/Vibratoire Amour.png", freq: 639, desc: "Ouvre le portail de la compassion." },
+        "Protection": { img: "img/Vibratoire Protection.png", freq: 417, desc: "Établit un bouclier de lumière." },
+        "Guérison": { img: "img/Vibratoire Guérison.png", freq: 528, desc: "Active la régénération cellulaire." },
+        "Guide": { img: "img/Vibratoire Guide.png", freq: 852, desc: "Connexion aux lignées de lumière." },
+        "Sagesse": { img: "img/Vibratoire Sagesse.png", freq: 963, desc: "Ancre la connaissance universelle." }
     };
 
-    // --- LOGIQUE SONORE ---
+    const messages = ["Alignement éthérique...", "Lecture des archives...", "Harmonisation sonore...", "Ouverture du portail..."];
+
     let audioCtx = null;
     function playFreq(f) {
         if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -183,46 +186,52 @@
         osc.start(); osc.stop(audioCtx.currentTime + 4);
     }
 
-    // --- TIRAGE ---
-    function ouvrirPortail() {
+    function lancerRituel() {
         document.getElementById('intro-step').style.display = 'none';
+        document.getElementById('loader').style.display = 'block';
+        let i = 0;
+        const interval = setInterval(() => {
+            document.getElementById('loading-msg').innerText = messages[i % messages.length];
+            i++;
+        }, 900);
+
+        setTimeout(() => {
+            clearInterval(interval);
+            afficherResultats();
+        }, 3500);
+    }
+
+    function afficherResultats() {
+        document.getElementById('loader').style.display = 'none';
         document.getElementById('portal-result').style.display = 'block';
 
         const arcKeys = Object.keys(archanges);
-        const arcName = arcKeys[Math.floor(Math.random() * arcKeys.length)];
-        const arc = archanges[arcName];
+        const aKey = arcKeys[Math.floor(Math.random() * arcKeys.length)];
+        const arc = archanges[aKey];
         const cha = chakras[Math.floor(Math.random() * chakras.length)];
         const pKeys = Object.keys(portes);
-        const pName = pKeys[Math.floor(Math.random() * pKeys.length)];
-        const porte = portes[pName];
+        const pKey = pKeys[Math.floor(Math.random() * pKeys.length)];
+        const porte = portes[pKey];
 
         document.getElementById('cards-container').innerHTML = 
-            '<div class="fiche"><h3>🛡️ Archange ' + arcName + '</h3>' +
-            '<img src="' + arc.img + '">' +
-            '<span class="highlight">Hébreu :</span><p class="details-text">' + arc.nom + '</p>' +
-            '<span class="highlight">Signification :</span><p class="details-text">' + arc.signif + '</p>' +
-            '<span class="highlight">Astres & Pierres :</span><p class="details-text">' + arc.astres + ' | ' + arc.pierres + '</p>' +
-            '<span class="highlight">Symboles :</span><p class="details-text">' + arc.symboles + '</p>' +
-            '<button class="audio-btn" onclick="playFreq(' + arc.freq + ')">🔊 ACTIVER ' + arc.freq + 'Hz</button></div>' +
+            `<div class="fiche"><div><h3>🛡️ ${aKey}</h3><img src="${arc.img}">` +
+            `<span class="highlight">Signification:</span><p class="details-text">${arc.signif}</p>` +
+            `<span class="highlight">Pierres:</span><p class="details-text">${arc.pierres}</p></div>` +
+            `<button class="audio-btn" onclick="playFreq(${arc.freq})">🔊 ${arc.freq}Hz</button></div>` +
 
-            '<div class="fiche"><h3>🌀 Chakra ' + cha.nom + '</h3>' +
-            '<img src="' + cha.img + '">' +
-            '<span class="highlight">Mantra d\'Alignement :</span>' +
-            '<p style="font-style:italic; color:var(--gold);">"' + cha.mantra + '"</p>' +
-            '<button class="audio-btn" onclick="playFreq(' + cha.freq + ')">🔊 VIBRER ' + cha.freq + 'Hz</button></div>' +
+            `<div class="fiche"><div><h3>🌀 Chakra ${cha.nom}</h3><img src="${cha.img}">` +
+            `<span class="highlight">Mantra:</span><p style="font-style:italic;color:var(--gold);">"${cha.mantra}"</p></div>` +
+            `<button class="audio-btn" onclick="playFreq(${cha.freq})">🔊 ${cha.freq}Hz</button></div>` +
 
-            '<div class="fiche" style="grid-column: 1 / -1; max-width: 500px; margin: auto; border: 2px solid var(--gold);">' +
-            '<h3>🚪 Porte de ' + pName + '</h3>' +
-            '<img src="' + porte.img + '">' +
-            '<p class="details-text">' + porte.desc + '</p>' +
-            '<button class="audio-btn" style="background:var(--gold); color:black;" onclick="playFreq(' + porte.freq + ')">✨ SCELLER LE RITUEL (' + porte.freq + 'Hz)</button></div>';
+            `<div class="fiche"><div><h3>🚪 Porte ${pKey}</h3><img src="${porte.img}">` +
+            `<span class="highlight">Action:</span><p class="details-text">${porte.desc}</p></div>` +
+            `<button class="audio-btn" style="background:var(--gold);" onclick="playFreq(${porte.freq})">✨ SCELLER</button></div>`;
         
         window.scrollTo(0,0);
     }
 
     window.onload = () => {
-        const d = new Date();
-        document.getElementById('moon-data').innerHTML = d.toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long', year:'numeric'}) + "<br>Lune : Premier Quartier en Bélier ♈ | Résonance : 528Hz";
+        document.getElementById('moon-data').innerHTML = new Date().toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long', year:'numeric'}) + "<br>Lune : Phase Vibratoire 2026 🌙";
     };
 </script>
 </body>

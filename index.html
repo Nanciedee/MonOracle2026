@@ -200,13 +200,69 @@
     }
 };
     const chakras = [
-        { nom: "Racine", freq: 396, mantra: "Je suis en sécurité, je suis ancré.", img: "img/Chakra 1 Racine.png" },
-        { nom: "Sacré", freq: 417, mantra: "Je suis créatif, je coule avec la vie.", img: "img/Chakra 2 Sacré.png" },
-        { nom: "Plexus Solaire", freq: 528, mantra: "Je suis puissant, j'agis avec volonté.", img: "img/Chakra 3 Plexus Solaire.png" },
-        { nom: "Cœur", freq: 639, mantra: "Je suis amour, je donne et je reçois.", img: "img/Chakra 4 Coeur.png" },
-        { nom: "Gorge", freq: 741, mantra: "Je parle ma vérité avec clarté.", img: "img/Chakra 5 Gorge.png" },
-        { nom: "3e Œil", freq: 852, mantra: "Je vois au-delà des apparences.", img: "img/Chakra 6 Troisieme Oeil.png" },
-        { nom: "Couronne", freq: 963, mantra: "Je suis un avec le Tout.", img: "img/Chakra 7 Couronne.png" }
+        { 
+            nom: "Racine (Muladhara)", 
+            freq: 396, 
+            mantra: "Je suis en sécurité, je suis ancré.", 
+            img: "img/Chakra 1 Racine.png",
+            signification: "Nancie, ce centre est ta fondation terrestre. Situé au bas de ta colonne, il est ton lien à la Terre et à ta survie.",
+            enseignement: "Quand il est équilibré, la peur disparaît. Tu maîtrises ton souffle et ton mental. Si tu ressens de l'insécurité ou des blocages matériels, c'est que ta racine appelle ton attention.",
+            rituel: "Résonne avec la note DO. Visualise le rouge ardent. Porte un Grenat ou une Tourmaline rubélite pour tonifier ton corps et réguler ton énergie vitale."
+        },
+        { 
+            nom: "Sacré (Svadhisthana)", 
+            freq: 417, 
+            mantra: "Je suis créatif, je coule avec la vie.", 
+            img: "img/Chakra 2 Sacré.png",
+            signification: "Ici réside le flot de tes émotions et de ta sensualité, juste sous ton nombril. C'est le gardien de ton passé et de ta famille.",
+            enseignement: "Maîtriser ce centre, c'est ne plus être victime de sentiments contradictoires. Si tu te sens possessive ou que tu refoules tes émotions, laisse l'énergie orange circuler à nouveau.",
+            rituel: "Chante la note RÉ. Utilise une Topaze champagne pour évacuer l'anxiété et retrouver la maîtrise de tes sens. Laisse ta créativité s'exprimer pleinement."
+        },
+        { 
+            nom: "Plexus Solaire (Manipura)", 
+            freq: 528, 
+            mantra: "Je suis puissant, j'agis avec volonté.", 
+            img: "img/Chakra 3 Plexus Solaire.png",
+            signification: "C'est ton soleil intérieur, Nancie. Ton pouvoir personnel et ton affirmation de soi rayonnent depuis ton estomac.",
+            enseignement: "Le Feu est ton élément ici. Il te libère de la douleur. Si tu ressens le besoin de dominer ou que ton ego te dicte ta conduite, ton soleil a besoin de douceur.",
+            rituel: "La note MI est ta clé. Le jaune de la Citrine t'aidera à lutter contre le stress et à stimuler ton système digestif. Brille sans écraser, rayonne simplement."
+        },
+        { 
+            nom: "Cœur (Anahata)", 
+            freq: 639, 
+            mantra: "Je suis amour, je donne et je reçois.", 
+            img: "img/Chakra 4 Coeur.png",
+            signification: "Au centre de ta poitrine bat l'amour inconditionnel. C'est le pont entre ton corps et ton esprit, porté par l'élément Air.",
+            enseignement: "Le yogi qui maîtrise son cœur acquiert le pouvoir de voler comme un oiseau, libre et léger. Si tu es fermée à ton intuition, ton cœur demande à s'ouvrir.",
+            rituel: "Vibre sur la note FA. Le vert de l'Épidote ou de la Verdélite apaisera tes angoisses et régulera ton rythme cardiaque. Respire l'harmonie."
+        },
+        { 
+            nom: "Gorge (Vishuddha)", 
+            freq: 741, 
+            mantra: "Je parle ma vérité avec clarté.", 
+            img: "img/Chakra 5 Gorge.png",
+            signification: "Ta voix est ton outil de création. Ce centre gère ta communication et ta capacité à guider les autres, par-delà le temps.",
+            enseignement: "Ici, tu vis en dehors du temps. Si tu as peur du changement ou que tu peines à t'exprimer, c'est que ta vérité intérieure cherche son chemin vers l'extérieur.",
+            rituel: "La note SOL et le bleu azur t'accompagnent. La Kunzite favorisera tes cordes vocales et ta thyroïde. Parle avec douceur et fermeté."
+        },
+        { 
+            nom: "3e Œil (Ajna)", 
+            freq: 852, 
+            mantra: "Je vois au-delà des apparences.", 
+            img: "img/Chakra 6 Troisieme Oeil.png",
+            signification: "Entre tes sourcils se trouve ta vision intérieure, ton discernement et la porte de tes rêves.",
+            enseignement: "En ouvrant ce troisième œil, tu accèdes à la connaissance de soi profonde. Si ta vision est trop négative ou que tu manques d'imagination, éveille ta conscience.",
+            rituel: "Porte ton attention sur la note LA et la couleur Indigo. L'Aigue-marine ouvrira les portes de ta spiritualité et calmera tes migraines. Vois l'invisible."
+        },
+        { 
+            nom: "Couronne (Sahasrara)", 
+            freq: 963, 
+            mantra: "Je suis un avec le Tout.", 
+            img: "img/Chakra 7 Couronne.png",
+            signification: "Au sommet de ton crâne, tu es connectée à l'Univers. C'est le siège de la sagesse absolue et de la félicité.",
+            enseignement: "Ici, tu atteins la supra-conscience. Si tu te sens séparée du Divin ou enfermée dans des dogmes rigides, libère ton esprit pour expérimenter l'unité.",
+            rituel: "La note SI et le Violet profond sont tes guides. L'Azurite éveillera tes facultés extrasensorielles. Reste ancrée avec une Hématite lors de tes voyages astraux."
+        }
     ];
 
     const cartesVibratoires = {
@@ -394,12 +450,24 @@ function startAmbiance() {
                 <button class="audio-btn" onclick="playFreq(${arc.freq})">🔊 ACTIVER</button>
             </div>
 
-            <div class="fiche">
+            <div class="fiche" style="position: relative;">
+                <div id="livret-chakra" class="livret-box" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10; padding: 20px; box-sizing: border-box; border-radius: 15px; border: 2px solid var(--gold); overflow-y: auto;">
+                    <h3 style="color:var(--gold); text-align:center;">📖 SAGESSE DU CHAKRA</h3>
+                    <p style="font-size:0.85rem; line-height:1.5;">${cha.signification}</p>
+                    <p style="font-size:0.85rem; line-height:1.5; color:var(--gold); font-style:italic;">"${cha.enseignement}"</p>
+                    <p style="font-size:0.85rem; line-height:1.5; border-top:1px solid var(--gold); padding-top:10px;"><b>🌿 Rituel :</b> ${cha.rituel}</p>
+                    <button class="audio-btn" onclick="document.getElementById('livret-chakra').style.display='none'">⬅ FERMER</button>
+                </div>
+
                 <h3>🌀 Chakra ${cha.nom}</h3>
                 <img src="${cha.img}">
                 <p class="details-text">💬 <b>Mantra :</b> "${cha.mantra}"</p>
                 <p class="details-text">🌈 <b>Fréquence :</b> ${cha.freq} Hz</p>
-                <button class="audio-btn" onclick="playFreq(${cha.freq})">🔊 ALIGNER</button>
+                
+                <div style="margin-top:auto;">
+                    <button class="audio-btn" onclick="playFreq(${cha.freq})">🔊 ALIGNER</button>
+                    <button class="audio-btn" style="background:transparent; color:#fff; border:1px solid #fff; margin-top:10px;" onclick="document.getElementById('livret-chakra').style.display='block'">📖 VOIR L'ENSEIGNEMENT</button>
+                </div>
             </div>
             
             <div class="fiche" style="position: relative; min-height: 450px;">

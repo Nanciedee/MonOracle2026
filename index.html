@@ -463,29 +463,40 @@ function startAmbiance() {
         const day = new Date().getDate() % 8;
         const currentPhase = phases[day];
         
-        if(document.getElementById('moon-icon')) {
-            document.getElementById('moon-icon').innerText = currentPhase.i;
-            document.getElementById('moon-name').innerText = currentPhase.n + " • " + currentPhase.f;
-        }
-        // Simulation des éphémérides du jour
+        // 1. Phase Lunaire & Icône
+        if(document.getElementById('moon-icon')) document.getElementById('moon-icon').innerText = currentPhase.i;
+        if(document.getElementById('moon-name')) document.getElementById('moon-name').innerText = currentPhase.n + " • " + currentPhase.f;
+        
+        // 2. Signe du Zodiaque
         const signesZodiaque = ["Bélier ♈", "Taureau ♉", "Gémeaux ♊", "Cancer ♋", "Lion ♌", "Vierge ♍", "Balance ♎", "Scorpion ♏", "Sagittaire ♐", "Capricorne ♑", "Verseau ♒", "Poissons ♓"];
-        const luneSigne = signesZodiaque[new Date().getDate() % 12]; // Rotation simplifiée
-        
-        document.getElementById('moon-zodiac').innerText = "Lune en " + luneSigne;
-        
-        // Exemple de lever/coucher (Heures moyennes de Janvier)
-        document.getElementById('sun-times').innerText = "07:34 • 16:58";
-        
-        // Température (Vibratoire ou réelle si tu veux changer manuellement)
+        const luneSigne = signesZodiaque[new Date().getDate() % 12];
+        if(document.getElementById('moon-zodiac')) {
+            document.getElementById('moon-zodiac').innerText = "Lune en " + luneSigne;
+        }
+
+        // 3. Soleil (Valeur par défaut avant mise à jour réelle)
+        if(document.getElementById('sun-times')) {
+            document.getElementById('sun-times').innerText = "07:34 • 16:58";
+        }
+
+        // 4. Température Simulée (Vibration)
         const tempSimulee = Math.floor(Math.random() * (2 - (-10) + 1)) + (-10); 
-        document.getElementById('temp-vibe').innerText = tempSimulee + "°C (Vibration Éthérée)";
+        if(document.getElementById('temp-vibe')) {
+            document.getElementById('temp-vibe').innerText = tempSimulee + "°C (Vibration Éthérée)";
+        }
+
+        // 5. Date complète
         if(document.getElementById('moon-data')) {
-            
             document.getElementById('moon-data').innerText = new Date().toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'});
         }
-        // Appel de la guidance personnalisée pour Nancie
+
+        // 6. Appel des fonctions de calcul
         genererGuidanceQuotidienne(currentPhase.n);
-        updateWeather(); // Lance la récupération de la température et du soleil
+        
+        // 7. Lancement de la météo réelle (Écrase les valeurs par défaut si ça marche)
+        if (typeof updateWeather === "function") {
+            updateWeather();
+        }
     };
 </script>
 </body>

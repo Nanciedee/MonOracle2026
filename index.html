@@ -137,66 +137,162 @@
     }
 
     // --- BASE DE DONNÉES COMPLÈTE ---
-    const archanges = {
+    const archangesData = {
     "Michaël": { 
-        signif: "Guerrier de Lumière flamboyant", nom: "Michaël — “Qui est comme Dieu ?”", 
-        freq: 528, pierres: "Lapis-lazuli, Sodalite", astres: "Soleil, Mars", 
-        symboles: "Épée flamboyante, Bouclier bleu", role: "Protection & Souveraineté", img: "img/Michael.png" 
+        nom: "Michaël — “Qui est comme Dieu ?”", 
+        signif: "Guerrier de Lumière flamboyant", 
+        freq: 528, 
+        pierres: "Lapis-lazuli, Sodalite", 
+        astres: "Soleil, Mars", 
+        symboles: "Épée flamboyante, Bouclier bleu", 
+        role: "Protection & Souveraineté", 
+        img: "img/Michael.png",
+        traditions: "<b>Christianisme :</b> Combattant du dragon dans l’Apocalypse.<br><b>Judaïsme :</b> Ange protecteur du peuple hébreu.<br><b>Islam :</b> Mikail, ange de la pluie et de la miséricorde.",
+        description: "Michaël incarne la puissance céleste dans une posture de défense noble. Son bouclier, incrusté de lapis-lazuli, rayonne comme un soleil mystique. Le masque solaire cache son visage, révélant seulement ses yeux flamboyants. Des motifs tribaux ornent ses bras et sa cape étoilée flotte dans un vent cosmique. Il est le chef des armées célestes, le guerrier qui combat le mal. Patron des forces armées, de la police, des malades et des pharmaciens.",
+        notes: "Mentionné cinq fois dans la Bible en tant que chef suprême."
     },
     "Gabriel": { 
-        signif: "Messager des visions claires", nom: "Gabriel — “Force de Dieu”", 
-        freq: 741, pierres: "Pierre de lune, Citrine", astres: "Lune, Neptune", 
-        symboles: "Trompette d'argent, Lys blanc", role: "Communication & Clarté", img: "img/Gabriel.png" 
+        nom: "Gabriel — “Force de Dieu”", 
+        signif: "Messager des visions claires", 
+        freq: 741, 
+        pierres: "Pierre de lune, Citrine", 
+        astres: "Lune, Neptune", 
+        symboles: "Trompette d'argent, Lys blanc", 
+        role: "Communication & Clarté", 
+        img: "img/Gabriel.png",
+        traditions: "<b>Christianisme :</b> Annonciateur de la naissance de Jésus.<br><b>Judaïsme :</b> Ange de la pureté et de la révélation.<br><b>Islam :</b> Jibril, transmetteur du Coran à Muhammad.",
+        description: "Gabriel semble émerger d’un rêve océanique. Sa robe nacrée reflète les phases lunaires. Des perles marines gravitent autour de lui, formant des constellations liquides. Sa harpe lunaire chante des messages célestes. Protecteur des travailleurs des communications, des facteurs, des ambassadeurs et des courriers. Représenté souvent avec un lis, symbole de l’Annonciation.",
+        notes: "Le messager par excellence, protecteur de la clarté."
     },
     "Raphaël": { 
-        signif: "Guide du voyageur et du soin", nom: "Raphaël — “Dieu guérit”", 
-        freq: 639, pierres: "Malachite, Émeraude", astres: "Mercure, Vénus", 
-        symboles: "Bâton d'émeraude, Poisson sacré", role: "Guérison & Équilibre", img: "img/Raphael.png" 
+        nom: "Raphaël — “Dieu guérit”", 
+        signif: "Guide du voyageur et du soin", 
+        freq: 639, 
+        pierres: "Malachite, Émeraude", 
+        astres: "Mercure, Vénus", 
+        symboles: "Bâton d'émeraude, Poisson sacré", 
+        role: "Guérison & Équilibre", 
+        img: "img/Raphael.png",
+        traditions: "<b>Christianisme :</b> Guide de Tobie, guérisseur des corps et des âmes.<br><b>Judaïsme :</b> Ange de la médecine et de la guérison.<br><b>Islam :</b> Associé à Israfil, l’ange du cor du Jugement.",
+        description: "Figure apaisante fusionnant avec la nature. Ses tatouages floraux s’animent doucement, pulsant au rythme de la lumière verte. Le temple de jade derrière lui symbolise la guérison éternelle. Patron de l’amour conjugal, des jeunes, des pharmaciens, des voyageurs et des réfugiés. Souvent représenté avec un pot de médicaments et un poisson.",
+        notes: "Son nom signifie 'La médecine de Dieu'."
     },
     "Uriel": { 
-        signif: "Pilier de la connaissance terrestre", nom: "Uriel — “Lumière de Dieu”", 
-        freq: 852, pierres: "Ambre, Pyrite", astres: "Uranus, Soleil", 
-        symboles: "Sphère de feu, Parchemin d'or", role: "Sagesse & Ancrage", img: "img/Uriel.png" 
+        nom: "Uriel — “Lumière de Dieu”", 
+        signif: "Pilier de la connaissance terrestre", 
+        freq: 852, 
+        pierres: "Ambre, Pyrite", 
+        astres: "Uranus, Soleil", 
+        symboles: "Sphère de feu, Parchemin d'or", 
+        role: "Sagesse & Ancrage", 
+        img: "img/Uriel.png",
+        traditions: "<b>Ésotérisme :</b> Archange de la connaissance et de l’été.<br><b>Apocryphes :</b> Interprète des prophéties.<br><b>Occultisme :</b> Alchimiste céleste.",
+        description: "Uriel est le feu incarné. Sa sphère incandescente tourbillonne de flammes dorées. Les glyphes forment des équations alchimiques. Interprète des prophéties, visionnaire, juge et bourreau. Il apporte aux êtres humains les lumières de la connaissance de Dieu. Associé aux quatre points cardinaux et à l'été.",
+        notes: "Son nom signifie également 'Flamme de Dieu'."
     },
     "Métatron": { 
-        signif: "Scribe des mondes supérieurs", nom: "Métatron — “Trône Divin”", 
-        freq: 999, pierres: "Platine, Diamant", astres: "Sirius, Cosmos", 
-        symboles: "Cube sacré, Rayon blanc", role: "Ascension & Géométrie Sacrée", img: "img/Métatron.png" 
+        nom: "Métatron — “Trône Divin”", 
+        signif: "Scribe des mondes supérieurs", 
+        freq: 999, 
+        pierres: "Platine, Diamant", 
+        astres: "Sirius, Cosmos", 
+        symboles: "Cube sacré, Rayon blanc", 
+        role: "Ascension & Géométrie Sacrée", 
+        img: "img/Métatron.png",
+        traditions: "<b>Kabbale :</b> Ancien prophète Hénoch transformé.<br><b>Mystique :</b> Scribe céleste, gardien du trône divin.",
+        description: "Architecte du cosmos. Son cube platine stellaire tourne lentement, révélant les lois universelles. Sa robe fractale change de forme à chaque pensée. Guide Rabbi Ishmael à travers les mondes célestes. Il incarne la vibration sacrée du monde, fusionnant les traditions et la géométrie divine.",
+        notes: "L'archange du monde divin selon la tradition juive."
     },
     "Azraël": { 
-        signif: "Guide des passages invisibles", nom: "Azraël — “Aide de Dieu”", 
-        freq: 396, pierres: "Rose des sables", astres: "Pluton", 
-        symboles: "Ombre lumineuse", role: "Transition & Paix de l'âme", img: "img/Azraël_2.png" 
+        nom: "Azraël — “Aide de Dieu”", 
+        signif: "Guide des passages invisibles", 
+        freq: 396, 
+        pierres: "Rose des sables", 
+        astres: "Pluton", 
+        symboles: "Ombre lumineuse", 
+        role: "Transition & Paix de l'âme", 
+        img: "img/Azraël_2.png",
+        traditions: "<b>Islam :</b> Ange de la mort, chargé de recueillir les âmes.<br><b>Mystique :</b> Guide des âmes vers la lumière.<br><b>Sikhisme :</b> Ange de la transition.",
+        description: "Guide des passages. Son linceul lumineux éclaire les âmes en transition. Le sablier chrysocolle mesure le temps sacré. L’encens astral forme des spirales de mémoire. Il sépare l’âme du corps avec sagesse. Considéré comme le plus malin et sage des archanges dans certaines traditions orientales.",
+        notes: "Signifie 'celui que Dieu aide'."
     },
     "Raziel": { 
-        signif: "Gardien des mystères cachés", nom: "Raziel — “Secret de Dieu”", 
-        freq: 888, pierres: "Labradorite, Cristal", astres: "Uranus", 
-        symboles: "Arc-en-ciel, Livre des secrets", role: "Ésotérisme & Intuition profonde", img: "img/Raziel.png" 
+        nom: "Raziel — “Secret de Dieu”", 
+        signif: "Gardien des mystères cachés", 
+        freq: 888, 
+        pierres: "Labradorite, Cristal", 
+        astres: "Uranus", 
+        symboles: "Arc-en-ciel, Livre des secrets", 
+        role: "Ésotérisme & Intuition profonde", 
+        img: "img/Raziel.png",
+        traditions: "<b>Kabbale :</b> Auteur du Livre de Raziel transmis à Adam.<br><b>Ésotérisme :</b> Maître des codes sacrés.",
+        description: "Explorateur des réalités. Son corps spiralé vibre avec les dimensions multiples. Les cristaux flottants changent de forme. Révèle les secrets de Dieu et montre la sagesse divine de la Torah. Protège les anges serviteurs des créatures vivantes qui soutiennent l'univers. Associé à la sephirah Chokmah.",
+        notes: "Représente la sagesse ésotérique et les vérités spirituelles."
     },
     "Sandalphon": { 
-        signif: "Vibration de la Terre nourricière", nom: "Sandalphon — “Frère céleste”", 
-        freq: 285, pierres: "Turquoise, Quartz fumé", astres: "Terre", 
-        symboles: "Notes de musique, Racines d'argent", role: "Prière & Manifestation", img: "img/Sandalphon.png" 
+        nom: "Sandalphon — “Frère céleste”", 
+        signif: "Vibration de la Terre nourricière", 
+        freq: 285, 
+        pierres: "Turquoise, Quartz fumé", 
+        astres: "Terre", 
+        symboles: "Notes de musique, Racines d'argent", 
+        role: "Prière & Manifestation", 
+        img: "img/Sandalphon.png",
+        traditions: "<b>Kabbale :</b> Ancien prophète Élie métamorphosé.<br><b>Mystique :</b> Tisseur des prières humaines vers le divin.",
+        description: "Le battement du monde. Son tambour turquoise résonne dans les racines de la Terre. Sa robe est un parchemin vivant. Chaque rythme réveille les mémoires ancestrales. Fusionne les traditions percussives mandingues avec une esthétique afro-spirituelle puissante. Il est le chant du sol.",
+        notes: "Veilleur des racines et des chants terrestres."
     },
     "Chamuel": { 
-        signif: "Rayon de l'amour inconditionnel", nom: "Chamuel — “Vision de Dieu”", 
-        freq: 639, pierres: "Quartz Rose, Kunzite", astres: "Vénus", 
-        symboles: "Colombe de paix, Cœur ailé", role: "Relations & Paix intérieure", img: "img/Chamuel.png" 
+        nom: "Chamuel — “Vision de Dieu”", 
+        signif: "Rayon de l'amour inconditionnel", 
+        freq: 639, 
+        pierres: "Quartz Rose, Kunzite", 
+        astres: "Vénus", 
+        symboles: "Colombe de paix, Cœur ailé", 
+        role: "Relations & Paix intérieure", 
+        img: "img/Chamuel.png",
+        traditions: "<b>Mystique :</b> Protecteur des relations, guérisseur du cœur.<br><b>Ésotérisme :</b> Guide des âmes vers l’amour divin.",
+        description: "Essence de l’amour et de la nature. L’arbre du cœur en quartz rose rayonne d’une lumière tendre. Les papillons de lumière dansent autour de lui. Dirigeant du chœur des puissances, il est associé à la justice, à la réussite et au courage. Sa mission est de pacifier les relations humaines.",
+        notes: "Associé à la planète Mars (force) et Vénus (amour)."
     },
     "Haniel": { 
-        signif: "Reine lunaire intuitive", nom: "Haniel — “Grâce de Dieu”", 
-        freq: 417, pierres: "Pierre de lune, Sélénite", astres: "Lune, Vénus", 
-        symboles: "Croissant lunaire, Miroir d’eau", role: "Féminité sacrée", img: "img/Haniel.png" 
+        nom: "Haniel — “Grâce de Dieu”", 
+        signif: "Reine lunaire intuitive", 
+        freq: 417, 
+        pierres: "Pierre de lune, Sélénite", 
+        astres: "Lune, Vénus", 
+        symboles: "Croissant lunaire, Miroir d’eau", 
+        role: "Féminité sacrée", 
+        img: "img/Haniel.png",
+        traditions: "<b>Kabbale :</b> Guide des rituels lunaires.<br><b>Mystique :</b> Ange de la joie et de la grâce.",
+        description: "Souveraine de l’invisible. Sa robe fluide est faite de brume lunaire. Le diadème d’eau reflète les émotions du cosmos. Son aile de sélénite capte les murmures des étoiles. En lien avec la planète Vénus et la séphira Netzach. Elle s’occupe des humains sur le plan sentimental et sexuel.",
+        notes: "Représentée souvent sous forme androgyne avec une robe émeraude."
     },
     "Jophiel": { 
-        signif: "Illumination de la pensée juste", nom: "Jophiel — “Beauté de Dieu”", 
-        freq: 963, pierres: "Citrine, Topaze jaune", astres: "Jupiter", 
-        symboles: "Lumière dorée, Miroir d'or", role: "Éveil & Clarté mentale", img: "img/Jophiel.png" 
+        nom: "Jophiel — “Beauté de Dieu”", 
+        signif: "Illumination de la pensée juste", 
+        freq: 963, 
+        pierres: "Citrine, Topaze jaune", 
+        astres: "Jupiter", 
+        symboles: "Lumière dorée, Miroir d'or", 
+        role: "Éveil & Clarté mentale", 
+        img: "img/Jophiel.png",
+        traditions: "<b>Kabbale :</b> Gardienne de la Torah et de la sagesse.<br><b>Mystique :</b> Guide des artistes et des penseurs.",
+        description: "Vision d’harmonie cosmique. Sa couronne d’or céleste brille comme un soleil intérieur. Les formes géométriques sacrées révèlent des vérités universelles. Archange qui aurait expulsé Adam et Ève du Paradis. Inspire la créativité et aide à transformer les pensées négatives en énergie positive.",
+        notes: "Patronne des artistes et de l'illumination mentale."
     },
     "Zadkiel": { 
-        signif: "Alchimiste de la flamme violette", nom: "Zadkiel — “Justice de Dieu”", 
-        freq: 432, pierres: "Améthyste", astres: "Saturne, Jupiter", 
-        symboles: "Flamme violette, Calice d'argent", role: "Transformation & Pardon", img: "img/Zadkiel.png" 
+        nom: "Zadkiel — “Justice de Dieu”", 
+        signif: "Alchimiste de la flamme violette", 
+        freq: 432, 
+        pierres: "Améthyste", 
+        astres: "Saturne, Jupiter", 
+        symboles: "Flamme violette, Calice d'argent", 
+        role: "Transformation & Pardon", 
+        img: "img/Zadkiel.png",
+        traditions: "<b>Mystique :</b> Ange du pardon et de la transformation.<br><b>New Age :</b> Gardien de la flamme violette.",
+        description: "Gardien des secrets spirituels. Son manteau violet est brodé de runes anciennes. Le grimoire en améthyste s’ouvre sur des pages vivantes. Le brasier à ses pieds purifie l’âme. Archange de la liberté et de la bienveillance. D'après la tradition juive, c'est lui qui aurait empêché Abraham de sacrifier son fils.",
+        notes: "Incarne la purification et la transmutation alchimique."
     }
 };
     const chakras = [

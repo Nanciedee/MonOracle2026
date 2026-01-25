@@ -45,11 +45,23 @@
 
 <div id="star-container"></div>
 <div id="app">
-    <div id="moon-phase-header" style="margin-bottom: 20px; padding: 15px; background: rgba(212, 175, 55, 0.1); border-radius: 15px; border: 1px solid rgba(212, 175, 55, 0.3);">
-        <span id="moon-icon" style="font-size: 2rem;">🌙</span>
-        <div id="moon-details" style="display: inline-block; vertical-align: middle; margin-left: 10px; text-align: left;">
-            <div id="moon-name" style="color: var(--gold); font-weight: bold; text-transform: uppercase; font-size: 0.8rem;">Chargement céleste...</div>
-            <div id="moon-resonance" style="font-size: 0.75rem; opacity: 0.8;">Résonance actuelle : 432Hz</div>
+    <div id="moon-phase-header" style="margin-bottom: 20px; padding: 15px; background: rgba(212, 175, 55, 0.1); border-radius: 15px; border: 1px solid rgba(212, 175, 55, 0.3); display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 10px;">
+        
+        <div style="text-align: left; min-width: 150px;">
+            <span id="moon-icon" style="font-size: 1.5rem;">🌙</span>
+            <div style="display: inline-block; vertical-align: middle; margin-left: 5px;">
+                <div id="moon-name" style="color: var(--gold); font-weight: bold; text-transform: uppercase; font-size: 0.75rem;">Phase...</div>
+                <div id="moon-zodiac" style="font-size: 0.7rem; opacity: 0.9;">Lune en Bélier ♈</div>
+            </div>
+        </div>
+
+        <div style="text-align: left; border-left: 1px solid rgba(212, 175, 55, 0.3); padding-left: 15px;">
+            <div style="font-size: 0.75rem; color: var(--gold);">☀️ Soleil : <span id="sun-times" style="color: #fff;">07:22 • 17:45</span></div>
+            <div style="font-size: 0.75rem; color: var(--gold);">🌡️ Température : <span id="temp-vibe" style="color: #fff;">-2°C (Vibration Cristal)</span></div>
+        </div>
+
+        <div id="moon-resonance" style="font-size: 0.7rem; background: rgba(212, 175, 55, 0.2); padding: 5px 10px; border-radius: 10px;">
+            ✨ 432Hz
         </div>
     </div>
 
@@ -437,8 +449,20 @@ function startAmbiance() {
             document.getElementById('moon-icon').innerText = currentPhase.i;
             document.getElementById('moon-name').innerText = currentPhase.n + " • " + currentPhase.f;
         }
+        // Simulation des éphémérides du jour
+        const signesZodiaque = ["Bélier ♈", "Taureau ♉", "Gémeaux ♊", "Cancer ♋", "Lion ♌", "Vierge ♍", "Balance ♎", "Scorpion ♏", "Sagittaire ♐", "Capricorne ♑", "Verseau ♒", "Poissons ♓"];
+        const luneSigne = signesZodiaque[new Date().getDate() % 12]; // Rotation simplifiée
         
+        document.getElementById('moon-zodiac').innerText = "Lune en " + luneSigne;
+        
+        // Exemple de lever/coucher (Heures moyennes de Janvier)
+        document.getElementById('sun-times').innerText = "07:34 • 16:58";
+        
+        // Température (Vibratoire ou réelle si tu veux changer manuellement)
+        const tempSimulee = Math.floor(Math.random() * (2 - (-10) + 1)) + (-10); 
+        document.getElementById('temp-vibe').innerText = tempSimulee + "°C (Vibration Éthérée)";
         if(document.getElementById('moon-data')) {
+            
             document.getElementById('moon-data').innerText = new Date().toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'});
         }
         // Appel de la guidance personnalisée pour Nancie

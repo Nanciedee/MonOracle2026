@@ -57,6 +57,7 @@
 
     <div id="intro-step">
         <div class="lune-header" id="moon-data">Chargement...</div>
+        
         <div class="section-rituel" style="border-style: dashed; border-color: rgba(212, 175, 55, 0.5); background: rgba(0,0,0,0.4);">
             <h3 style="color:var(--gold); margin-top:0; font-size: 1.1rem;">🌌 Ton Ciel Vibratoire, Nancie</h3>
             <p id="daily-intro" style="font-size: 0.9rem; line-height: 1.6; color: #e2e8f0;"></p>
@@ -71,10 +72,20 @@
         </div>
 
         <button class="btn-divin" onclick="lancerRituel()">Ouvrir le Portail</button>
+    </div>
 
-    <div id="loader">
+    <div id="loader" style="display:none;">
         <div class="spiral"></div>
         <div id="loading-msg">Initialisation des fréquences...</div>
+    </div>
+    
+    <div id="portal-result" style="display:none;">
+        <div class="result-grid" id="cards-container"></div>
+        
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 40px;">
+            <button class="btn-divin" style="border-color: #4CAF50; color: #4CAF50; margin: 0;" onclick="window.print()">📥 SAUVEGARDER LA GUIDANCE</button>
+            <button class="btn-divin" style="margin: 0;" onclick="location.reload()">NOUVELLE CONSULTATION</button>
+        </div>
     </div>
     
 <div class="section-rituel" style="...">

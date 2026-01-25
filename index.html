@@ -519,11 +519,11 @@ function startAmbiance() {
         if (box) box.style.display = (box.style.display === 'block') ? 'none' : 'block';
     }
 
-    function afficherResultats() {
-        // Transformation de l'objet archanges en tableau pour le tirage aléatoire
-        const archiKeys = Object.keys(archanges);
+function afficherResultats() {
+        // 1. Tirage aléatoire des trois cartes
+        const archiKeys = Object.keys(archangesData);
         const arcKey = archiKeys[Math.floor(Math.random() * archiKeys.length)];
-        const arc = archanges[arcKey];
+        const arc = archangesData[arcKey];
 
         const cha = chakras[Math.floor(Math.random() * chakras.length)];
         
@@ -531,84 +531,80 @@ function startAmbiance() {
         const vKey = vKeys[Math.floor(Math.random() * vKeys.length)];
         const vib = cartesVibratoires[vKey];
 
+        // 2. Gestion de l'affichage de l'interface
         document.getElementById('loader').style.display = 'none';
         document.getElementById('portal-result').style.display = 'block';
 
+        // 3. Génération du HTML des 3 fiches
         document.getElementById('cards-container').innerHTML = `
-            <div class="fiche">
+            <div class="fiche" style="position: relative; min-height: 500px;">
+                <div id="codex-archange" class="livret-box" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #080c12; z-index: 20; padding: 20px; box-sizing: border-box; border-radius: 15px; border: 2px solid var(--gold); overflow-y: auto;">
+                    <h3 style="color:var(--gold); text-align:center; border-bottom: 1px solid var(--gold); padding-bottom: 10px;">📜 CODEX DE ${arcKey.toUpperCase()}</h3>
+                    <p style="font-size:0.85rem; line-height:1.5; color: #fff; margin-top: 15px;"><b>Traditions :</b><br>${arc.traditions}</p>
+                    <p style="font-size:0.85rem; line-height:1.5; color: #e2e8f0; font-style: italic; margin-top: 15px;"><b>Vision :</b><br>${arc.description}</p>
+                    <p style="font-size:0.8rem; color: var(--gold); margin-top: 15px; border-top: 1px solid rgba(212,175,55,0.3); padding-top: 10px;">✨ ${arc.notes}</p>
+                    <button class="audio-btn" style="width:100%; margin-top: 20px;" onclick="document.getElementById('codex-archange').style.display='none'">⬅ FERMER</button>
+                </div>
+
                 <h3>🌌 ${arc.nom}</h3>
-                <img src="${arc.img}">
-                <p class="details-text">🌈 <b>Fréquence :</b> ${arc.freq} Hz</p>
+                <img src="${arc.img}" style="width:100%; border-radius:10px;">
                 <p class="details-text">💎 <b>Pierres :</b> ${arc.pierres}</p>
-                <p class="details-text">🌠 <b>Astres :</b> ${arc.astres}</p>
-                <p class="details-text">🪬 <b>Symboles :</b> ${arc.symboles}</p>
                 <p class="details-text">🧭 <b>Rôle :</b> ${arc.role}</p>
-                <button class="audio-btn" onclick="playFreq(${arc.freq})">🔊 ACTIVER</button>
+                
+                <div style="margin-top:auto; display: flex; flex-direction: column; gap: 10px;">
+                    <button class="audio-btn" onclick="playFreq(${arc.freq})">🔊 ACTIVER (${arc.freq}Hz)</button>
+                    <button class="audio-btn" style="background:transparent; color:#fff; border:1px solid #fff;" onclick="document.getElementById('codex-archange').style.display='block'">📖 LIRE LE CODEX</button>
+                </div>
             </div>
 
-            <div class="fiche" style="position: relative;">
+            <div class="fiche" style="position: relative; min-height: 500px;">
                 <div id="livret-chakra" class="livret-box" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10; padding: 20px; box-sizing: border-box; border-radius: 15px; border: 2px solid var(--gold); overflow-y: auto;">
                     <h3 style="color:var(--gold); text-align:center;">📖 SAGESSE DU CHAKRA</h3>
                     <p style="font-size:0.85rem; line-height:1.5;">${cha.signification}</p>
                     <p style="font-size:0.85rem; line-height:1.5; color:var(--gold); font-style:italic;">"${cha.enseignement}"</p>
                     <p style="font-size:0.85rem; line-height:1.5; border-top:1px solid var(--gold); padding-top:10px;"><b>🌿 Rituel :</b> ${cha.rituel}</p>
-                    <button class="audio-btn" onclick="document.getElementById('livret-chakra').style.display='none'">⬅ FERMER</button>
+                    <button class="audio-btn" style="width:100%;" onclick="document.getElementById('livret-chakra').style.display='none'">⬅ FERMER</button>
                 </div>
 
                 <h3>🌀 Chakra ${cha.nom}</h3>
-                <img src="${cha.img}">
+                <img src="${cha.img}" style="width:100%; border-radius:10px;">
                 <p class="details-text">💬 <b>Mantra :</b> "${cha.mantra}"</p>
                 <p class="details-text">🌈 <b>Fréquence :</b> ${cha.freq} Hz</p>
                 
-                <div style="margin-top:auto;">
+                <div style="margin-top:auto; display: flex; flex-direction: column; gap: 10px;">
                     <button class="audio-btn" onclick="playFreq(${cha.freq})">🔊 ALIGNER</button>
-                    <button class="audio-btn" style="background:transparent; color:#fff; border:1px solid #fff; margin-top:10px;" onclick="document.getElementById('livret-chakra').style.display='block'">📖 VOIR L'ENSEIGNEMENT</button>
+                    <button class="audio-btn" style="background:transparent; color:#fff; border:1px solid #fff;" onclick="document.getElementById('livret-chakra').style.display='block'">📖 VOIR L'ENSEIGNEMENT</button>
                 </div>
             </div>
-            
-            <div class="fiche" style="position: relative; min-height: 450px;">
-                <div id="livret-overlay-box" class="livret-box" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #1a1a1a 0%, #000 100%); z-index: 10; padding: 25px; box-sizing: border-box; border-radius: 15px; border: 2px solid var(--gold); overflow-y: auto; animation: fadeIn 0.5s ease;">
-                    
+
+            <div class="fiche" style="position: relative; min-height: 500px;">
+                <div id="livret-overlay-box" class="livret-box" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #1a1a1a 0%, #000 100%); z-index: 10; padding: 25px; box-sizing: border-box; border-radius: 15px; border: 2px solid var(--gold); overflow-y: auto;">
                     <h3 style="color:var(--gold); margin-top: 0; text-align:center; letter-spacing: 2px;">📖 GRIMOIRE DE ${vKey.toUpperCase()}</h3>
-                    
-                    <div class="livret-content">
-                        <p style="color: #fff; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; text-align: center;">— Invocation Sacrée —</p>
-                        <p id="invocation-text" style="color: var(--gold); font-style: italic; font-size: 1.1rem; line-height: 1.6; margin: 20px 0; padding: 15px; border: 1px double rgba(212, 175, 55, 0.3); background: rgba(212, 175, 55, 0.05); text-align: center;">
-                            ${vib.invocation}
-                        </p> 
-
-                        <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; margin-bottom: 15px;">
-                            <b style="color: #4CAF50;">⚡ Action Vibratoire :</b><br>
-                            ${vib.effet}
-                        </div>
-
-                        <div style="padding: 5px;">
-                            <b style="color: var(--gold);">🔮 Protocole de Rituel :</b><br>
-                            ${vib.livret || "Infusion en cours..."}
-                        </div>
+                    <p style="color: #fff; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; text-align: center;">— Invocation Sacrée —</p>
+                    <p id="invocation-text" style="color: var(--gold); font-style: italic; font-size: 1rem; line-height: 1.6; margin: 15px 0; padding: 10px; border: 1px double rgba(212, 175, 55, 0.3); background: rgba(212, 175, 55, 0.05); text-align: center;">
+                        ${vib.invocation}
+                    </p> 
+                    <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size:0.85rem;">
+                        <b style="color: #4CAF50;">⚡ Action Vibratoire :</b><br>${vib.effet}
                     </div>
-
-                    <button class="audio-btn" style="background:var(--gold); color:#000; margin-top: 25px; width: 100%;" onclick="toggleLivret()">⬅ REPLIER LE LIVRET</button>
+                    <div style="padding: 5px; font-size:0.85rem;">
+                        <b style="color: var(--gold);">🔮 Protocole de Rituel :</b><br>${vib.livret || "Infusion en cours..."}
+                    </div>
+                    <button class="audio-btn" style="background:var(--gold); color:#000; margin-top: 20px; width: 100%;" onclick="toggleLivret()">⬅ REPLIER LE LIVRET</button>
                 </div>
 
                 <h3>✨ Carte de ${vKey}</h3>
                 <img src="${vib.img}" style="width: 100%; border-radius: 10px; margin-bottom: 10px;">
                 <p class="details-text">🌠 <b>Astre :</b> ${vib.astre}</p>
-                <p class="details-text">💎 <b>Pierres :</b> ${vib.pierres}</p>
                 <p class="details-text">⚡ <b>Effet :</b> ${vib.effet}</p>
                 
-                <div style="margin-top: auto;">
-                    <button class="audio-btn" style="background:#fff; color:#000; width: 100%;" onclick="playFreq(${vib.freq})">
-                        ✨ SCELLER LE RITUEL (${vib.freq}Hz)
-                    </button>
-                    <button class="audio-btn" style="background:transparent; color:#fff; border:1px solid #fff; margin-top:10px; width: 100%;" onclick="toggleLivret()">
-                        📖 VOIR LE LIVRET COMPLET
-                    </button>
+                <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                    <button class="audio-btn" style="background:#fff; color:#000;" onclick="playFreq(${vib.freq})">✨ SCELLER LE RITUEL (${vib.freq}Hz)</button>
+                    <button class="audio-btn" style="background:transparent; color:#fff; border:1px solid #fff;" onclick="toggleLivret()">📖 VOIR LE LIVRET COMPLET</button>
                 </div>
             </div>
-        `; // Fermeture du innerHTML
+        `;
         
-        // Remonte automatiquement en haut pour voir les cartes
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 

@@ -47,9 +47,17 @@
 <div id="app">
     <div id="moon-phase-header" style="margin-bottom: 20px; padding: 15px; background: rgba(212, 175, 55, 0.1); border-radius: 15px; border: 1px solid rgba(212, 175, 55, 0.3); display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 10px;">
         
+        <div style="text-align: left; min-width: 150px;">
+            <span id="moon-icon" style="font-size: 1.5rem;">🌙</span>
+            <div style="display: inline-block; vertical-align: middle; margin-left: 5px;">
+                <div id="moon-name" style="color: var(--gold); font-weight: bold; text-transform: uppercase; font-size: 0.75rem;">Chargement...</div>
+                <div id="moon-zodiac" style="font-size: 0.7rem; opacity: 0.9;">Lune en transit...</div>
+            </div>
+        </div>
+
         <div style="text-align: left; border-left: 1px solid rgba(212, 175, 55, 0.3); padding-left: 15px;">
-            <div style="font-size: 0.75rem; color: var(--gold);">☀️ Soleil : <span id="sun-times" style="color: #fff;">Calcul...</span></div>
-            <div style="font-size: 0.75rem; color: var(--gold);">🌡️ <span id="city-name">Ma position</span> : <span id="temp-real" style="color: #fff;">--°C</span></div>
+            <div style="font-size: 0.75rem; color: var(--gold);">☀️ Soleil : <span id="sun-times" style="color: #fff;">--:--</span></div>
+            <div style="font-size: 0.75rem; color: var(--gold);">🌡️ Montréal : <span id="temp-real" style="color: #fff;">--°C</span></div>
         </div>
 
         <div id="moon-resonance" style="font-size: 0.7rem; background: rgba(212, 175, 55, 0.2); padding: 5px 10px; border-radius: 10px;">

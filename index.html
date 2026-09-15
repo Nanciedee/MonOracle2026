@@ -612,106 +612,56 @@ function afficherResultats() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // --- INITIALISATION ---
-window.onload = async () => {
-    const phases = [
-        {n: "Nouvelle Lune", i: "🌑", f: "Introspection"},
-        {n: "Premier Croissant", i: "🌙", f: "Éclosion"},
-        {n: "Premier Quartier", i: "🌓", f: "Action"},
-        {n: "Gibbeuse Croissante", i: "🌔", f: "Affinage"},
-        {n: "Pleine Lune", i: "🌕", f: "Illumination"},
-        {n: "Gibbeuse Décroissante", i: "🌖", f: "Gratitude"},
-        {n: "Dernier Quartier", i: "🌗", f: "Libération"},
-        {n: "Dernier Croissant", i: "🌘", f: "Repos"}
-    ];
-
-    // 1. CALCUL RÉEL DE LA PHASE LUNAIRE (Algorithme basé sur le cycle synodique de 29.53 jours)
-    const obtenirVraiePhaseLunaire = (date) => {
-        const annee = date.getFullYear();
-        const mois = date.getMonth() + 1;
-        const jour = date.getDate();
+   // --- INITIALISATION ---
+    window.onload = () => {
+        const phases = [
+            {n: "Nouvelle Lune", i: "🌑", f: "Introspection"},
+            {n: "Premier Croissant", i: "🌙", f: "Éclosion"},
+            {n: "Premier Quartier", i: "🌓", f: "Action"},
+            {n: "Gibbeuse Croissante", i: "🌔", f: "Affinage"},
+            {n: "Pleine Lune", i: "🌕", f: "Illumination"},
+            {n: "Gibbeuse Décroissante", i: "🌖", f: "Gratitude"},
+            {n: "Dernier Quartier", i: "🌗", f: "Libération"},
+            {n: "Dernier Croissant", i: "🌘", f: "Repos"}
+        ];
+        const day = new Date().getDate() % 8;
+        const currentPhase = phases[day];
         
-        let c = 0, e = 0, jd = 0;
-        if (mois < 3) { annee--; mois += 12; }
-        mois++;
-        c = 365.25 * annee;
-        e = 30.6 * mois;
-        jd = c + e + jour - 694039.09; // Jours écoulés depuis la Nouvelle Lune de référence (1900)
-        jd /= 29.5305882; // Division par la durée d'un cycle lunaire
-        let b = parseInt(jd);
-        jd -= b; // On garde la partie décimale
-        let res = Math.round(jd * 8); // Conversion en index de 0 à 7
-        return res >= 8 ? 0 : res;
-    };
+        // 1. Phase Lunaire & Icône
+        if(document.getElementById('moon-icon')) document.getElementById('moon-icon').innerText = currentPhase.i;
+        if(document.getElementById('moon-name')) document.getElementById('moon-name').innerText = currentPhase.n + " • " + currentPhase.f;
+        
+        // 2. Signe du Zodiaque
+        const signesZodiaque = ["Bélier ♈", "Taureau ♉", "Gémeaux ♊", "Cancer ♋", "Lion ♌", "Vierge ♍", "Balance ♎", "Scorpion ♏", "Sagittaire ♐", "Capricorne ♑", "Verseau ♒", "Poissons ♓"];
+        const luneSigne = signesZodiaque[new Date().getDate() % 12];
+        if(document.getElementById('moon-zodiac')) {
+            document.getElementById('moon-zodiac').innerText = "Lune en " + luneSigne;
+        }
 
-    const indexPhase Reelle = obtenirVraiePhaseLunaire(new Date());
-    const currentPhase = phases[indexPhaseReelle];
-    
-    // Affichage Lune & Icône
-    if(document.getElementById('moon-icon')) document.getElementById('moon-icon').innerText = currentPhase.i;
-    if(document.getElementById('moon-name')) document.getElementById('moon-name').innerText = currentPhase.n + " • " + currentPhase.f;
-    
-    // 2. Signe du Zodiaque de la Lune (Simulé par défaut en attendant un éphéméride complet)
-    const signesZodiaque = ["Bélier ♈", "Taureau ♉", "Gémeaux ♊", "Cancer ♋", "Lion ♌", "Vierge ♍", "Balance ♎", "Scorpion ♏", "Sagittaire ♐", "Capricorne ♑", "Verseau ♒", "Poissons ♓"];
-    const luneSigne = signesZodiaque[new Date().getDate() % 12];
-    if(document.getElementById('moon-zodiac')) {
-        document.getElementById('moon-zodiac').innerText = "Lune en " + luneSigne;
-    }
+        // 3. Soleil (Valeur par défaut avant mise à jour réelle)
+        if(document.getElementById('sun-times')) {
+            document.getElementById('sun-times').innerText = "07:34 • 16:58";
+        }
 
-    // 3 & 7. GÉOLOCALISATION & APPELS API (Soleil et Météo Réels)
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(async (position) => {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
+        // 4. Température Simulée (Vibration)
+        const tempSimulee = Math.floor(Math.random() * (2 - (-10) + 1)) + (-10); 
+        if(document.getElementById('temp-vibe')) {
+            document.getElementById('temp-vibe').innerText = tempSimulee + "°C (Vibration Éthérée)";
+        }
 
-            try {
-                // Récupération des vrais horaires du Soleil (API gratuite sans clé)
-                const reponseSoleil = await fetch(`https://sunrise-sunset.org{lat}&lng=${lon}&formatted=0`);
-                const donneesSoleil = await reponseSoleil.json();
-                
-                if (donneesSoleil.status === "OK") {
-                    // Conversion des heures UTC en heure locale
-                    const optionHeure = { hour: '2-digit', minute: '2-digit', hour12: false };
-                    const lever = new Date(donneesSoleil.results.sunrise).toLocaleTimeString('fr-FR', optionHeure);
-                    const coucher = new Date(donneesSoleil.results.sunset).toLocaleTimeString('fr-FR', optionHeure);
-                    
-                    if(document.getElementById('sun-times')) {
-                        document.getElementById('sun-times').innerText = `${lever} • ${coucher}`;
-                    }
-                }
-            } catch (erreur) {
-                console.error("Erreur lors de la récupération des horaires de Soleil :", erreur);
-                if(document.getElementById('sun-times')) document.getElementById('sun-times').innerText = "07:34 • 16:58 (Défaut)";
-            }
+        // 5. Date complète
+        if(document.getElementById('moon-data')) {
+            document.getElementById('moon-data').innerText = new Date().toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'});
+        }
 
-            // Lancement de votre fonction météo si elle utilise la vraie géolocalisation
-            if (typeof updateWeather === "function") {
-                updateWeather(lat, lon);
-            }
-        }, (erreurGeo) => {
-            console.warn("Géolocalisation refusée ou indisponible. Utilisation des valeurs par défaut.");
-            if(document.getElementById('sun-times')) document.getElementById('sun-times').innerText = "07:34 • 16:58";
-        });
-    } else {
-        if(document.getElementById('sun-times')) document.getElementById('sun-times').innerText = "07:34 • 16:58";
-    }
-
-    // 4. Température Simulée (Vibration)
-    const tempSimulee = Math.floor(Math.random() * (2 - (-10) + 1)) + (-10); 
-    if(document.getElementById('temp-vibe')) {
-        document.getElementById('temp-vibe').innerText = tempSimulee + "°C (Vibration Éthérée)";
-    }
-
-    // 5. Date complète
-    if(document.getElementById('moon-data')) {
-        document.getElementById('moon-data').innerText = new Date().toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'});
-    }
-
-    // 6. Appel des fonctions de guidance
-    if (typeof genererGuidanceQuotidienne === "function") {
+        // 6. Appel des fonctions de calcul
         genererGuidanceQuotidienne(currentPhase.n);
-    }
-};
+        
+        // 7. Lancement de la météo réelle (Écrase les valeurs par défaut si ça marche)
+        if (typeof updateWeather === "function") {
+            updateWeather();
+        }
+    };
 </script>
 </body>
 </html>

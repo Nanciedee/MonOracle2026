@@ -1394,32 +1394,16 @@ function restaurerNatal() {
     
    // --- INITIALISATION ---
 window.onload = () => {
-    // 1. Lune calculée astronomiquement
-    const moonData = updateMoonData(new Date());
-
-    // 2. Utilise la vraie phase lunaire dans la guidance
-    genererGuidanceQuotidienne(moonData.name);
-
-    // 3. Soleil et température pour Montréal
-    updateSunAndWeather();
-
-    // 4. Date complète affichée
-    const dateElement = document.getElementById("moon-data");
-
-    if (dateElement) {
-        const dateText = new Intl.DateTimeFormat("fr-FR", {
-            timeZone: LOCATION.timezone,
-            weekday: "long",
-            day: "numeric",
-            month: "long",
-            year: "numeric"
-        }).format(new Date());
-
-        dateElement.innerText =
-            `${moonData.name} — ${moonData.illumination}% éclairée — ${dateText}`;
-    }
-restaurerNatal();
-};
+        const moonData = updateMoonData(new Date());
+        genererGuidanceQuotidienne(moonData.name);
+        updateSunAndWeather();
+        const dateElement = document.getElementById("moon-data");
+        if (dateElement) {
+            const dateText = new Intl.DateTimeFormat("fr-FR", { timeZone: LOCATION.timezone, weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(new Date());
+            dateElement.innerText = `${moonData.name} — ${moonData.illumination}% éclairée — ${dateText}`;
+        }
+        restaurerNatal();
+    };
 </script>
 </body>
 </html>

@@ -850,6 +850,58 @@ function updateMoonData(date = new Date()) {
         }
     }
 }
+
+const SIGNES = ["Bélier","Taureau","Gémeaux","Cancer","Lion","Vierge","Balance","Scorpion","Sagittaire","Capricorne","Verseau","Poissons"];
+const RAD = Math.PI / 180;
+
+function longitudeSoleil(jd) {
+    const n = jd - 2451545.0;
+    const L = (280.460 + 0.9856474 * n) % 360;
+    const g = (357.528 + 0.9856003 * n) * RAD;
+    return (((L + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g)) % 360) + 360) % 360;
+}
+
+function ascendant(jd, lat, lon) {
+    const T = (jd - 2451545.0) / 36525;
+    const gmst = 280.46061837 + 360.98564736629 * (jd - 2451545.0) + 0.000387933 * T * T;
+    const lst = ((((gmst + lon) % 360) + 360) % 360) * RAD;
+    const eps = 23.4392911 * RAD;
+    const asc = Math.atan2(Math.cos(lst), -(Math.sin(lst) * Math.cos(eps) + Math.tan(lat * RAD) * Math.sin(eps)));
+    return (((asc / RAD) % 360) + 360) % 360;
+}
+
+const fmtSigne = l => `${SIGNES[Math.floor(l / 30)]} (${(l % 30).toFixed(1)}°)`;
+
+function calculerCielNatal(donnees) {
+    const get = id => document.getElementById(id).value;
+    const d = donnees?.d ?? get('n-date');
+    const t = donnees?.t ?? get('n-time');
+    const utc = parseFloat(donnees?.utc ?? get('n-utc'));
+    const lat = parseFloat(donnees?.lat ?? get('n-lat'));
+    const lon = parseFloat(donnees?.lon ?? get('n-lon'));
+
+    if (!d || isNaN(utc)) { alert("Entre au moins ta date de naissance."); return; }
+
+    const [Y, M, D] = d.split('-').map(Number);
+    const [h, m] = (t || "12:00").split(':').map(Number);
+    const ms = Date.UTC(Y, M - 1, D, h, m) - utc * 3600000;
+    const jd = ms / 86400000 + 2440587.5;
+
+    let txt = `☀️ Soleil en ${fmtSigne(longitudeSoleil(jd))}`;
+    if (t && !isNaN(lat) && !isNaN(lon)) txt += ` · ↑ Ascendant en ${fmtSigne(ascendant(jd, lat, lon))}`;
+    document.getElementById('natal-result').innerText = txt;
+
+    if (!donnees && document.getElementById('n-save').checked) {
+        try { localStorage.setItem('natal', JSON.stringify({ d, t, utc, lat, lon })); } catch (e) {}
+    }
+}
+
+function restaurerNatal() {
+    try {
+        const s = JSON.parse(localStorage.getItem('natal'));
+        if (s) calculerCielNatal(s);
+    } catch (e) {}
+}    
     
    // --- INITIALISATION ---
 window.onload = () => {

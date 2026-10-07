@@ -956,19 +956,71 @@ function ascendant(jd, lat, lon) {
 
 const fmtSigne = l => `${SIGNES[Math.floor(l / 30)]} (${(l % 30).toFixed(1)}°)`;
 
+// --- Recherche du lieu (nom de ville seulement envoyé à Open-Meteo) ---
+let lieuxTrouves = [];
+
+async function chercherLieu() {
+    const q = document.getElementById('n-lieu').value.trim();
+    if (!q) return;
+    try {
+        const r = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=8&language=fr&format=json`);
+        const data = await r.json();
+        lieuxTrouves = data.results || [];
+    } catch (e) { lieuxTrouves = []; }
+
+    if (!lieuxTrouves.length) {
+        alert("Lieu introuvable. Essaie une grande ville proche, ou entre la latitude et la longitude à la main.");
+        return;
+    }
+    const sel = document.getElementById('n-choix');
+    sel.innerHTML = '';
+    lieuxTrouves.forEach((l, i) => {
+        sel.add(new Option([l.name, l.admin1, l.country].filter(Boolean).join(', '), i));
+    });
+    document.getElementById('n-choix-box').style.display = 'flex';
+    choisirLieu();
+}
+
+function choisirLieu() {
+    const l = lieuxTrouves[document.getElementById('n-choix').value];
+    if (!l) return;
+    document.getElementById('n-lat').value = l.latitude.toFixed(2);
+    document.getElementById('n-lon').value = l.longitude.toFixed(2);
+    document.getElementById('n-tz').value = l.timezone || '';
+}
+
+// --- Décalage UTC réel pour une date et un fuseau donnés (heure d'été incluse) ---
+function offsetTZ(tz, ms) {
+    const p = new Intl.DateTimeFormat('en-US', {
+        timeZone: tz, hourCycle: 'h23', year: 'numeric', month: '2-digit',
+        day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'
+    }).formatToParts(new Date(ms));
+    const g = t => +p.find(x => x.type === t).value;
+    return Date.UTC(g('year'), g('month') - 1, g('day'), g('hour'), g('minute'), g('second')) - ms;
+}
+function utcDepuisLocal(tz, Y, M, D, h, m) {
+    const naive = Date.UTC(Y, M - 1, D, h, m);
+    let ms = naive - offsetTZ(tz, naive);
+    ms = naive - offsetTZ(tz, ms);
+    return ms;
+}
+
 function calculerCielNatal(donnees) {
     const get = id => document.getElementById(id).value;
     const d = donnees?.d ?? get('n-date');
     const t = donnees?.t ?? get('n-time');
-    const utc = parseFloat(donnees?.utc ?? get('n-utc'));
+    const tz = donnees?.tz ?? get('n-tz');
+    const utcBrut = donnees?.utc ?? get('n-utc');
     const lat = parseFloat(donnees?.lat ?? get('n-lat'));
     const lon = parseFloat(donnees?.lon ?? get('n-lon'));
 
-    if (!d || isNaN(utc)) { alert("Entre au moins ta date de naissance."); return; }
+    if (!d) { alert("Entre au moins ta date de naissance."); return; }
 
     const [Y, M, D] = d.split('-').map(Number);
     const [h, m] = (t || "12:00").split(':').map(Number);
-    const ms = Date.UTC(Y, M - 1, D, h, m) - utc * 3600000;
+    const ms = tz
+        ? utcDepuisLocal(tz, Y, M, D, h, m)
+        : Date.UTC(Y, M - 1, D, h, m) - parseFloat(String(utcBrut)) * 3600000;
     const jd = ms / 86400000 + 2440587.5;
 
     const lonSol = longitudeSoleil(jd);
@@ -982,16 +1034,12 @@ function calculerCielNatal(donnees) {
     document.getElementById('natal-result').innerHTML = html;
 
     if (!donnees && document.getElementById('n-save').checked) {
-        try { localStorage.setItem('natal', JSON.stringify({ d, t, utc: get('n-utc'), lat, lon })); } catch (e) {}
+        try {
+            localStorage.setItem('natal', JSON.stringify({
+                d, t, utc: get('n-utc'), tz: get('n-tz'), lieu: get('n-lieu'), lat, lon
+            }));
+        } catch (e) {}
     }
-}
-
-function choisirVille() {
-    const v = document.getElementById('n-ville').value;
-    if (!v) return;
-    const [la, lo] = v.split(',');
-    document.getElementById('n-lat').value = la;
-    document.getElementById('n-lon').value = lo;
 }
 
 function restaurerNatal() {
@@ -1001,6 +1049,8 @@ function restaurerNatal() {
         document.getElementById('n-date').value = s.d || '';
         document.getElementById('n-time').value = s.t || '';
         document.getElementById('n-utc').value = s.utc;
+        document.getElementById('n-tz').value = s.tz || '';
+        document.getElementById('n-lieu').value = s.lieu || '';
         document.getElementById('n-lat').value = isNaN(s.lat) ? '' : s.lat;
         document.getElementById('n-lon').value = isNaN(s.lon) ? '' : s.lon;
         document.getElementById('n-save').checked = true;

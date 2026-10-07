@@ -473,53 +473,137 @@ const messages = ["Alignement éthérique...", "Lecture des archives...", "Harmo
         osc.start(); osc.stop(audioCtx.currentTime + 6);
     }
     
+// =====================================================================
+//  GUIDANCE QUOTIDIENNE – version immersive (4 à 5 phrases par élément)
+//  HTML à ajouter dans ta carte (avant #daily-resonance) :
+//     <div id="daily-intro"></div>
+// =====================================================================
+
+function obtenirSigneSolaire(date) {
+    const debuts = [
+        [1, 20, "Verseau"], [2, 19, "Poissons"], [3, 21, "Bélier"], [4, 20, "Taureau"],
+        [5, 21, "Gémeaux"], [6, 21, "Cancer"], [7, 23, "Lion"], [8, 23, "Vierge"],
+        [9, 23, "Balance"], [10, 23, "Scorpion"], [11, 22, "Sagittaire"], [12, 22, "Capricorne"]
+    ];
+    const m = date.getMonth() + 1;
+    const d = date.getDate();
+    let signe = "Capricorne"; // du 1er au 19 janvier
+    for (const [mois, jourDebut, nom] of debuts) {
+        if (m > mois || (m === mois && d >= jourDebut)) signe = nom;
+    }
+    return signe;
+}
+
+function categoriePhaseLune(phaseLune) {
+    const p = String(phaseLune || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    if (p.includes("nouvelle")) return "nouvelle";
+    if (p.includes("pleine")) return "pleine";
+    if (p.includes("premier quartier")) return "premierQuartier";
+    if (p.includes("dernier quartier")) return "dernierQuartier";
+    if (p.includes("decroissant")) return "decroissante";
+    if (p.includes("croissant")) return "croissante";
+    return "neutre";
+}
+
 function genererGuidanceQuotidienne(phaseLune) {
-    const jour = new Date().getDate();
-    
-    const intros = [
-        "L'énergie du Scorpion en progression t'invite à sonder tes profondeurs.",
-        "Ta vibration Balance cherche l'harmonie parfaite dans tes échanges.",
-        "Le ciel tisse un lien entre ton intuition et tes actions concrètes.",
-        "Ton Soleil en Balance brille aujourd'hui avec une clarté nouvelle."
+    const maintenant = new Date();
+    const jourAnnee = Math.floor((maintenant - new Date(maintenant.getFullYear(), 0, 0)) / 86400000);
+    const signe = obtenirSigneSolaire(maintenant);
+
+    // ------------------------------------------------------------------
+    //  1. INTRO : dépend du signe solaire du jour
+    // ------------------------------------------------------------------
+    const introsParSigne = {
+        "Balance": [
+            `Ton Soleil traverse la Balance, le signe qui cherche la beauté dans chaque rencontre et la justesse dans chaque parole. Aujourd'hui, l'air semble plus léger autour de toi, comme si les tensions acceptaient enfin de se dénouer. Regarde où tu peux remplacer l'effort par la douceur : c'est souvent là que la vraie harmonie se cache. Tes échanges sont des miroirs, et ce que tu offres avec sincérité te revient avec élégance.`,
+            `La vibration de la Balance t'invite à tenir le fil délicat entre ce que tu désires et ce que tu donnes. Ce signe d'Air aime les conversations qui éclairent, les compromis qui honorent chacun et les gestes qui apaisent. Ton regard est aujourd'hui plus clair, plus juste, capable de voir les deux côtés d'une situation sans perdre ton centre. Fais confiance à cette clarté nouvelle : elle sait où se trouve ton équilibre.`
+        ],
+        "Scorpion": [
+            `Le Soleil entre dans le Scorpion, et avec lui monte une énergie d'eau profonde, silencieuse et magnétique. Ce signe ne se contente jamais de la surface : il t'invite à descendre là où vivent tes vérités les plus intimes. Ce que tu ressens peut sembler intense, mais c'est le signe que quelque chose en toi est prêt à se transformer. Accueille cette profondeur sans la fuir, car elle contient exactement la force dont tu as besoin.`,
+            `L'énergie du Scorpion en progression t'invite à sonder tes profondeurs, là où dorment tes désirs véritables et tes blessures en voie de guérison. Comme le phénix, ce signe connaît l'art de renaître de ce qu'il laisse derrière lui. Aujourd'hui, une part de toi cherche à lâcher une vieille peau pour laisser place à plus de vérité. Avance avec courage : tout ce qui se transforme dans l'ombre finit par briller à la lumière.`
+        ],
+        "Sagittaire": [
+            `Le Soleil traverse le Sagittaire, signe de feu tourné vers l'horizon, la quête de sens et la joie d'explorer. Ton esprit aspire aujourd'hui à voir plus loin, à comprendre pourquoi les choses arrivent plutôt que simplement comment. Laisse ta curiosité te guider vers une idée, un lieu ou une conversation qui élargit ton regard. L'optimisme est une boussole fiable : il t'indique la direction où ta vie veut grandir.`
+        ]
+    };
+
+    const introGenerique = [
+        `Ton Soleil traverse aujourd'hui le signe du ${signe}, et son énergie colore subtilement chacune de tes journées. Prends un instant pour sentir comment cette vibration résonne en toi : une envie, une tension, un élan peut-être. Chaque signe porte une leçon, et celle d'aujourd'hui se révèle dans les petits détails de ton quotidien. Reste attentif et bienveillant envers toi-même : le ciel te parle à travers ce que tu ressens.`
     ];
-    
+
+    const variantesIntro = introsParSigne[signe] || introGenerique;
+    const intro = variantesIntro[jourAnnee % variantesIntro.length];
+
+    // ------------------------------------------------------------------
+    //  2. RÉSONANCES : un message de fond + une nuance liée à la phase de lune
+    // ------------------------------------------------------------------
     const resonances = [
-        `Sous cette ${phaseLune}, ta diplomatie naturelle est ta plus grande force.`,
-        `Le mouvement céleste active ta transformation intérieure. Ose muer.`,
-        `L'équilibre entre donner et recevoir est la clé de ta paix aujourd'hui.`,
-        `Une résonance cristalline favorise ton discernement spirituel.`
+        `Sous cette ${phaseLune}, ta diplomatie naturelle devient ton plus beau talent. Tu sais écouter ce qui se dit entre les mots, et les autres le sentent. Aujourd'hui, une parole mesurée aura plus de poids que mille arguments. Choisis la douceur sans renoncer à ta vérité : c'est ainsi que tu désarmes les conflits avant même qu'ils naissent.`,
+        `Le mouvement céleste réveille ta transformation intérieure, comme une marée lente qui change le paysage sans bruit. Quelque chose en toi a déjà commencé à muer, même si tu ne le vois pas encore clairement. Ose laisser partir ce qui ne te ressemble plus : une habitude, une croyance, une attente trop lourde. Sous la ${phaseLune}, ce que tu libères fait de la place pour ce qui est vrai.`,
+        `L'équilibre entre donner et recevoir est la clé de ta paix aujourd'hui. Tu as peut-être l'habitude d'offrir beaucoup, parfois au-delà de ce que ton cœur peut porter. Permets-toi d'accepter une aide, un compliment ou simplement un moment de repos sans te justifier. La ${phaseLune} rappelle que le flux de la vie circule dans les deux sens.`,
+        `Une résonance cristalline traverse ta journée et affine ton discernement spirituel. Les signes, les coïncidences et les intuitions soudaines ne sont pas du hasard : ils sont des invitations à regarder plus loin. Prends le temps de noter ce qui te frappe, même si cela te semble anodin. Sous la ${phaseLune}, ta perception devient un instrument précis, à condition de lui laisser du silence.`,
+        `Aujourd'hui, ton cœur et ta raison cherchent à parler la même langue. Si une décision te pèse, demande-toi ce que tu choisirais sans peur, puis observe ce que ton corps répond. Une sensation d'ouverture est souvent plus fiable qu'une longue liste d'arguments. La ${phaseLune} soutient cette alliance entre intuition et lucidité.`,
+        `Une énergie de renouveau circule autour de toi, discrète mais bien réelle. Elle se glisse dans les détails : une lumière sur un mur, un sourire inattendu, une idée qui surgit au bon moment. Ne cherche pas à tout comprendre, contente-toi d'accueillir ce qui se présente avec gratitude. Sous la ${phaseLune}, la vie te montre que les commencements n'ont pas besoin d'être spectaculaires.`,
+        `Ta sensibilité est aujourd'hui une boussole, pas une fragilité. Ce que tu perçois chez les autres, ce que tu devines avant qu'on te le dise, tout cela nourrit ta sagesse. Protège ton énergie en choisissant les lieux et les personnes qui te font du bien. La ${phaseLune} t'enseigne que se préserver n'est pas se fermer, c'est rester fidèle à soi.`
     ];
 
+    const nuancesLune = {
+        nouvelle: `La Nouvelle Lune, en particulier, est un terrain fertile pour planter une intention : formule-la simplement, comme une graine confiée à la nuit.`,
+        croissante: `Cette lune croissante amplifie ton élan, c'est le bon moment pour passer à l'action, même par de petits pas.`,
+        premierQuartier: `Le Premier Quartier met ta détermination à l'épreuve, et te rappelle qu'un obstacle franchi aujourd'hui renforce ta confiance pour la suite.`,
+        pleine: `La Pleine Lune éclaire tout ce qui était dans l'ombre : accueille ce qui se révèle, sans jugement, comme un cadeau de lucidité.`,
+        decroissante: `Cette lune décroissante favorise le lâcher-prise : c'est le moment idéal pour clarifier, ranger et pardonner.`,
+        dernierQuartier: `Le Dernier Quartier invite au bilan tendre : remercie ce qui s'achève et garde ce qui a de la valeur.`,
+        neutre: `Laisse le rythme de la Lune guider ton souffle et rappelle-toi que chaque phase a sa sagesse.`
+    };
+
+    // ------------------------------------------------------------------
+    //  3. RITUELS : 3 gestes bien décrits + une affirmation
+    // ------------------------------------------------------------------
     const rituels = [
-        "✨ Inspire la lumière dorée (4s), expire tes doutes.<br>✨ Pose tes mains sur ton cœur.<br>✨ Affirmation : 'Je suis en harmonie.'",
-        "✨ Allume une bougie virtuelle dans ton esprit.<br>✨ Visualise une lumière bleue de protection.<br>✨ Affirmation : 'Mon espace est sacré.'",
-        "✨ Masse doucement tes tempes avec une intention de paix.<br>✨ Respire l'élément Air (Balance).<br>✨ Affirmation : 'Mes pensées sont fluides.'",
-        "✨ Ancre tes pieds au sol et sens l'énergie remonter.<br>✨ Visualise un quartz rose sur ton plexus.<br>✨ Affirmation : 'Je rayonne l'Amour.'"
+        `✨ Installe-toi confortablement, le dos droit, et inspire une lumière dorée pendant 4 secondes en imaginant qu'elle remplit ta poitrine. Retiens ce souffle un instant, puis expire lentement tes doutes comme une brume qui se dissipe.<br>✨ Pose tes deux mains sur ton cœur et sens sa chaleur et son rythme tranquille. Reste ainsi pendant trois respirations complètes, sans rien chercher à changer.<br>✨ Affirmation à répéter lentement, trois fois : « Je suis en harmonie avec moi-même et avec ce qui m'entoure. »`,
+        `✨ Ferme les yeux et allume dans ton esprit une bougie à la flamme calme et stable. Observe sa lumière grandir jusqu'à éclairer l'espace autour de toi.<br>✨ Visualise ensuite une lumière bleue qui t'enveloppe comme un manteau de protection, des pieds jusqu'au sommet de la tête. Respire profondément et sens que rien de ce qui ne te convient pas ne peut y entrer.<br>✨ Affirmation à répéter lentement, trois fois : « Mon espace est sacré, et je choisis ce que j'y accueille. »`,
+        `✨ Masse doucement tes tempes avec le bout des doigts, en petits cercles, pendant une minute. Mets dans ce geste l'intention de relâcher les pensées qui tournent en boucle.<br>✨ Respire l'élément Air, symbole de la Balance : inspire par le nez en imaginant une brise fraîche, expire par la bouche comme si tu dispersais des nuages. Répète sept fois, à ton rythme.<br>✨ Affirmation à répéter lentement, trois fois : « Mes pensées sont fluides, légères et bienveillantes. »`,
+        `✨ Tiens-toi debout, les pieds bien posés au sol, et imagine des racines qui descendent de tes plantes vers la terre. Sens l'énergie remonter lentement le long de tes jambes, stable et rassurante.<br>✨ Visualise un quartz rose lumineux au niveau de ton plexus solaire, juste sous les côtes. Laisse sa douceur apaiser les tensions de ton ventre et de ton souffle.<br>✨ Affirmation à répéter lentement, trois fois : « Je rayonne l'Amour, et je le reçois en retour. »`,
+        `✨ Prends un verre d'eau, tiens-le entre tes deux mains et dépose-y l'intention de te purifier et de t'hydrater en profondeur. Bois-le par petites gorgées, en savourant chacune comme une bénédiction.<br>✨ Pendant ce temps, imagine que cette eau lave tes fatigues et tes préoccupations, puis rejoint la terre qui les transforme. Observe la sensation de légèreté qui s'installe.<br>✨ Affirmation à répéter lentement, trois fois : « Je me libère de ce qui n'est plus nécessaire. »`,
+        `✨ Place-toi près d'une fenêtre ou à l'extérieur, et lève doucement les yeux vers le ciel, qu'il soit dégagé ou nuageux. Prends trois grandes respirations en laissant ton regard s'adoucir.<br>✨ Imagine un fil de lumière argentée qui relie ton cœur à la Lune. Sens-le te transmettre calme, intuition et confiance dans le rythme des cycles.<br>✨ Affirmation à répéter lentement, trois fois : « Je fais confiance au temps juste de ma vie. »`
     ];
 
-    const i = jour % 4; 
-
-    // --- Logique des Nombres Angéliques (Maintenue) ---
+    // ------------------------------------------------------------------
+    //  4. NOMBRES ANGÉLIQUES : un titre + 4 à 5 phrases
+    // ------------------------------------------------------------------
     const nombresAngeliques = [
-        { num: "000", msg: "Infini : Un nouveau départ s'offre à toi." },
-        { num: "111", msg: "Alignement : Tes pensées se manifestent rapidement." },
-        { num: "222", msg: "Confiance : Tu es au bon endroit, au bon moment." },
-        { num: "333", msg: "Protection : Les Maîtres Ascensionnés t'entourent." },
-        { num: "444", msg: "Soutien : Tes guides t'offrent leur force et leur aide." },
-        { num: "555", msg: "Changement : Une transformation positive arrive." },
-        { num: "666", msg: "Équilibre : Recentres tes pensées sur le spirituel." },
-        { num: "777", msg: "Miracles : La chance divine t'accompagne." },
-        { num: "888", msg: "Abondance : Un flux d'énergie financière s'ouvre." },
-        { num: "999", msg: "Accomplissement : Un cycle se termine pour un renouveau." }
+        { num: "000", titre: "Infini", msg: `Le triple zéro évoque le cercle sans début ni fin, le vide fertile d'où naît toute chose. Il apparaît souvent quand un chapitre se referme et qu'une page blanche s'ouvre devant toi. Rien n'est figé : tu as le droit de recommencer, de choisir autrement, de te réinventer. Accueille cet espace sans l'emplir trop vite, car c'est dans le silence que se dessinent les nouvelles directions. Aujourd'hui, un nouveau départ s'offre à toi.` },
+        { num: "111", titre: "Alignement", msg: `Le 111 est un rappel que tes pensées possèdent un pouvoir de création, surtout quand elles sont claires et sincères. Il apparaît lorsque ton intention et ton énergie s'accordent, comme un portail qui s'entrouvre. Observe ce à quoi tu accordes ton attention : c'est ce qui grandit. Choisis des pensées qui te soutiennent, car elles se manifestent plus vite qu'on ne le croit. Aujourd'hui, formule un souhait précis et garde-le près de ton cœur.` },
+        { num: "222", titre: "Confiance", msg: `Le 222 murmure que tout se met en place, même si le chemin semble lent ou incertain. Comme une graine qui travaille sous la terre, ce qui se prépare n'est pas encore visible mais déjà vivant. Cette séquence invite à la patience, à la coopération et à la foi dans le timing de la vie. Tu es au bon endroit, au bon moment, avec exactement ce qu'il te faut. Respire, relâche le contrôle et laisse les choses éclore.` },
+        { num: "333", titre: "Protection", msg: `Le 333 est souvent associé à la présence des Maîtres Ascensionnés, ces êtres de sagesse qui ont traversé l'expérience humaine et veillent avec bienveillance sur ceux qui cherchent la lumière. Il t'invite à sentir que tu n'es jamais seul(e) dans tes épreuves. Il évoque aussi l'expression de soi : ta voix, ta créativité et ta joie ont leur place. Appuie-toi sur ce soutien invisible pour oser ce que tu hésitais à faire. Aujourd'hui, tu es entouré(e), guidé(e) et protégé(e).` },
+        { num: "444", titre: "Soutien", msg: `Le 444 est le nombre des fondations solides, des racines profondes et de la stabilité qui rassure. Quand il apparaît, tes guides te signalent qu'ils sont à tes côtés et t'offrent leur force. Ce que tu bâtis avec constance, patience et honnêteté repose sur un terrain sûr. N'hésite pas à demander de l'aide, qu'elle soit humaine ou spirituelle : elle est déjà en route. Aujourd'hui, avance pas à pas, tu es soutenu(e) plus que tu ne le crois.` },
+        { num: "555", titre: "Changement", msg: `Le 555 annonce un vent de renouveau qui balaie ce qui ne servait plus. Les changements peuvent d'abord sembler bousculants, mais ils ouvrent des portes que tu n'aurais pas osé pousser seul(e). Cette énergie t'invite à la souplesse, à l'aventure et à la confiance dans l'inconnu. Pose-toi la question : de quoi suis-je prêt(e) à me libérer pour avancer plus léger(e) ? Une transformation positive arrive, accueille-la avec curiosité.` },
+        { num: "666", titre: "Équilibre", msg: `Loin de sa réputation, le 666 est un rappel d'équilibre : il apparaît quand l'attention se concentre trop sur le matériel, les soucis ou les inquiétudes. Il t'invite à replacer ton énergie là où elle nourrit vraiment ton âme. Prends un moment pour te reconnecter à ce qui est essentiel : ton souffle, tes valeurs, les personnes que tu aimes. Quand tu rééquilibres le visible et l'invisible, la tension se dissout. Recentre tes pensées sur le spirituel et laisse la paix revenir.` },
+        { num: "777", titre: "Miracles", msg: `Le 777 est le nombre de la grâce, de la sagesse intérieure et des heureuses synchronicités. Il apparaît lorsque tu es en phase avec ton chemin et que l'univers applaudit tes efforts. Les coïncidences se multiplient : une rencontre, une idée, une porte qui s'ouvre au bon moment. Remercie pour ce qui est déjà là, car la gratitude amplifie la chance. Aujourd'hui, la protection divine t'accompagne et les miracles ordinaires se multiplient.` },
+        { num: "888", titre: "Abondance", msg: `Le 888 symbolise l'infini en mouvement, le flux généreux qui circule entre ce que tu donnes et ce que tu reçois. Il parle d'abondance sous toutes ses formes : financière, bien sûr, mais aussi affective, créative et énergétique. Cette séquence t'encourage à te sentir digne de recevoir, sans culpabilité. Remercie pour tout ce qui est déjà là et sois généreux(se) à ton tour, car l'abondance aime circuler. Un flux d'énergie prospère s'ouvre devant toi.` },
+        { num: "999", titre: "Accomplissement", msg: `Le 999 marque la fin d'un grand cycle, la dernière étape avant le renouveau. Ce que tu as vécu, appris et traversé a fait de toi quelqu'un de plus sage et de plus entier. Honore ce chemin parcouru avec reconnaissance, même pour les passages difficiles. Laisse partir ce qui est complet pour faire de la place à ce qui arrive. Un cycle se termine, et il prépare un renouveau magnifique.` }
     ];
-    const indexAngel = jour % nombresAngeliques.length;
-    const angel = nombresAngeliques[indexAngel];
 
-    // Injection dans le HTML
+    const angel = nombresAngeliques[jourAnnee % nombresAngeliques.length];
+
+    // ------------------------------------------------------------------
+    //  5. CHOIX DES VARIANTES (modules différents → combinaisons variées)
+    // ------------------------------------------------------------------
+    const categorie = categoriePhaseLune(phaseLune);
+    const resonanceDuJour = resonances[jourAnnee % resonances.length] + " " + nuancesLune[categorie];
+    const rituelDuJour = rituels[jourAnnee % rituels.length];
+
+    // ------------------------------------------------------------------
+    //  6. INJECTION DANS LE HTML
+    // ------------------------------------------------------------------
+    const introEl = document.getElementById('daily-intro');
+    if (introEl) introEl.innerHTML = intro;
+
     document.getElementById('angel-number').innerText = angel.num;
-    document.getElementById('angel-message').innerText = angel.msg;
-    document.getElementById('daily-resonance').innerHTML = `"${resonances[i]}"`;
-    document.getElementById('daily-rituel').innerHTML = rituels[i];
+    document.getElementById('angel-message').innerHTML = `<strong>${angel.titre}</strong><br>${angel.msg}`;
+    document.getElementById('daily-resonance').innerHTML = `"${resonanceDuJour}"`;
+    document.getElementById('daily-rituel').innerHTML = rituelDuJour;
 }
 
 // --- NOUVELLE FONCTION MÉTÉO (À AJOUTER ICI) ---

@@ -659,7 +659,52 @@ function formatDateISO(date) {
 }
 
 function updateMoonData(date = new Date()) {
+    // Vérifier si SunCalc est chargé
+    if (typeof SunCalc === 'undefined') {
+        console.error('SunCalc n\'est pas chargé ! Ajoute cette ligne avant <script> :');
+        console.error('<script src="https://cdn.jsdelivr.net/npm/suncalc@1.9.0/suncalc.js"></script>');
+        
+        // Mode dégradé
+        const moonIconEl = document.getElementById("moon-icon");
+        const moonNameEl = document.getElementById("moon-name");
+        const moonZodiacEl = document.getElementById("moon-zodiac");
+        const moonDataEl = document.getElementById("moon-data");
+        
+        if (moonIconEl) moonIconEl.innerText = "🌙";
+        if (moonNameEl) moonNameEl.innerText = "Chargement...";
+        if (moonZodiacEl) moonZodiacEl.innerText = "Lune en transit";
+        if (moonDataEl) moonDataEl.innerText = "Données indisponibles";
+        
+        return {
+            name: "Inconnue",
+            icon: "🌙",
+            quality: "Attente",
+            illumination: 0
+        };
+    }
+
     const illumination = SunCalc.getMoonIllumination(date);
+    
+    // Vérifier si illumination.phase existe
+    if (!illumination || typeof illumination.phase === 'undefined') {
+        console.error('SunCalc.getMoonIllumination a retourné une valeur invalide', illumination);
+        
+        const moonIconEl = document.getElementById("moon-icon");
+        const moonNameEl = document.getElementById("moon-name");
+        const moonZodiacEl = document.getElementById("moon-zodiac");
+        
+        if (moonIconEl) moonIconEl.innerText = "🌙";
+        if (moonNameEl) moonNameEl.innerText = "Erreur calcul";
+        if (moonZodiacEl) moonZodiacEl.innerText = "Lune en transit";
+        
+        return {
+            name: "Erreur",
+            icon: "🌙",
+            quality: "Erreur",
+            illumination: 0
+        };
+    }
+
     const phase = getMoonPhaseName(illumination.phase);
 
     const moonPosition = SunCalc.getMoonPosition(
@@ -677,26 +722,17 @@ function updateMoonData(date = new Date()) {
     const illuminationPercent = Math.round(illumination.fraction * 100);
 
     // --- CALCUL DE LA LONGITUDE ÉCLIPTIQUE ---
-    // SunCalc donne ascension droite (ra) et déclinaison (dec)
-    // On convertit en longitude écliptique pour le zodiaque tropical
-    
-    const ra = moonPosition.ra; // ascension droite en radians
-    const dec = moonPosition.dec; // déclinaison en radians
-    
-    // Obliquité de l'écliptique (inclinaison de l'axe terrestre)
-    // Valeur moyenne pour 2000-2050 : ~23.439°
+    const ra = moonPosition.ra;
+    const dec = moonPosition.dec;
     const obliquity = 23.439 * Math.PI / 180;
     
-    // Conversion vers longitude écliptique (formule astronomique standard)
     let eclipticLongitude = Math.atan2(
         Math.sin(ra) * Math.cos(obliquity) + Math.tan(dec) * Math.sin(obliquity),
         Math.cos(ra)
     );
     
-    // Normaliser entre 0 et 2π
     eclipticLongitude = ((eclipticLongitude * 180 / Math.PI) + 360) % 360;
     
-    // --- TABLEAU DES SIGNES ZODIACAUX ---
     const zodiacSigns = [
         { name: "Bélier", symbol: "♈", start: 0 },
         { name: "Taureau", symbol: "♉", start: 30 },
@@ -712,7 +748,6 @@ function updateMoonData(date = new Date()) {
         { name: "Poissons", symbol: "♓", start: 330 }
     ];
     
-    // Trouver le signe
     const signIndex = Math.floor(eclipticLongitude / 30);
     const currentSign = zodiacSigns[signIndex];
     const degreeInSign = (eclipticLongitude % 30).toFixed(1);
@@ -734,8 +769,7 @@ function updateMoonData(date = new Date()) {
     }
 
     if (moonDataEl) {
-        moonDataEl.innerText =
-            `${phase.name} — ${illuminationPercent}% éclairée`;
+        moonDataEl.innerText = `${phase.name} — ${illuminationPercent}% éclairée`;
     }
 
     return {
@@ -753,7 +787,6 @@ function updateMoonData(date = new Date()) {
         eclipticLongitude: eclipticLongitude.toFixed(2)
     };
 }
-
     async function updateSunAndWeather() {
     const today = formatDateISO(new Date());
 

@@ -117,14 +117,23 @@
     <h3 style="color:var(--gold); margin-top:0; font-size: 1.1rem;">🌌 Ton Ciel Vibratoire</h3>
     <p id="daily-intro" style="font-size: 0.9rem; line-height: 1.6; color: #e2e8f0;">Bienvenue dans ton calendrier vibratoire. ✨🌙</p>
 
-    <div id="natal-form" style="display:flex; flex-wrap:wrap; gap:12px; margin:15px 0;">
-    <label class="champ-natal">📅 Date de naissance
-        <input type="date" id="n-date">
+    <div class="champ-natal" style="flex:1 1 100%">📍 Lieu de naissance (ville, pays)
+        <div style="display:flex; gap:8px;">
+            <input type="text" id="n-lieu" placeholder="ex. Fort-de-France, Dakar, Lyon, Shanghai" style="flex:1" onkeydown="if(event.key==='Enter'){event.preventDefault();chercherLieu();}">
+            <button type="button" class="audio-btn" style="width:auto; margin-top:0" onclick="chercherLieu()">Rechercher</button>
+        </div>
+    </div>
+    <label class="champ-natal" id="n-choix-box" style="flex:1 1 100%; display:none">Choisis le bon lieu
+        <select id="n-choix" onchange="choisirLieu()"></select>
     </label>
-    <label class="champ-natal">🕐 Heure de naissance (si connue)
-        <input type="time" id="n-time">
+    <input type="hidden" id="n-tz">
+    <label class="champ-natal">Latitude
+        <input type="number" id="n-lat" step="any" placeholder="rempli automatiquement" oninput="document.getElementById('n-tz').value=''">
     </label>
-    <label class="champ-natal">🌎 Fuseau horaire à ta naissance
+    <label class="champ-natal">Longitude
+        <input type="number" id="n-lon" step="any" placeholder="rempli automatiquement" oninput="document.getElementById('n-tz').value=''">
+    </label>
+    <label class="champ-natal">🌎 Fuseau (seulement si le lieu n'est pas trouvé)
         <select id="n-utc">
             <option value="-3|ADT">Atlantique – heure d'été (ADT)</option>
             <option value="-4|AST">Atlantique – heure normale (AST)</option>
@@ -136,8 +145,10 @@
             <option value="-7|MST">Montagne – heure normale (MST)</option>
             <option value="-7|PDT">Pacifique – heure d'été (PDT)</option>
             <option value="-8|PST">Pacifique – heure normale (PST)</option>
+            <option value="0|GMT">Londres / Afrique de l'Ouest – heure normale (GMT)</option>
             <option value="1|CET">Europe centrale – heure normale (CET)</option>
             <option value="2|CEST">Europe centrale – heure d'été (CEST)</option>
+            <option value="8|CST">Chine (UTC+8)</option>
         </select>
     </label>
     <label class="champ-natal">📍 Lieu de naissance

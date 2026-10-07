@@ -595,16 +595,38 @@ function genererGuidanceQuotidienne(phaseLune) {
     const rituelDuJour = rituels[jourAnnee % rituels.length];
 
     // ------------------------------------------------------------------
-    //  6. INJECTION DANS LE HTML
+    //  6. MISE EN FORME (espacement aéré, majuscules seulement pour le titre)
+    // ------------------------------------------------------------------
+    const styleTexte = "margin:0 0 18px 0;line-height:1.9;letter-spacing:0.3px;text-transform:none;font-weight:normal;";
+    const para = (txt) => `<p style="${styleTexte}">${txt}</p>`;
+
+    const introHTML = para(intro);
+
+    const resonanceHTML =
+        para(`« ${resonances[jourAnnee % resonances.length]} »`) +
+        `<p style="${styleTexte}font-style:italic;opacity:0.9;">${nuancesLune[categorie]}</p>`;
+
+    const rituelHTML = rituelDuJour
+        .split("<br>")
+        .map(ligne => `<div style="margin:0 0 16px 0;line-height:1.9;letter-spacing:0.3px;text-transform:none;font-weight:normal;">${ligne}</div>`)
+        .join("");
+
+    const angelHTML =
+        `<div style="text-transform:uppercase;letter-spacing:4px;font-weight:600;margin:6px 0 16px 0;">${angel.titre}</div>` +
+        para(angel.msg);
+
+    // ------------------------------------------------------------------
+    //  7. INJECTION DANS LE HTML
     // ------------------------------------------------------------------
     const introEl = document.getElementById('daily-intro');
-    if (introEl) introEl.innerHTML = intro;
+    if (introEl) introEl.innerHTML = introHTML;
 
     document.getElementById('angel-number').innerText = angel.num;
-    document.getElementById('angel-message').innerHTML = `<strong>${angel.titre}</strong><br>${angel.msg}`;
-    document.getElementById('daily-resonance').innerHTML = `"${resonanceDuJour}"`;
-    document.getElementById('daily-rituel').innerHTML = rituelDuJour;
+    document.getElementById('angel-message').innerHTML = angelHTML;
+    document.getElementById('daily-resonance').innerHTML = resonanceHTML;
+    document.getElementById('daily-rituel').innerHTML = rituelHTML;
 }
+
 
 // --- NOUVELLE FONCTION MÉTÉO (À AJOUTER ICI) ---
 async function updateWeather() {

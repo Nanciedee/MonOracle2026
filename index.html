@@ -676,6 +676,48 @@ function updateMoonData(date = new Date()) {
 
     const illuminationPercent = Math.round(illumination.fraction * 100);
 
+    // --- CALCUL DE LA LONGITUDE ÉCLIPTIQUE ---
+    // SunCalc donne ascension droite (ra) et déclinaison (dec)
+    // On convertit en longitude écliptique pour le zodiaque tropical
+    
+    const ra = moonPosition.ra; // ascension droite en radians
+    const dec = moonPosition.dec; // déclinaison en radians
+    
+    // Obliquité de l'écliptique (inclinaison de l'axe terrestre)
+    // Valeur moyenne pour 2000-2050 : ~23.439°
+    const obliquity = 23.439 * Math.PI / 180;
+    
+    // Conversion vers longitude écliptique (formule astronomique standard)
+    let eclipticLongitude = Math.atan2(
+        Math.sin(ra) * Math.cos(obliquity) + Math.tan(dec) * Math.sin(obliquity),
+        Math.cos(ra)
+    );
+    
+    // Normaliser entre 0 et 2π
+    eclipticLongitude = ((eclipticLongitude * 180 / Math.PI) + 360) % 360;
+    
+    // --- TABLEAU DES SIGNES ZODIACAUX ---
+    const zodiacSigns = [
+        { name: "Bélier", symbol: "♈", start: 0 },
+        { name: "Taureau", symbol: "♉", start: 30 },
+        { name: "Gémeaux", symbol: "♊", start: 60 },
+        { name: "Cancer", symbol: "♋", start: 90 },
+        { name: "Lion", symbol: "♌", start: 120 },
+        { name: "Vierge", symbol: "♍", start: 150 },
+        { name: "Balance", symbol: "♎", start: 180 },
+        { name: "Scorpion", symbol: "♏", start: 210 },
+        { name: "Sagittaire", symbol: "♐", start: 240 },
+        { name: "Capricorne", symbol: "♑", start: 270 },
+        { name: "Verseau", symbol: "♒", start: 300 },
+        { name: "Poissons", symbol: "♓", start: 330 }
+    ];
+    
+    // Trouver le signe
+    const signIndex = Math.floor(eclipticLongitude / 30);
+    const currentSign = zodiacSigns[signIndex];
+    const degreeInSign = (eclipticLongitude % 30).toFixed(1);
+    
+    // --- MISE À JOUR DU DOM ---
     const moonIconEl = document.getElementById("moon-icon");
     const moonNameEl = document.getElementById("moon-name");
     const moonZodiacEl = document.getElementById("moon-zodiac");
@@ -688,13 +730,29 @@ function updateMoonData(date = new Date()) {
     }
 
     if (moonZodiacEl) {
-        moonZodiacEl.innerText = "Cycle lunaire calculé astronomiquement";
+        moonZodiacEl.innerText = `Lune en ${currentSign.name} ${currentSign.symbol} (${degreeInSign}°)`;
     }
 
     if (moonDataEl) {
         moonDataEl.innerText =
             `${phase.name} — ${illuminationPercent}% éclairée`;
     }
+
+    return {
+        name: phase.name,
+        icon: phase.icon,
+        quality: phase.quality,
+        phaseValue: illumination.phase,
+        illumination: illuminationPercent,
+        altitude: moonPosition.altitude,
+        moonrise: moonTimes.rise ? formatTime(moonTimes.rise) : "--:--",
+        moonset: moonTimes.set ? formatTime(moonTimes.set) : "--:--",
+        zodiacSign: currentSign.name,
+        zodiacSymbol: currentSign.symbol,
+        degreeInSign: degreeInSign,
+        eclipticLongitude: eclipticLongitude.toFixed(2)
+    };
+}
 
     return {
         name: phase.name,

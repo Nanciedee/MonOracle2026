@@ -671,9 +671,7 @@ function formatDateISO(date) {
 function updateMoonData(date = new Date()) {
     // Vérifier si SunCalc est chargé
     if (typeof SunCalc === 'undefined') {
-        console.error('SunCalc n\'est pas chargé ! Ajoute cette ligne avant <script> :');
-        console.error('<script src="https://cdn.jsdelivr.net/npm/suncalc@1.9.0/suncalc.js"></script>');
-        
+            
         // Mode dégradé
         const moonIconEl = document.getElementById("moon-icon");
         const moonNameEl = document.getElementById("moon-name");
@@ -732,16 +730,11 @@ function updateMoonData(date = new Date()) {
     const illuminationPercent = Math.round(illumination.fraction * 100);
 
     // --- CALCUL DE LA LONGITUDE ÉCLIPTIQUE ---
-    const ra = moonPosition.ra;
-    const dec = moonPosition.dec;
-    const obliquity = 23.439 * Math.PI / 180;
-    
-    let eclipticLongitude = Math.atan2(
-        Math.sin(ra) * Math.cos(obliquity) + Math.tan(dec) * Math.sin(obliquity),
-        Math.cos(ra)
-    );
-    
-    eclipticLongitude = ((eclipticLongitude * 180 / Math.PI) + 360) % 360;
+    const radM = Math.PI / 180;
+    const dM = date.valueOf() / 86400000 - 0.5 + 2440588 - 2451545;
+    const LM = radM * (218.316 + 13.176396 * dM);
+    const MM = radM * (134.963 + 13.064993 * dM);
+    const eclipticLongitude = ((((LM + radM * 6.289 * Math.sin(MM)) / radM) % 360) + 360) % 360;
     
     const zodiacSigns = [
         { name: "Bélier", symbol: "♈", start: 0 },

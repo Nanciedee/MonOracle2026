@@ -473,53 +473,162 @@ const messages = ["Alignement éthérique...", "Lecture des archives...", "Harmo
         osc.start(); osc.stop(audioCtx.currentTime + 6);
     }
     
+// =====================================================================
+//  GUIDANCE QUOTIDIENNE – version immersive (12 signes avec icônes)
+// =====================================================================
+
+function obtenirSigneSolaire(date) {
+    const debuts = [
+        [1, 20, "Verseau"], [2, 19, "Poissons"], [3, 21, "Bélier"], [4, 20, "Taureau"],
+        [5, 21, "Gémeaux"], [6, 21, "Cancer"], [7, 23, "Lion"], [8, 23, "Vierge"],
+        [9, 23, "Balance"], [10, 23, "Scorpion"], [11, 22, "Sagittaire"], [12, 22, "Capricorne"]
+    ];
+    const m = date.getMonth() + 1;
+    const d = date.getDate();
+    let signe = "Capricorne";
+    for (const [mois, jourDebut, nom] of debuts) {
+        if (m > mois || (m === mois && d >= jourDebut)) signe = nom;
+    }
+    return signe;
+}
+
+function categoriePhaseLune(phaseLune) {
+    const p = String(phaseLune || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    if (p.includes("nouvelle")) return "nouvelle";
+    if (p.includes("pleine")) return "pleine";
+    if (p.includes("premier quartier")) return "premierQuartier";
+    if (p.includes("dernier quartier")) return "dernierQuartier";
+    if (p.includes("decroissant")) return "decroissante";
+    if (p.includes("croissant")) return "croissante";
+    return "neutre";
+}
+
 function genererGuidanceQuotidienne(phaseLune) {
-    const jour = new Date().getDate();
-    
-    const intros = [
-        "L'énergie du Scorpion en progression t'invite à sonder tes profondeurs.",
-        "Ta vibration Balance cherche l'harmonie parfaite dans tes échanges.",
-        "Le ciel tisse un lien entre ton intuition et tes actions concrètes.",
-        "Ton Soleil en Balance brille aujourd'hui avec une clarté nouvelle."
+    const maintenant = new Date();
+    const jourAnnee = Math.floor((maintenant - new Date(maintenant.getFullYear(), 0, 0)) / 86400000);
+    const signe = obtenirSigneSolaire(maintenant);
+
+    const introsParSigne = {
+        "♈ Bélier": [
+            `Le Soleil traverse le Bélier, et avec lui se lève une énergie de feu qui t'invite à l'action et à l'affirmation de soi. Ce signe de feu t'appelle à oser, à initier, à prendre ton élan sans attendre. Aujourd'hui, quelque chose en toi cherche à naître, à se déclarer, à se mettre en mouvement. Écoute cet élan : il porte la semence de ton prochain commencement.`,
+            `La vibration du Bélier colore ta journée d'une audace nouvelle. Ce signe t'invite à trancher, à choisir, à avancer même si le chemin n'est pas entièrement éclairé. Ton défi du jour : agir avec courage tout en restant à l'écoute de ton intuition. C'est dans ce juste équilibre entre élan et conscience que tu trouveras ta force.`
+        ],
+        "♉ Taureau": [
+            `Le Soleil traverse le Taureau, et avec lui monte une énergie de terre, lente, stable et sensuelle. Ce signe t'invite à ralentir, à ancrer, à savourer ce qui est déjà là. Aujourd'hui, la vie te demande de poser des bases solides, de construire pas à pas, de faire confiance au temps. Ce qui grandit dans la patience porte des fruits durables.`,
+            `La vibration du Taureau t'appelle à reconnecter avec tes sens : le goût, le toucher, l'odorat, la vue, l'ouïe. Prends un moment pour apprécier la beauté simple d'un objet, d'un lieu, d'un geste. Ce signe te rappelle que la vraie richesse est souvent discrète, et qu'elle se trouve dans ce que tu as déjà.`
+        ],
+        "♊ Gémeaux": [
+            `Le Soleil traverse les Gémeaux, et avec lui circule une énergie d'air, légère, curieuse et communicante. Ce signe t'invite à explorer, à apprendre, à relier les idées et les personnes. Aujourd'hui, ton esprit est vif, ta parole est fluide, et les rencontres peuvent t'ouvrir de nouvelles perspectives.`,
+            `La vibration des Gémeaux t'appelle à sortir de tes certitudes, à accueillir la diversité des points de vue. Ce signe te rappelle que la vérité a souvent plusieurs visages, et que la richesse est dans l'échange. Ose poser des questions, ose dire ce que tu penses : ta voix porte aujourd'hui.`
+        ],
+        "♋ Cancer": [
+            `Le Soleil traverse le Cancer, et avec lui monte une énergie d'eau, sensible, protectrice et intuitive. Ce signe t'invite à écouter tes émotions, à prendre soin de toi et des tiens, à créer un cocon de sécurité. Aujourd'hui, ton intuition est ta boussole : fais-lui confiance.`,
+            `La vibration du Cancer t'appelle à honorer ta vulnérabilité, à ne pas la cacher mais à l'accueillir comme une force. Ce signe te rappelle que la sensibilité est un don, et que prendre soin de ton monde intérieur te permet de mieux prendre soin du monde extérieur.`
+        ],
+        "♌ Lion": [
+            `Le Soleil traverse le Lion, et avec lui rayonne une énergie de feu, créative, généreuse et joyeuse. Ce signe t'invite à briller, à créer, à exprimer qui tu es sans retenue. Aujourd'hui, ton cœur veut chanter, ton corps veut danser, ton âme veut se montrer.`,
+            `La vibration du Lion t'appelle à reprendre ta place, à oser être vu(e), à partager tes dons avec le monde. Ce signe te rappelle que tu as quelque chose d'unique à offrir, et que le monde a besoin de ta lumière. N'aie pas peur de briller : c'est ta nature.`
+        ],
+        "♍ Vierge": [
+            `Le Soleil traverse la Vierge, et avec lui circule une énergie de terre, précise, dévouée et attentive. Ce signe t'invite à perfectionner, à organiser, à prendre soin des détails. Aujourd'hui, ton regard est aigu, ton esprit est clair, et tu vois ce qui peut être amélioré.`,
+            `La vibration de la Vierge t'appelle à servir avec humilité, à mettre tes compétences au service du bien commun. Ce signe te rappelle que les petits gestes comptent, et que la perfection n'est pas dans l'exploit mais dans la constance. Prends soin de toi en prenant soin des autres.`
+        ],
+        "♎ Balance": [
+            `Ton Soleil traverse la Balance, le signe qui cherche la beauté dans chaque rencontre et la justesse dans chaque parole. Aujourd'hui, l'air semble plus léger autour de toi, comme si les tensions acceptaient enfin de se dénouer. Regarde où tu peux remplacer l'effort par la douceur : c'est souvent là que la vraie harmonie se cache. Tes échanges sont des miroirs, et ce que tu offres avec sincérité te revient avec élégance.`,
+            `La vibration de la Balance t'invite à tenir le fil délicat entre ce que tu désires et ce que tu donnes. Ce signe d'Air aime les conversations qui éclairent, les compromis qui honorent chacun et les gestes qui apaisent. Ton regard est aujourd'hui plus clair, plus juste, capable de voir les deux côtés d'une situation sans perdre ton centre. Fais confiance à cette clarté nouvelle : elle sait où se trouve ton équilibre.`
+        ],
+        "♏ Scorpion": [
+            `Le Soleil entre dans le Scorpion, et avec lui monte une énergie d'eau profonde, silencieuse et magnétique. Ce signe ne se contente jamais de la surface : il t'invite à descendre là où vivent tes vérités les plus intimes. Ce que tu ressens peut sembler intense, mais c'est le signe que quelque chose en toi est prêt à se transformer. Accueille cette profondeur sans la fuir, car elle contient exactement la force dont tu as besoin.`,
+            `L'énergie du Scorpion en progression t'invite à sonder tes profondeurs, là où dorment tes désirs véritables et tes blessures en voie de guérison. Comme le phénix, ce signe connaît l'art de renaître de ce qu'il laisse derrière lui. Aujourd'hui, une part de toi cherche à lâcher une vieille peau pour laisser place à plus de vérité. Avance avec courage : tout ce qui se transforme dans l'ombre finit par briller à la lumière.`
+        ],
+        "♐ Sagittaire": [
+            `Le Soleil traverse le Sagittaire, signe de feu tourné vers l'horizon, la quête de sens et la joie d'explorer. Ton esprit aspire aujourd'hui à voir plus loin, à comprendre pourquoi les choses arrivent plutôt que simplement comment. Laisse ta curiosité te guider vers une idée, un lieu ou une conversation qui élargit ton regard. L'optimisme est une boussole fiable : il t'indique la direction où ta vie veut grandir.`,
+            `La vibration du Sagittaire t'invite à élargir tes horizons, à croire en la vie, à faire confiance à l'avenir. Ce signe de Feu t'appelle à l'aventure, à la découverte, à la foi dans ce qui vient. Aujourd'hui, quelque chose en toi veut grandir, s'élever, toucher le ciel. Suis cet élan : il te mène vers ta vérité.`
+        ],
+        "♑ Capricorne": [
+            `Le Soleil traverse le Capricorne, et avec lui monte une énergie de terre, ambitieuse, disciplinée et patiente. Ce signe t'invite à construire, à persévérer, à viser haut tout en restant concret. Aujourd'hui, ton sens des responsabilités est éveillé, et tu sais ce que tu veux.`,
+            `La vibration du Capricorne t'appelle à avancer pas à pas, à ne pas te décourager face aux obstacles, à faire confiance au temps. Ce signe te rappelle que les plus grandes réalisations sont le fruit d'un travail constant. Honore tes engagements, et le monde t'honorera en retour.`
+        ],
+        "♒ Verseau": [
+            `Le Soleil traverse le Verseau, et avec lui circule une énergie d'air, originale, humaniste et libre. Ce signe t'invite à penser autrement, à innover, à rêver d'un monde meilleur. Aujourd'hui, ton esprit est tourné vers l'avenir, et tu sens que le changement est possible.`,
+            `La vibration du Verseau t'appelle à être toi-même, sans compromis, sans peur du regard des autres. Ce signe te rappelle que ta singularité est ta force, et que le monde a besoin de ta vision. Ose être différent(e) : c'est ainsi que tu inspires.`
+        ],
+        "♓ Poissons": [
+            `Le Soleil traverse les Poissons, et avec lui monte une énergie d'eau, rêveuse, intuitive et compatissante. Ce signe t'invite à écouter ton monde intérieur, à te connecter à l'invisible, à faire confiance à ton intuition. Aujourd'hui, tes ressentis sont tes guides.`,
+            `La vibration des Poissons t'appelle à la douceur, à la compassion, à l'ouverture de cœur. Ce signe te rappelle que tu es relié(e) à tout ce qui vit, et que ta sensibilité est un pont vers le divin. Laisse-toi porter par le flux de la vie : il te mène là où tu dois être.`
+        ]
+    };
+
+    const introGenerique = [
+        `Ton Soleil traverse aujourd'hui le signe du ${signe}, et son énergie colore subtilement chacune de tes journées. Prends un instant pour sentir comment cette vibration résonne en toi : une envie, une tension, un élan peut-être. Chaque signe porte une leçon, et celle d'aujourd'hui se révèle dans les petits détails de ton quotidien. Reste attentif et bienveillant envers toi-même : le ciel te parle à travers ce que tu ressens.`
     ];
-    
+
+    const variantesIntro = introsParSigne[signe] || introGenerique;
+    const intro = variantesIntro[jourAnnee % variantesIntro.length];
+
     const resonances = [
-        `Sous cette ${phaseLune}, ta diplomatie naturelle est ta plus grande force.`,
-        `Le mouvement céleste active ta transformation intérieure. Ose muer.`,
-        `L'équilibre entre donner et recevoir est la clé de ta paix aujourd'hui.`,
-        `Une résonance cristalline favorise ton discernement spirituel.`
+        `Sous cette ${phaseLune}, ta diplomatie naturelle devient ton plus beau talent. Tu sais écouter ce qui se dit entre les mots, et les autres le sentent. Aujourd'hui, une parole mesurée aura plus de poids que mille arguments. Choisis la douceur sans renoncer à ta vérité : c'est ainsi que tu désarmes les conflits avant même qu'ils naissent.`,
+        `Le mouvement céleste réveille ta transformation intérieure, comme une marée lente qui change le paysage sans bruit. Quelque chose en toi a déjà commencé à muer, même si tu ne le vois pas encore clairement. Ose laisser partir ce qui ne te ressemble plus : une habitude, une croyance, une attente trop lourde. Sous la ${phaseLune}, ce que tu libères fait de la place pour ce qui est vrai.`,
+        `L'équilibre entre donner et recevoir est la clé de ta paix aujourd'hui. Tu as peut-être l'habitude d'offrir beaucoup, parfois au-delà de ce que ton cœur peut porter. Permets-toi d'accepter une aide, un compliment ou simplement un moment de repos sans te justifier. La ${phaseLune} rappelle que le flux de la vie circule dans les deux sens.`,
+        `Une résonance cristalline traverse ta journée et affine ton discernement spirituel. Les signes, les coïncidences et les intuitions soudaines ne sont pas du hasard : ils sont des invitations à regarder plus loin. Prends le temps de noter ce qui te frappe, même si cela te semble anodin. Sous la ${phaseLune}, ta perception devient un instrument précis, à condition de lui laisser du silence.`,
+        `Aujourd'hui, ton cœur et ta raison cherchent à parler la même langue. Si une décision te pèse, demande-toi ce que tu choisirais sans peur, puis observe ce que ton corps répond. Une sensation d'ouverture est souvent plus fiable qu'une longue liste d'arguments. La ${phaseLune} soutient cette alliance entre intuition et lucidité.`,
+        `Une énergie de renouveau circule autour de toi, discrète mais bien réelle. Elle se glisse dans les détails : une lumière sur un mur, un sourire inattendu, une idée qui surgit au bon moment. Ne cherche pas à tout comprendre, contente-toi d'accueillir ce qui se présente avec gratitude. Sous la ${phaseLune}, la vie te montre que les commencements n'ont pas besoin d'être spectaculaires.`,
+        `Ta sensibilité est aujourd'hui une boussole, pas une fragilité. Ce que tu perçois chez les autres, ce que tu devines avant qu'on te le dise, tout cela nourrit ta sagesse. Protège ton énergie en choisissant les lieux et les personnes qui te font du bien. La ${phaseLune} t'enseigne que se préserver n'est pas se fermer, c'est rester fidèle à soi.`
     ];
+
+    const nuancesLune = {
+        nouvelle: `La Nouvelle Lune, en particulier, est un terrain fertile pour planter une intention : formule-la simplement, comme une graine confiée à la nuit.`,
+        croissante: `Cette lune croissante amplifie ton élan, c'est le bon moment pour passer à l'action, même par de petits pas.`,
+        premierQuartier: `Le Premier Quartier met ta détermination à l'épreuve, et te rappelle qu'un obstacle franchi aujourd'hui renforce ta confiance pour la suite.`,
+        pleine: `La Pleine Lune éclaire tout ce qui était dans l'ombre : accueille ce qui se révèle, sans jugement, comme un cadeau de lucidité.`,
+        decroissante: `Cette lune décroissante favorise le lâcher-prise : c'est le moment idéal pour clarifier, ranger et pardonner.`,
+        dernierQuartier: `Le Dernier Quartier invite au bilan tendre : remercie ce qui s'achève et garde ce qui a de la valeur.`,
+        neutre: `Laisse le rythme de la Lune guider ton souffle et rappelle-toi que chaque phase a sa sagesse.`
+    };
 
     const rituels = [
-        "✨ Inspire la lumière dorée (4s), expire tes doutes.<br>✨ Pose tes mains sur ton cœur.<br>✨ Affirmation : 'Je suis en harmonie.'",
-        "✨ Allume une bougie virtuelle dans ton esprit.<br>✨ Visualise une lumière bleue de protection.<br>✨ Affirmation : 'Mon espace est sacré.'",
-        "✨ Masse doucement tes tempes avec une intention de paix.<br>✨ Respire l'élément Air (Balance).<br>✨ Affirmation : 'Mes pensées sont fluides.'",
-        "✨ Ancre tes pieds au sol et sens l'énergie remonter.<br>✨ Visualise un quartz rose sur ton plexus.<br>✨ Affirmation : 'Je rayonne l'Amour.'"
+        `✨ Installe-toi confortablement, le dos droit, et inspire une lumière dorée pendant 4 secondes en imaginant qu'elle remplit ta poitrine. Retiens ce souffle un instant, puis expire lentement tes doutes comme une brume qui se dissipe.<br>✨ Pose tes deux mains sur ton cœur et sens sa chaleur et son rythme tranquille. Reste ainsi pendant trois respirations complètes, sans rien chercher à changer.<br>✨ Affirmation à répéter lentement, trois fois : « Je suis en harmonie avec moi-même et avec ce qui m'entoure. »`,
+        `✨ Ferme les yeux et allume dans ton esprit une bougie à la flamme calme et stable. Observe sa lumière grandir jusqu'à éclairer l'espace autour de toi.<br>✨ Visualise ensuite une lumière bleue qui t'enveloppe comme un manteau de protection, des pieds jusqu'au sommet de la tête. Respire profondément et sens que rien de ce qui ne te convient pas ne peut y entrer.<br>✨ Affirmation à répéter lentement, trois fois : « Mon espace est sacré, et je choisis ce que j'y accueille. »`,
+        `✨ Masse doucement tes tempes avec le bout des doigts, en petits cercles, pendant une minute. Mets dans ce geste l'intention de relâcher les pensées qui tournent en boucle.<br>✨ Respire l'élément Air, symbole de la Balance : inspire par le nez en imaginant une brise fraîche, expire par la bouche comme si tu dispersais des nuages. Répète sept fois, à ton rythme.<br>✨ Affirmation à répéter lentement, trois fois : « Mes pensées sont fluides, légères et bienveillantes. »`,
+        `✨ Tiens-toi debout, les pieds bien posés au sol, et imagine des racines qui descendent de tes plantes vers la terre. Sens l'énergie remonter lentement le long de tes jambes, stable et rassurante.<br>✨ Visualise un quartz rose lumineux au niveau de ton plexus solaire, juste sous les côtes. Laisse sa douceur apaiser les tensions de ton ventre et de ton souffle.<br>✨ Affirmation à répéter lentement, trois fois : « Je rayonne l'Amour, et je le reçois en retour. »`,
+        `✨ Prends un verre d'eau, tiens-le entre tes deux mains et dépose-y l'intention de te purifier et de t'hydrater en profondeur. Bois-le par petites gorgées, en savourant chacune comme une bénédiction.<br>✨ Pendant ce temps, imagine que cette eau lave tes fatigues et tes préoccupations, puis rejoint la terre qui les transforme. Observe la sensation de légèreté qui s'installe.<br>✨ Affirmation à répéter lentement, trois fois : « Je me libère de ce qui n'est plus nécessaire. »`,
+        `✨ Place-toi près d'une fenêtre ou à l'extérieur, et lève doucement les yeux vers le ciel, qu'il soit dégagé ou nuageux. Prends trois grandes respirations en laissant ton regard s'adoucir.<br>✨ Imagine un fil de lumière argentée qui relie ton cœur à la Lune. Sens-le te transmettre calme, intuition et confiance dans le rythme des cycles.<br>✨ Affirmation à répéter lentement, trois fois : « Je fais confiance au temps juste de ma vie. »`
     ];
 
-    const i = jour % 4; 
-
-    // --- Logique des Nombres Angéliques (Maintenue) ---
     const nombresAngeliques = [
-        { num: "000", msg: "Infini : Un nouveau départ s'offre à toi." },
-        { num: "111", msg: "Alignement : Tes pensées se manifestent rapidement." },
-        { num: "222", msg: "Confiance : Tu es au bon endroit, au bon moment." },
-        { num: "333", msg: "Protection : Les Maîtres Ascensionnés t'entourent." },
-        { num: "444", msg: "Soutien : Tes guides t'offrent leur force et leur aide." },
-        { num: "555", msg: "Changement : Une transformation positive arrive." },
-        { num: "666", msg: "Équilibre : Recentres tes pensées sur le spirituel." },
-        { num: "777", msg: "Miracles : La chance divine t'accompagne." },
-        { num: "888", msg: "Abondance : Un flux d'énergie financière s'ouvre." },
-        { num: "999", msg: "Accomplissement : Un cycle se termine pour un renouveau." }
+        { num: "000", titre: "Infini", msg: `Le triple zéro évoque le cercle sans début ni fin, le vide fertile d'où naît toute chose. Il apparaît souvent quand un chapitre se referme et qu'une page blanche s'ouvre devant toi. Rien n'est figé : tu as le droit de recommencer, de choisir autrement, de te réinventer. Accueille cet espace sans l'emplir trop vite, car c'est dans le silence que se dessinent les nouvelles directions. Aujourd'hui, un nouveau départ s'offre à toi.` },
+        { num: "111", titre: "Alignement", msg: `Le 111 est un rappel que tes pensées possèdent un pouvoir de création, surtout quand elles sont claires et sincères. Il apparaît lorsque ton intention et ton énergie s'accordent, comme un portail qui s'entrouvre. Observe ce à quoi tu accordes ton attention : c'est ce qui grandit. Choisis des pensées qui te soutiennent, car elles se manifestent plus vite qu'on ne le croit. Aujourd'hui, formule un souhait précis et garde-le près de ton cœur.` },
+        { num: "222", titre: "Confiance", msg: `Le 222 murmure que tout se met en place, même si le chemin semble lent ou incertain. Comme une graine qui travaille sous la terre, ce qui se prépare n'est pas encore visible mais déjà vivant. Cette séquence invite à la patience, à la coopération et à la foi dans le timing de la vie. Tu es au bon endroit, au bon moment, avec exactement ce qu'il te faut. Respire, relâche le contrôle et laisse les choses éclore.` },
+        { num: "333", titre: "Protection", msg: `Le 333 est souvent associé à la présence des Maîtres Ascensionnés, ces êtres de sagesse qui ont traversé l'expérience humaine et veillent avec bienveillance sur ceux qui cherchent la lumière. Il t'invite à sentir que tu n'es jamais seul(e) dans tes épreuves. Il évoque aussi l'expression de soi : ta voix, ta créativité et ta joie ont leur place. Appuie-toi sur ce soutien invisible pour oser ce que tu hésitais à faire. Aujourd'hui, tu es entouré(e), guidé(e) et protégé(e).` },
+        { num: "444", titre: "Soutien", msg: `Le 444 est le nombre des fondations solides, des racines profondes et de la stabilité qui rassure. Quand il apparaît, tes guides te signalent qu'ils sont à tes côtés et t'offrent leur force. Ce que tu bâtis avec constance, patience et honnêteté repose sur un terrain sûr. N'hésite pas à demander de l'aide, qu'elle soit humaine ou spirituelle : elle est déjà en route. Aujourd'hui, avance pas à pas, tu es soutenu(e) plus que tu ne le crois.` },
+        { num: "555", titre: "Changement", msg: `Le 555 annonce un vent de renouveau qui balaie ce qui ne servait plus. Les changements peuvent d'abord sembler bousculants, mais ils ouvrent des portes que tu n'aurais pas osé pousser seul(e). Cette énergie t'invite à la souplesse, à l'aventure et à la confiance dans l'inconnu. Pose-toi la question : de quoi suis-je prêt(e) à me libérer pour avancer plus léger(e) ? Une transformation positive arrive, accueille-la avec curiosité.` },
+        { num: "666", titre: "Équilibre", msg: `Loin de sa réputation, le 666 est un rappel d'équilibre : il apparaît quand l'attention se concentre trop sur le matériel, les soucis ou les inquiétudes. Il t'invite à replacer ton énergie là où elle nourrit vraiment ton âme. Prends un moment pour te reconnecter à ce qui est essentiel : ton souffle, tes valeurs, les personnes que tu aimes. Quand tu rééquilibres le visible et l'invisible, la tension se dissout. Recentre tes pensées sur le spirituel et laisse la paix revenir.` },
+        { num: "777", titre: "Miracles", msg: `Le 777 est le nombre de la grâce, de la sagesse intérieure et des heureuses synchronicités. Il apparaît lorsque tu es en phase avec ton chemin et que l'univers applaudit tes efforts. Les coïncidences se multiplient : une rencontre, une idée, une porte qui s'ouvre au bon moment. Remercie pour ce qui est déjà là, car la gratitude amplifie la chance. Aujourd'hui, la protection divine t'accompagne et les miracles ordinaires se multiplient.` },
+        { num: "888", titre: "Abondance", msg: `Le 888 symbolise l'infini en mouvement, le flux généreux qui circule entre ce que tu donnes et ce que tu reçois. Il parle d'abondance sous toutes ses formes : financière, bien sûr, mais aussi affective, créative et énergétique. Cette séquence t'encourage à te sentir digne de recevoir, sans culpabilité. Remercie pour tout ce qui est déjà là et sois généreux(se) à ton tour, car l'abondance aime circuler. Un flux d'énergie prospère s'ouvre devant toi.` },
+        { num: "999", titre: "Accomplissement", msg: `Le 999 marque la fin d'un grand cycle, la dernière étape avant le renouveau. Ce que tu as vécu, appris et traversé a fait de toi quelqu'un de plus sage et de plus entier. Honore ce chemin parcouru avec reconnaissance, même pour les passages difficiles. Laisse partir ce qui est complet pour faire de la place à ce qui arrive. Un cycle se termine, et il prépare un renouveau magnifique.` }
     ];
-    const indexAngel = jour % nombresAngeliques.length;
-    const angel = nombresAngeliques[indexAngel];
 
-    // Injection dans le HTML
+    const angel = nombresAngeliques[jourAnnee % nombresAngeliques.length];
+
+    const categorie = categoriePhaseLune(phaseLune);
+    const resonanceDuJour = resonances[jourAnnee % resonances.length] + " " + nuancesLune[categorie];
+    const rituelDuJour = rituels[jourAnnee % rituels.length];
+
+    const styleTexte = "margin:0 0 18px 0;line-height:1.9;letter-spacing:0.3px;text-transform:none;font-weight:normal;";
+    const para = (txt) => `<p style="${styleTexte}">${txt}</p>`;
+
+    const introHTML = para(intro);
+    const resonanceHTML = para(`« ${resonances[jourAnnee % resonances.length]} »`) + `<p style="${styleTexte}font-style:italic;opacity:0.9;">${nuancesLune[categorie]}</p>`;
+    const rituelHTML = rituelDuJour.split("<br>").map(ligne => `<div style="margin:0 0 16px 0;line-height:1.9;letter-spacing:0.3px;text-transform:none;font-weight:normal;">${ligne}</div>`).join("");
+    const angelHTML = `<div style="text-transform:uppercase;letter-spacing:4px;font-weight:600;margin:6px 0 16px 0;">${angel.titre}</div>` + para(angel.msg);
+
+    const introEl = document.getElementById('daily-intro');
+    if (introEl) introEl.innerHTML = introHTML;
+
     document.getElementById('angel-number').innerText = angel.num;
-    document.getElementById('angel-message').innerText = angel.msg;
-    document.getElementById('daily-resonance').innerHTML = `"${resonances[i]}"`;
-    document.getElementById('daily-rituel').innerHTML = rituels[i];
+    document.getElementById('angel-message').innerHTML = angelHTML;
+    document.getElementById('daily-resonance').innerHTML = resonanceHTML;
+    document.getElementById('daily-rituel').innerHTML = rituelHTML;
 }
 
 // --- NOUVELLE FONCTION MÉTÉO (À AJOUTER ICI) ---
@@ -893,34 +1002,275 @@ const SIGNES = ["Bélier","Taureau","Gémeaux","Cancer","Lion","Vierge","Balance
 const RAD = Math.PI / 180;
 
 const DESC_SOLEIL = [
- "Ton essence est celle du pionnier : élan, courage, besoin d'agir et de relever des défis. Ton défi : la patience.",
- "Ton essence est ancrée et sensuelle : tu construis dans la durée et tu aimes la beauté et la stabilité. Ton défi : accueillir le changement.",
- "Ton essence est curieuse et communicante : tu apprends vite et tu relies les idées comme les personnes. Ton défi : la constance.",
- "Ton essence est sensible et protectrice : ton intuition et ta mémoire émotionnelle te guident. Ton défi : ne pas te replier.",
- "Ton essence est rayonnante et généreuse : tu as besoin de créer, de briller et d'aimer avec cœur. Ton défi : l'humilité.",
- "Ton essence est analytique et dévouée : tu perfectionnes, tu soignes les détails et tu rends service. Ton défi : l'indulgence envers toi-même.",
- "Ton essence est diplomate et esthète : tu cherches l'harmonie, l'équité et la beauté dans tes liens. Ton défi : trancher sans t'effacer.",
- "Ton essence est intense et transformatrice : tu vas au fond des choses et tu renais de tes crises. Ton défi : lâcher le contrôle.",
- "Ton essence est aventurière et philosophe : tu vises loin et tu cherches le sens et la liberté. Ton défi : l'engagement.",
- "Ton essence est ambitieuse et fiable : tu bâtis pas à pas, avec discipline et endurance. Ton défi : t'autoriser la douceur.",
- "Ton essence est originale et humaniste : tu penses autrement et tu rêves d'un monde meilleur. Ton défi : l'intimité émotionnelle.",
- "Ton essence est rêveuse et compatissante : tu perçois l'invisible et tu te nourris d'art et de spiritualité. Ton défi : poser tes limites."
+    `☀️ SOLEIL — BÉLIER ♈
+
+🔥 TON ESSENCE
+Ton Soleil en Bélier porte une énergie de commencement, d'affirmation et d'action. Tu as besoin de sentir que tu avances par toi-même, que tu peux prendre des initiatives et ouvrir ton propre chemin. Tu fonctionnes avec instinct et spontanéité, et les défis ont souvent le pouvoir de réveiller le meilleur de toi.
+
+✨ TA FORCE
+Ton courage vient de ta capacité à agir avant que tout soit parfaitement sécurisé. Tu sais provoquer le mouvement, prendre des risques et insuffler de l'énergie autour de toi. Lorsque tu crois en quelque chose, ton enthousiasme peut devenir particulièrement communicatif.
+
+🌙 TON DÉFI
+Ton énergie peut parfois te pousser à vouloir des résultats immédiats ou à réagir avant d'avoir pris le temps de mesurer les conséquences. Ton évolution consiste à découvrir que la patience ne diminue pas ta force : elle t'apprend à mieux la diriger.`,
+
+    `☀️ SOLEIL — TAUREAU ♉
+
+🌿 TON ESSENCE
+Ton Soleil en Taureau recherche la stabilité, la sécurité et ce qui possède une véritable valeur à tes yeux. Tu as besoin de construire quelque chose de concret, de fiable et de durable. Ton rapport aux sensations, au confort, à la nature et aux plaisirs simples peut jouer un rôle important dans ton équilibre.
+
+✨ TA FORCE
+Tu possèdes une remarquable capacité à persévérer. Lorsque tu as choisi une direction, tu avances avec patience et constance, sans avoir besoin de brûler les étapes. Tu sais donner de la valeur aux choses en leur accordant du temps, de l'attention et de la présence.
+
+🌙 TON DÉFI
+Ton besoin de stabilité peut parfois rendre les changements plus difficiles à accepter. Tu peux t'accrocher à ce qui est familier même lorsque quelque chose en toi sait qu'il est temps d'évoluer. Ton chemin consiste à apprendre que changer ne signifie pas forcément perdre ce que tu as construit.`,
+
+    `☀️ SOLEIL — GÉMEAUX ♊
+
+💬 TON ESSENCE
+Ton Soleil en Gémeaux a besoin de comprendre, d'apprendre et d'échanger. Ton esprit se nourrit de curiosité, de rencontres et de nouvelles informations. Tu possèdes souvent une grande facilité à faire circuler les idées et à créer des connexions entre des univers différents.
+
+✨ TA FORCE
+Ta vivacité intellectuelle et ta capacité d'adaptation te permettent de trouver rapidement de nouvelles perspectives. Tu sais poser des questions, communiquer et t'intéresser à des sujets très variés. Ton intelligence s'exprime autant par les mots que par ta capacité à observer et à relier.
+
+🌙 TON DÉFI
+Ton esprit peut parfois s'éparpiller lorsque trop de possibilités attirent ton attention en même temps. Ton évolution consiste à apprendre à approfondir plutôt qu'à simplement multiplier les découvertes, et à donner suffisamment de temps à une idée pour qu'elle puisse réellement porter ses fruits.`,
+
+    `☀️ SOLEIL — CANCER ♋
+
+🌙 TON ESSENCE
+Ton Soleil en Cancer est profondément lié au monde émotionnel, aux liens affectifs et au besoin de construire un sentiment de sécurité intérieure. La mémoire, les racines et les personnes auxquelles tu es attaché peuvent occuper une place importante dans ta construction personnelle. Tu ressens souvent les choses avec beaucoup de finesse.
+
+✨ TA FORCE
+Ta sensibilité te donne une capacité naturelle à prendre soin, à protéger et à comprendre ce qui se passe derrière les mots. Tu peux offrir aux autres une présence particulièrement chaleureuse et sécurisante. Ton intuition est souvent une véritable boussole intérieure.
+
+🌙 TON DÉFI
+Lorsque tu te sens blessé ou menacé, tu peux avoir tendance à te replier dans ton monde intérieur. Ton évolution consiste à ne pas laisser la peur de souffrir t'empêcher de vivre pleinement. Tu peux protéger ta sensibilité sans avoir besoin de construire une carapace autour d'elle.`,
+
+    `☀️ SOLEIL — LION ♌
+
+☀️ TON ESSENCE
+Ton Soleil en Lion cherche naturellement à créer, à exprimer sa personnalité et à vivre avec générosité. Tu as besoin de sentir que tu peux donner quelque chose de personnel au monde et que ton existence possède une couleur qui lui appartient. Le cœur, la créativité et le besoin de rayonner occupent une place importante dans ton identité.
+
+✨ TA FORCE
+Tu possèdes une énergie chaleureuse qui peut encourager et inspirer les autres. Ta générosité, ta créativité et ta capacité à assumer pleinement ce que tu es peuvent devenir de véritables forces de leadership. Lorsque tu crois en toi, tu peux donner confiance autour de toi.
+
+🌙 TON DÉFI
+Ton besoin de reconnaissance peut parfois devenir trop dépendant du regard extérieur. Ton évolution consiste à construire une estime de toi qui ne repose pas uniquement sur les applaudissements. Le véritable rayonnement commence lorsque tu n'as plus besoin de prouver ta valeur.`,
+
+    `☀️ SOLEIL — VIERGE ♍
+
+🔍 TON ESSENCE
+Ton Soleil en Vierge cherche à comprendre, à améliorer et à rendre les choses plus justes ou plus efficaces. Tu observes les détails, tu analyses ce qui pourrait être perfectionné et tu as souvent besoin de sentir que ton énergie sert à quelque chose de concret. Être utile peut être pour toi une véritable manière d'aimer.
+
+✨ TA FORCE
+Ton sens de l'observation, ton intelligence pratique et ta capacité à organiser les choses te permettent de transformer le désordre en quelque chose de plus clair. Tu sais repérer ce qui manque, corriger ce qui doit l'être et progresser par petites étapes.
+
+🌙 TON DÉFI
+Ton regard précis peut parfois devenir trop critique, particulièrement envers toi-même. Tu peux avoir l'impression qu'il y aura toujours quelque chose à améliorer. Ton évolution consiste à accepter l'imperfection et à reconnaître la valeur de ce qui existe déjà, sans toujours chercher à le corriger.`,
+
+    `☀️ SOLEIL — BALANCE ♎
+
+⚖️ TON ESSENCE
+Ton Soleil en Balance recherche l'équilibre, l'harmonie et la qualité des relations. Tu es naturellement sensible à la manière dont les personnes se traitent et à l'atmosphère qui existe entre elles. La beauté, l'élégance et le besoin de créer des liens équilibrés peuvent participer profondément à ton sentiment d'être à ta place.
+
+✨ TA FORCE
+Tu possèdes une réelle capacité à comprendre plusieurs points de vue et à créer du dialogue. Ta diplomatie peut permettre de désamorcer les tensions et de rapprocher les personnes. Tu sais également reconnaître les nuances plutôt que de réduire les situations à quelque chose de simplement noir ou blanc.
+
+🌙 TON DÉFI
+À force de rechercher l'équilibre, tu peux parfois hésiter à prendre position ou à faire un choix qui pourrait déplaire. Ton évolution consiste à comprendre que préserver l'harmonie ne signifie pas toujours éviter les conflits. Tu peux être diplomate tout en restant profondément fidèle à toi-même.`,
+
+    `☀️ SOLEIL — SCORPION ♏
+
+🦂 TON ESSENCE
+Ton Soleil en Scorpion recherche la profondeur, l'authenticité et la vérité derrière les apparences. Tu n'es pas naturellement attiré par les expériences superficielles : tu veux comprendre ce qui se cache derrière les comportements, les émotions et les situations. Les grandes transformations peuvent devenir des étapes importantes de ton parcours.
+
+✨ TA FORCE
+Tu possèdes une grande intensité intérieure et une capacité remarquable à te reconstruire après les périodes difficiles. Ton instinct, ta lucidité et ta détermination te permettent d'aller là où d'autres préfèrent parfois ne pas regarder. Lorsque tu t'engages véritablement, tu le fais rarement à moitié.
+
+🌙 TON DÉFI
+Cette intensité peut parfois devenir un besoin de contrôle ou une difficulté à faire confiance. Ton évolution consiste à comprendre que tout ne peut pas être maîtrisé et que certaines transformations nécessitent justement de laisser partir ce qui n'a plus sa place.`,
+
+    `☀️ SOLEIL — SAGITTAIRE ♐
+
+🏹 TON ESSENCE
+Ton Soleil en Sagittaire cherche l'ouverture, la liberté et le sens. Tu as besoin de découvrir, d'explorer et d'élargir ta vision de la vie. Les voyages, les nouvelles cultures, les études, les grandes idées ou la recherche d'une vérité personnelle peuvent nourrir profondément ton identité.
+
+✨ TA FORCE
+Ton optimisme et ta capacité à voir plus loin t'aident à dépasser les limites du moment présent. Tu sais souvent redonner du sens à une situation et encourager les autres à envisager de nouvelles possibilités. Ton enthousiasme grandit lorsque tu as quelque chose à apprendre ou un horizon à explorer.
+
+🌙 TON DÉFI
+Ton besoin de liberté peut parfois te rendre impatient face aux contraintes ou aux engagements qui demandent de la durée. Ton évolution consiste à comprendre que la liberté ne signifie pas toujours partir : elle peut aussi exister dans la capacité à choisir consciemment ce à quoi tu décides de rester fidèle.`,
+
+    `☀️ SOLEIL — CAPRICORNE ♑
+
+⛰️ TON ESSENCE
+Ton Soleil en Capricorne cherche à construire, à progresser et à donner une forme concrète à ses ambitions. Tu comprends instinctivement que les réalisations importantes demandent du temps, de la discipline et de la persévérance. Tu peux avoir besoin de sentir que ta vie avance vers quelque chose de solide et de significatif.
+
+✨ TA FORCE
+Ta capacité à rester engagé lorsque les résultats tardent à apparaître est l'une de tes grandes qualités. Tu sais travailler avec patience, assumer tes responsabilités et transformer progressivement une ambition en réalité. Ton sérieux peut devenir une véritable force de stabilité pour les autres.
+
+🌙 TON DÉFI
+Tu peux parfois croire que tu dois constamment être fort, performant ou responsable. Ton évolution consiste à comprendre que ta valeur ne dépend pas uniquement de ce que tu accomplis. T'autoriser le repos, la vulnérabilité et la douceur ne remet pas en question ta solidité.`,
+
+    `☀️ SOLEIL — VERSEAU ♒
+
+✨ TON ESSENCE
+Ton Soleil en Verseau cherche à comprendre le monde autrement. Tu as besoin de conserver ton indépendance d'esprit et de pouvoir remettre en question ce qui semble évident. Les idées nouvelles, l'innovation, les causes collectives et la recherche d'une société différente peuvent éveiller quelque chose de profond en toi.
+
+✨ TA FORCE
+Ton originalité te permet de voir des possibilités que d'autres ne remarquent pas encore. Tu peux être naturellement tourné vers l'avenir et apporter une perspective différente dans les groupes auxquels tu appartiens. Ton besoin de liberté protège aussi ta capacité à penser par toi-même.
+
+🌙 TON DÉFI
+Ton indépendance peut parfois devenir une distance émotionnelle. Tu peux avoir plus de facilité à comprendre les idées que les émotions qui se jouent dans une relation. Ton évolution consiste à découvrir que l'intimité ne menace pas ta liberté et qu'elle peut au contraire enrichir profondément ton expérience du monde.`,
+
+    `☀️ SOLEIL — POISSONS ♓
+
+🌊 TON ESSENCE
+Ton Soleil en Poissons est profondément réceptif au monde émotionnel, aux ambiances et à tout ce qui dépasse les apparences. Ton imagination est riche et tu peux être particulièrement sensible à l'art, à la création, à la spiritualité ou aux expériences qui donnent une dimension plus vaste à la vie.
+
+✨ TA FORCE
+Ton empathie et ton intuition te permettent de percevoir des nuances que beaucoup ne remarquent pas. Tu peux comprendre sans qu'on t'explique longuement et offrir une présence particulièrement douce aux personnes qui traversent quelque chose de difficile.
+
+🌙 TON DÉFI
+Ta grande réceptivité peut parfois te faire absorber les émotions ou les attentes des autres. Ton évolution consiste à apprendre à distinguer ce qui t'appartient de ce qui appartient aux autres. Poser des limites ne diminue pas ta sensibilité : cela lui permet de rester une force.`
+
 ];
 
+
 const DESC_ASC = [
- "On te perçoit comme direct, énergique et franc. Tu entres dans la vie avec élan et spontanéité.",
- "On te perçoit comme calme, posé et rassurant. Tu abordes la vie avec lenteur, sens pratique et goût du confort.",
- "On te perçoit comme vif, curieux et sociable. Tu abordes la vie par la parole, l'humour et la découverte.",
- "On te perçoit comme doux, réservé et protecteur. Tu abordes la vie avec prudence et intuition.",
- "On te perçoit comme chaleureux, charismatique et fier. Tu entres dans une pièce avec présence et générosité.",
- "On te perçoit comme discret, attentionné et réfléchi. Tu abordes la vie avec méthode et sens du détail.",
- "On te perçoit comme aimable, élégant et diplomate. Tu abordes les autres avec courtoisie et sens de l'équilibre.",
- "On te perçoit comme magnétique, intense et mystérieux. Tu observes beaucoup et tu te dévoiles lentement.",
- "On te perçoit comme enthousiaste, optimiste et direct. Tu abordes la vie comme une aventure.",
- "On te perçoit comme sérieux, réservé et responsable. Tu inspires le respect et tu avances avec persévérance.",
- "On te perçoit comme original, indépendant et amical. Tu abordes le monde avec recul et singularité.",
- "On te perçoit comme rêveur, empathique et insaisissable. Tu absorbes les ambiances et réponds par l'intuition."
+    `🌅 ASCENDANT — BÉLIER ♈
+
+🔥 TON PREMIER IMPACT
+Avec un Ascendant Bélier, tu peux donner dès les premières secondes une impression d'énergie, de franchise et de spontanéité. Tu sembles souvent prêt à agir plutôt qu'à attendre, et les autres peuvent ressentir chez toi une forme d'assurance directe, même lorsque tu réfléchis encore intérieurement.
+
+✨ TA MANIÈRE D'AVANCER
+Tu abordes généralement les situations par l'action. Tu préfères essayer, expérimenter et ajuster ensuite plutôt que rester longtemps dans l'hésitation. Ton langage corporel et ta façon de réagir peuvent également paraître rapides et affirmés.
+
+🌙 TON DÉFI
+Ton impulsivité peut parfois donner l'impression que tu vas trop vite ou que tu réagis avant d'avoir réellement écouté. Ton évolution consiste à conserver ton élan tout en laissant davantage de place à l'observation et à la patience.`,
+
+    `🌅 ASCENDANT — TAUREAU ♉
+
+🌿 TON PREMIER IMPACT
+Avec un Ascendant Taureau, tu peux donner une impression de calme, de stabilité et de maîtrise. Tu ne sembles généralement pas pressé de te livrer ou de prendre une décision. Les autres peuvent percevoir chez toi quelque chose de posé, rassurant et profondément ancré.
+
+✨ TA MANIÈRE D'AVANCER
+Tu préfères souvent prendre le temps de ressentir les choses avant d'agir. Ton approche est progressive, concrète et sensorielle. Tu accordes de l'importance à ce qui est fiable et tu peux instinctivement chercher à créer autour de toi un environnement confortable et stable.
+
+🌙 TON DÉFI
+Ton besoin de sécurité peut parfois te rendre prudent face à la nouveauté. Ton évolution consiste à accepter que certaines expériences nécessitent de sortir de ta zone de confort sans que cela signifie perdre tes repères.`,
+
+    `🌅 ASCENDANT — GÉMEAUX ♊
+
+💬 TON PREMIER IMPACT
+Avec un Ascendant Gémeaux, tu peux être perçu comme vif, curieux, accessible et facile à approcher. Ton regard, ta façon de parler ou ta capacité à rebondir dans une conversation donnent souvent une impression de mouvement et de vivacité.
+
+✨ TA MANIÈRE D'AVANCER
+Tu abordes naturellement le monde par les questions, l'observation et les échanges. Tu peux rapidement t'adapter à une nouvelle personne ou à un nouvel environnement en cherchant à comprendre comment il fonctionne. La communication est souvent ton premier outil d'exploration.
+
+🌙 TON DÉFI
+Ton besoin de stimulation peut parfois donner une impression d'inconstance ou de dispersion. Ton évolution consiste à ne pas toujours chercher la prochaine information ou la prochaine expérience, et à apprendre aussi à approfondir ce qui se trouve déjà devant toi.`,
+
+    `🌅 ASCENDANT — CANCER ♋
+
+🌙 TON PREMIER IMPACT
+Avec un Ascendant Cancer, tu peux donner une impression douce, réservée et attentive. Avant de t'ouvrir complètement, tu sembles avoir besoin de ressentir l'ambiance et de savoir si tu peux faire confiance. Les autres peuvent percevoir chez toi une sensibilité qui s'exprime davantage dans les attitudes que dans les grands discours.
+
+✨ TA MANIÈRE D'AVANCER
+Tu abordes souvent les situations en observant d'abord ce que tu ressens. Tu peux être particulièrement attentif aux besoins des personnes autour de toi et chercher instinctivement à créer un climat sécurisant. Ton intuition joue un rôle important dans tes réactions spontanées.
+
+🌙 TON DÉFI
+Lorsque tu ne te sens pas en sécurité, tu peux avoir tendance à te protéger ou à te retirer. Ton évolution consiste à ne pas laisser la prudence devenir une fermeture et à apprendre à montrer progressivement ce que tu ressens sans attendre d'être totalement rassuré.`,
+
+    `🌅 ASCENDANT — LION ♌
+
+☀️ TON PREMIER IMPACT
+Avec un Ascendant Lion, tu peux naturellement attirer l'attention par ta présence, ton assurance ou ta manière d'occuper l'espace. Même lorsque tu ne cherches pas à être au centre, quelque chose dans ton attitude peut donner l'impression que tu assumes pleinement ta place.
+
+✨ TA MANIÈRE D'AVANCER
+Tu abordes généralement les situations avec chaleur, créativité et une certaine confiance dans tes capacités. Tu peux spontanément prendre un rôle visible ou encourager les autres lorsque tu sens qu'ils ont besoin de motivation. L'expression personnelle occupe une place importante dans ta façon d'être au monde.
+
+🌙 TON DÉFI
+Ton besoin d'être apprécié peut parfois te rendre sensible au regard des autres. Ton évolution consiste à ne pas confondre présence et besoin de validation. Tu peux occuper pleinement ta place sans avoir besoin de capter constamment l'attention.`,
+
+    `🌅 ASCENDANT — VIERGE ♍
+
+🔍 TON PREMIER IMPACT
+Avec un Ascendant Vierge, tu peux donner une impression de discrétion, d'observation et de précision. Tu sembles souvent remarquer les détails avant de te lancer et tu peux paraître plus réservé au premier contact que tu ne l'es réellement.
+
+✨ TA MANIÈRE D'AVANCER
+Tu abordes généralement les situations en cherchant d'abord à comprendre ce qui est attendu et comment les choses fonctionnent. Tu préfères souvent être efficace plutôt que spectaculaire et tu peux spontanément chercher à améliorer, organiser ou rendre service.
+
+🌙 TON DÉFI
+Ton attention aux détails peut parfois se transformer en hésitation ou en autocritique. Ton évolution consiste à accepter qu'il n'est pas nécessaire de tout comprendre ou de tout perfectionner avant d'agir.`,
+
+    `🌅 ASCENDANT — BALANCE ♎
+
+⚖️ TON PREMIER IMPACT
+Avec un Ascendant Balance, tu peux donner une impression naturellement agréable, élégante et diplomate. Tu sembles attentif aux codes sociaux, à la manière dont les autres se sentent et à l'équilibre qui existe dans une conversation ou une relation.
+
+✨ TA MANIÈRE D'AVANCER
+Tu as tendance à observer les différentes possibilités avant de choisir. Tu peux instinctivement chercher le compromis, la coopération et la solution qui permettra à chacun de trouver sa place. Ton charme passe souvent davantage par la qualité du contact que par la volonté de t'imposer.
+
+🌙 TON DÉFI
+Ton désir d'éviter les tensions peut parfois te faire repousser une décision ou masquer ton véritable avis. Ton évolution consiste à comprendre que l'harmonie devient plus authentique lorsque tu peux également exprimer clairement ce que tu veux.`,
+
+    `🌅 ASCENDANT — SCORPION ♏
+
+🦂 TON PREMIER IMPACT
+Avec un Ascendant Scorpion, tu peux donner une impression particulièrement intense et difficile à cerner. Ton regard, ton silence ou ta façon d'observer peuvent laisser penser que tu remarques beaucoup plus de choses que tu ne montres.
+
+✨ TA MANIÈRE D'AVANCER
+Tu abordes rarement une situation sans chercher à comprendre ce qui se joue réellement derrière les apparences. Tu peux observer longtemps avant de faire confiance et préférer les relations profondes aux échanges superficiels. Ton instinct peut te pousser à détecter rapidement ce qui te semble authentique ou non.
+
+🌙 TON DÉFI
+Cette vigilance peut parfois te rendre méfiant ou te pousser à vouloir garder le contrôle de ton image. Ton évolution consiste à comprendre que montrer progressivement ta vulnérabilité peut créer davantage de confiance que de toujours chercher à rester impénétrable.`,
+
+    `🌅 ASCENDANT — SAGITTAIRE ♐
+
+🏹 TON PREMIER IMPACT
+Avec un Ascendant Sagittaire, tu peux être perçu comme ouvert, enthousiaste et spontanément optimiste. Tu donnes souvent l'impression d'être prêt à découvrir quelque chose de nouveau et de ne pas avoir envie de rester enfermé dans des limites trop étroites.
+
+✨ TA MANIÈRE D'AVANCER
+Tu abordes le monde par l'expérience. Tu apprends en explorant, en rencontrant, en voyageant ou en élargissant constamment ton champ de vision. Ton enthousiasme peut te permettre d'établir rapidement un contact avec des personnes très différentes de toi.
+
+🌙 TON DÉFI
+Ton besoin de mouvement peut parfois te faire aller trop rapidement vers la prochaine expérience. Ton évolution consiste à apprendre à rester suffisamment longtemps dans une situation pour en découvrir toute la profondeur, même lorsqu'elle devient moins stimulante.`,
+
+    `🌅 ASCENDANT — CAPRICORNE ♑
+
+⛰️ TON PREMIER IMPACT
+Avec un Ascendant Capricorne, tu peux donner une impression de sérieux, de retenue et de maîtrise. Tu ne sembles pas nécessairement chercher à attirer l'attention et tu peux préférer observer avant de montrer ce que tu penses réellement.
+
+✨ TA MANIÈRE D'AVANCER
+Tu abordes souvent les situations avec prudence et sens des responsabilités. Tu cherches à comprendre ce qui est durable, utile et réaliste avant de t'engager. Ton comportement peut donner l'impression que tu sais garder ton sang-froid même lorsque les circonstances deviennent exigeantes.
+
+🌙 TON DÉFI
+Cette maîtrise extérieure peut parfois cacher une tendance à trop porter seul. Ton évolution consiste à comprendre que demander de l'aide, montrer tes émotions ou laisser apparaître une part plus légère de toi ne diminue pas ton sérieux.`,
+
+    `🌅 ASCENDANT — VERSEAU ♒
+
+✨ TON PREMIER IMPACT
+Avec un Ascendant Verseau, tu peux donner une impression d'originalité, d'indépendance et de liberté d'esprit. Les autres peuvent sentir rapidement que tu n'as pas forcément besoin de suivre les codes habituels pour te sentir à ta place.
+
+💡 TA MANIÈRE D'AVANCER
+Tu abordes souvent les situations avec recul et curiosité. Tu observes les comportements, les systèmes et les idées avant de décider si tu souhaites y adhérer. Tu peux naturellement chercher une manière différente de faire les choses ou proposer une perspective inattendue.
+
+🌙 TON DÉFI
+Ton besoin de liberté peut parfois donner une impression de distance ou d'imprévisibilité. Ton évolution consiste à conserver ton indépendance tout en montrant davantage ce que tu ressens et ce qui te relie réellement aux autres.`,
+
+    `🌅 ASCENDANT — POISSONS ♓
+
+🌊 TON PREMIER IMPACT
+Avec un Ascendant Poissons, tu peux donner une impression douce, sensible et presque insaisissable. Tu sembles particulièrement réceptif aux ambiances et aux émotions présentes autour de toi, parfois avant même que les autres les aient consciemment remarquées.
+
+✨ TA MANIÈRE D'AVANCER
+Tu abordes souvent le monde davantage par le ressenti que par la confrontation directe. Ton intuition, ton imagination et ta capacité à t'adapter aux atmosphères peuvent guider tes premiers réflexes. Tu peux également avoir une manière très intuitive de comprendre les personnes.
+
+🌙 TON DÉFI
+Cette grande réceptivité peut parfois rendre les frontières entre toi et les autres moins évidentes. Ton évolution consiste à apprendre à rester sensible sans absorber tout ce qui t'entoure, et à développer des limites suffisamment claires pour protéger ton équilibre intérieur.`
 ];
+
 
 function longitudeSoleil(jd) {
     const n = jd - 2451545.0;

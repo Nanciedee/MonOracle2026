@@ -754,19 +754,7 @@ function updateMoonData(date = new Date()) {
     };
 }
 
-    return {
-        name: phase.name,
-        icon: phase.icon,
-        quality: phase.quality,
-        phaseValue: illumination.phase,
-        illumination: illuminationPercent,
-        altitude: moonPosition.altitude,
-        moonrise: moonTimes.rise ? formatTime(moonTimes.rise) : "--:--",
-        moonset: moonTimes.set ? formatTime(moonTimes.set) : "--:--"
-    };
-}
-
-async function updateSunAndWeather() {
+    async function updateSunAndWeather() {
     const today = formatDateISO(new Date());
 
     const url =

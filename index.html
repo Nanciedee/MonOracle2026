@@ -106,10 +106,21 @@
         </div>
     </div>
     
-<div class="section-rituel" style="...">
-    <h3 ...>🌌 Ton Ciel Vibratoire</h3>
-    <p id="daily-intro" ...></p>
-    
+<div class="section-rituel" style="border-style: dashed; border-color: rgba(212, 175, 55, 0.5); background: rgba(0,0,0,0.4);">
+    <h3 style="color:var(--gold); margin-top:0; font-size: 1.1rem;">🌌 Ton Ciel Vibratoire</h3>
+    <p id="daily-intro" style="font-size: 0.9rem; line-height: 1.6; color: #e2e8f0;">Bienvenue dans ton calendrier vibratoire. ✨🌙</p>
+
+    <div id="natal-form" style="display:flex; flex-wrap:wrap; gap:8px; margin:10px 0;">
+        <input type="date" id="n-date">
+        <input type="time" id="n-time">
+        <input type="number" id="n-utc" step="0.5" value="-4" title="Décalage UTC (EDT = -4, EST = -5)" style="width:70px">
+        <input type="number" id="n-lat" step="any" placeholder="Latitude" style="width:100px">
+        <input type="number" id="n-lon" step="any" placeholder="Longitude" style="width:100px">
+        <label style="font-size:0.75rem"><input type="checkbox" id="n-save"> Mémoriser sur cet appareil</label>
+        <button class="audio-btn" style="width:auto" onclick="calculerCielNatal()">Calculer mon ciel natal</button>
+    </div>
+    <p id="natal-result" style="color:var(--gold); font-size:0.9rem;"></p>
+
     <div id="daily-resonance" ...></div>
 
     <div id="angel-number" style="text-align: center; color: var(--gold); font-size: 1.8rem; font-weight: bold; margin: 15px 0 5px 0; text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); letter-spacing: 5px;"></div>

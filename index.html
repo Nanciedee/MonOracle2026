@@ -1,673 +1,34 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oracle Vibratoire 2026</title>
-    <style>
-        :root { --gold: #d4af37; --glass: rgba(255, 255, 255, 0.08); --text: #e2e8f0; }
-        body { background: #000; color: var(--text); font-family: 'Georgia', serif; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
-        #star-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%); }
-        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.4; animation: moveStar linear infinite; }
-        @keyframes moveStar { from { transform: translateY(0px); } to { transform: translateY(-1000px); } }
-        
-        #app { width: 95%; max-width: 1100px; text-align: center; padding: 40px 0; }
-        h1 { color: var(--gold); letter-spacing: 5px; text-shadow: 0 0 20px rgba(212, 175, 55, 0.6); }
-        
-        .section-rituel { background: var(--glass); border: 1px solid var(--gold); padding: 25px; border-radius: 20px; margin-bottom: 25px; backdrop-filter: blur(10px); text-align: left; }
-        textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--gold); color: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; font-family: inherit; box-sizing: border-box; }
-        
-        .btn-divin { background: transparent; border: 2px solid var(--gold); color: var(--gold); padding: 18px 45px; border-radius: 50px; cursor: pointer; font-size: 1.2rem; font-weight: bold; text-transform: uppercase; transition: 0.5s; margin: 20px 0; }
-        .btn-divin:hover { background: var(--gold); color: #000; box-shadow: 0 0 50px var(--gold); }
-
-        #loader { display: none; padding: 100px 20px; }
-        .spiral { width: 80px; height: 80px; border: 4px solid var(--gold); border-top: 4px solid transparent; border-radius: 50%; animation: spin 1.5s linear infinite; margin: 0 auto 30px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        #loading-msg { font-style: italic; font-size: 1.5rem; color: var(--gold); text-shadow: 0 0 10px var(--gold); }
-
-        .result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-top: 30px; justify-content: center; }
-        .fiche { background: rgba(0,0,0,0.85); border: 1px solid var(--gold); border-radius: 20px; padding: 25px; text-align: left; display: flex; flex-direction: column; justify-content: space-between; }
-        .fiche img { width: 100%; height: 250px; object-fit: contain; border-radius: 10px; margin-bottom: 15px; background: rgba(255,255,255,0.03); }
-        
-        .highlight { color: var(--gold); font-weight: bold; font-size: 0.85rem; text-transform: uppercase; display: block; margin-top: 10px; }
-        .details-text { font-size: 0.95rem; line-height: 1.4; margin-bottom: 5px; color: #cbd5e1; }
-        
-        .audio-btn { background: var(--gold); border: none; padding: 12px 20px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 15px; color: black; }
-        .lune-header { font-style: italic; color: var(--gold); margin-bottom: 20px; font-size: 1.1rem; }
-        .champ-natal { ... }
-        .champ-natal input, .champ-natal select { ... }
-        #natal-result { ... }
-        @keyframes pulse {
-    from { opacity: 0.8; transform: scale(1); }
-    to { opacity: 1; transform: scale(1.05); }
-}
-
-.champ-natal { display:flex; flex-direction:column; gap:4px; font-size:0.75rem; color:var(--gold); text-align:left; flex:1 1 170px; }
-.champ-natal input, .champ-natal select { background:rgba(0,0,0,0.6); color:#fff; border:1px solid var(--gold); border-radius:8px; padding:10px; font-family:inherit; font-size:0.9rem; color-scheme:dark; }
-#natal-result { text-align:left; line-height:1.6; font-size:0.9rem; color:#e2e8f0; background:rgba(212,175,55,0.07); border-radius:10px; }        
-    </style>
-</head>
-<body>
-
-<div id="star-container"></div>
-<div id="app">
-    <div id="moon-phase-header" style="margin-bottom: 20px; padding: 15px; background: rgba(212, 175, 55, 0.1); border-radius: 15px; border: 1px solid rgba(212, 175, 55, 0.3); display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 10px;">
-        
-        <div style="text-align: left; min-width: 150px;">
-            <span id="moon-icon" style="font-size: 1.5rem;">🌙</span>
-            <div style="display: inline-block; vertical-align: middle; margin-left: 5px;">
-                <div id="moon-name" style="color: var(--gold); font-weight: bold; text-transform: uppercase; font-size: 0.75rem;">Chargement...</div>
-                <div id="moon-zodiac" style="font-size: 0.7rem; opacity: 0.9;">Lune en transit...</div>
-            </div>
-        </div>
-
-        <div style="text-align: left; border-left: 1px solid rgba(212, 175, 55, 0.3); padding-left: 15px;">
-            <div style="font-size: 0.75rem; color: var(--gold);">☀️ Soleil : <span id="sun-times" style="color: #fff;">--:--</span></div>
-            <div style="font-size: 0.75rem; color: var(--gold);">🌡️ Montréal : <span id="temp-real" style="color: #fff;">--°C</span></div>
-        </div>
-
-        <div id="moon-resonance" style="font-size: 0.7rem; background: rgba(212, 175, 55, 0.2); padding: 5px 10px; border-radius: 10px;">
-            ✨ 432Hz
-        </div>
-    </div>
-
-    <h1>✨ ORACLE VIBRATOIRE ✨</h1>
-
-    <div id="intro-step">
-        <div class="lune-header" id="moon-data">Chargement...</div>
-        
-        <div class="section-rituel" style="border-style: dashed; border-color: rgba(212, 175, 55, 0.5); background: rgba(0,0,0,0.4);">
-            <h3 style="color:var(--gold); margin-top:0; font-size: 1.1rem;">🌌 Ton Ciel Vibratoire</h3>
-            <p id="daily-intro" style="font-size: 0.9rem; line-height: 1.6; color: #e2e8f0;"></p>
-            
-            <div id="daily-resonance" style="margin: 15px 0; padding: 10px; border-left: 3px solid var(--gold); background: rgba(212, 175, 55, 0.05); font-style: italic; font-size: 0.85rem;"></div>
-            
-            <div id="angel-number" style="text-align: center; color: var(--gold); font-size: 1.8rem; font-weight: bold; margin: 15px 0 5px 0; text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); letter-spacing: 5px; animation: pulse 2s infinite alternate;"></div>
-            <p id="angel-message" style="text-align: center; color: var(--gold); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; opacity: 0.9;"></p>
-            
-            <h3 style="color:var(--gold); font-size: 1rem;">🌿 Rituel du Jour</h3>
-            <div id="daily-rituel" style="font-size: 0.85rem; text-align: left; line-height: 1.6; color: #cbd5e1;"></div>
-        </div>
-
-        <button class="btn-divin" onclick="lancerRituel()">Ouvrir le Portail</button>
-    </div>
-
-    <div id="loader" style="display:none;">
-        <div class="spiral"></div>
-        <div id="loading-msg">Initialisation des fréquences...</div>
-    </div>
-    
-    <div id="portal-result" style="display:none;">
-        <div class="result-grid" id="cards-container"></div>
-        
-        <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 40px;">
-            <button class="btn-divin" style="border-color: #4CAF50; color: #4CAF50; margin: 0;" onclick="window.print()">📥 SAUVEGARDER LA GUIDANCE</button>
-            
-            <!-- 🟢 LE NOUVEAU BOUTON VERS L'ANALYSE POUSSÉE EST ICI -->
-            <a href="https://nanciedee.github.io/Horoscope2moi" class="btn-divin" style="text-decoration: none; text-align: center; border-color: var(--gold); color: var(--gold); margin: 0;">
-                🔮 PASSER À L'ANALYSE POUSSÉE
-            </a>
-
-            <button class="btn-divin" style="margin: 0;" onclick="location.reload()">NOUVELLE CONSULTATION</button>
-        </div>
-    </div>
-    
-<div class="section-rituel" style="border-style: dashed; border-color: rgba(212, 175, 55, 0.5); background: rgba(0,0,0,0.4);">
-    <h3 style="color:var(--gold); margin-top:0; font-size: 1.1rem;">🌌 Ton Ciel Vibratoire</h3>
-    <p id="daily-intro" style="font-size: 0.9rem; line-height: 1.6; color: #e2e8f0;">Bienvenue dans ton calendrier vibratoire. ✨🌙</p>
-
-    <div id="natal-form" style="display:flex; flex-wrap:wrap; gap:12px; margin:15px 0;">
-    <label class="champ-natal">📅 Date de naissance
-        <input type="date" id="n-date">
-    </label>
-    <label class="champ-natal">🕐 Heure de naissance (si connue)
-        <input type="time" id="n-time">
-    </label>
-
-    <div class="champ-natal" style="flex:1 1 100%">📍 Lieu de naissance (ville, pays)
-        <div style="display:flex; gap:8px;">
-            <input type="text" id="n-lieu" placeholder="ex. Port-au-Prince, Fort-de-France, Dakar, Lyon, Shanghai" style="flex:1" onkeydown="if(event.key==='Enter'){event.preventDefault();chercherLieu();}">
-            <button type="button" class="audio-btn" style="width:auto; margin-top:0" onclick="chercherLieu()">Rechercher</button>
-        </div>
-    </div>
-    <label class="champ-natal" id="n-choix-box" style="flex:1 1 100%; display:none">Choisis le bon lieu
-        <select id="n-choix" onchange="choisirLieu()"></select>
-    </label>
-    <input type="hidden" id="n-tz">
-
-    <label class="champ-natal">Latitude
-        <input type="number" id="n-lat" step="any" placeholder="rempli automatiquement" oninput="document.getElementById('n-tz').value=''">
-    </label>
-    <label class="champ-natal">Longitude
-        <input type="number" id="n-lon" step="any" placeholder="rempli automatiquement" oninput="document.getElementById('n-tz').value=''">
-    </label>
-    <label class="champ-natal">🌎 Fuseau (seulement si le lieu n'est pas trouvé)
-        <select id="n-utc">
-            <option value="-3|ADT">Atlantique – heure d'été (ADT)</option>
-            <option value="-4|AST">Atlantique – heure normale (AST)</option>
-            <option value="-4|EDT" selected>Est – heure d'été (EDT)</option>
-            <option value="-5|EST">Est – heure normale (EST)</option>
-            <option value="-5|CDT">Centre – heure d'été (CDT)</option>
-            <option value="-6|CST">Centre – heure normale (CST)</option>
-            <option value="-6|MDT">Montagne – heure d'été (MDT)</option>
-            <option value="-7|MST">Montagne – heure normale (MST)</option>
-            <option value="-7|PDT">Pacifique – heure d'été (PDT)</option>
-            <option value="-8|PST">Pacifique – heure normale (PST)</option>
-            <option value="0|GMT">Londres / Afrique de l'Ouest – heure normale (GMT)</option>
-            <option value="1|CET">Europe centrale – heure normale (CET)</option>
-            <option value="2|CEST">Europe centrale – heure d'été (CEST)</option>
-            <option value="8|CST">Chine (UTC+8)</option>
-        </select>
-    </label>
-</div>
-
-<label style="font-size:0.75rem; display:block; margin-bottom:10px;"><input type="checkbox" id="n-save"> Mémoriser sur cet appareil</label>
-<button class="audio-btn" style="width:auto" onclick="calculerCielNatal()">Calculer mon ciel natal</button>
-<div id="natal-result" style="margin-top:15px; padding:12px;"></div>
-
-    <div id="daily-resonance" style="margin: 15px 0; padding: 10px; border-left: 3px solid var(--gold); background: rgba(212, 175, 55, 0.05); font-style: italic; font-size: 0.85rem;"></div>
-
-    <div id="angel-number" style="text-align: center; color: var(--gold); font-size: 1.8rem; font-weight: bold; margin: 15px 0 5px 0; text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); letter-spacing: 5px;"></div>
-    <p id="angel-message" style="text-align: center; color: var(--gold); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; opacity: 0.9;"></p>
-
-    <h3 style="color:var(--gold); font-size: 1rem; margin-bottom: 10px;">🌿 Rituel de Connexion</h3>
-    <div id="daily-rituel" ...></div>
-</div>
-
-<div id="portal-result" style="display:none;">
-    <div class="result-grid" id="cards-container"></div>
-    
-    <button class="btn-divin" style="margin-top:40px; border-color: #4CAF50; color: #4CAF50;" onclick="window.print()">📥 SAUVEGARDER LA GUIDANCE</button>
-    
-    <button class="btn-divin" style="margin-top:10px" onclick="location.reload()">NOUVELLE CONSULTATION</button>
-</div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/suncalc@1.9.0/suncalc.js"></script>
-<script>
-    // --- ÉTOILES ---
-    const container = document.getElementById('star-container');
-    for (let i = 0; i < 100; i++) {
-        const star = document.createElement('div');
-        star.className = 'star';
-        star.style.width = Math.random() * 2 + 'px';
-        star.style.height = star.style.width;
-        star.style.left = Math.random() * 100 + '%';
-        star.style.top = Math.random() * 100 + '%';
-        star.style.animationDuration = (Math.random() * 30 + 20) + 's';
-        container.appendChild(star);
-    }
-
-    // --- BASE DE DONNÉES COMPLÈTE ---
-    const archangesData = {
-    "Michaël": { 
-        nom: "Michaël — “Qui est comme Dieu ?”", 
-        signif: "Guerrier de Lumière flamboyant", 
-        freq: 528, 
-        pierres: "Lapis-lazuli, Sodalite", 
-        astres: "Soleil, Mars", 
-        symboles: "Épée flamboyante, Bouclier bleu", 
-        role: "Protection & Souveraineté", 
-        img: "img/Michael.png",
-        traditions: "<b>Christianisme :</b> Combattant du dragon dans l’Apocalypse.<br><b>Judaïsme :</b> Ange protecteur du peuple hébreu.<br><b>Islam :</b> Mikail, ange de la pluie et de la miséricorde.",
-        description: "Michaël incarne la puissance céleste dans une posture de défense noble. SIl est le chef des armées célestes, le guerrier qui combat le mal et le protecteur par excellence, et ses symboles ont toujours été l’épée, ou la lance et l’armure. Michael est Le Guerrier, commandant des armées angéliques, celui qui a mené les armées du Paradis contre Lucifer et ses rebelles, les repoussant au-dessus des nuages et les faisant tomber en Enfer.•	Patron de nombreuses villes et pays, protecteur du peuple juif, gardien de l’Église catholique, protecteur des malades et des auxiliaires médicaux ; des forces armées, de la police aux marins, des parachutistes, des pompiers, des radiologistes, des épiciers et de tous ceux qui utilisent des balances, tels que les pharmaciens, les confiseurs, les merciers, les escrimeurs, les maîtres d’armes, les doreurs, les fabricants de coupes."
-    },
-    "Gabriel": { 
-        nom: "Gabriel — “Force de Dieu”", 
-        signif: "Messager des visions claires", 
-        freq: 741, 
-        pierres: "Pierre de lune, Citrine", 
-        astres: "Lune, Neptune", 
-        symboles: "Trompette d'argent, Lys blanc", 
-        role: "Communication & Clarté", 
-        img: "img/Gabriel.png",
-        traditions: "<b>Christianisme :</b> Annonciateur de la naissance de Jésus.<br><b>Judaïsme :</b> Ange de la pureté et de la révélation.<br><b>Islam :</b> Jibril, transmetteur du Coran à Muhammad.",
-        description: "Gabriel est le messager par excellence, connu pour avoir annoncé à la Vierge Marie la naissance de Jésus. Gabriel est considéré comme le protecteur des travailleurs des communications, des facteurs, des ambassadeurs, des marchands de journaux et des courriers. L’iconographie chrétienne le dépeint comme un jeune éphèbe ailé, qui porte souvent dans ses mains un lis, symbole de l’Annonciation à Marie."
-    },
-    "Raphaël": { 
-        nom: "Raphaël — “Dieu guérit”", 
-        signif: "Guide du voyageur et du soin", 
-        freq: 639, 
-        pierres: "Malachite, Émeraude", 
-        astres: "Mercure, Vénus", 
-        symboles: "Bâton d'émeraude, Poisson sacré", 
-        role: "Guérison & Équilibre", 
-        img: "img/Raphael.png",
-        traditions: "<b>Christianisme :</b> Guide de Tobie, guérisseur des corps et des âmes.<br><b>Judaïsme :</b> Ange de la médecine et de la guérison.<br><b>Islam :</b> Associé à Israfil, l’ange du cor du Jugement.",
-        description: "Figure apaisante fusionnant avec la nature. Bien que non mentionné dans le Coran, pour les musulmans, c’est l’ange chargé de jouer du cor qui signalera le début du Jour du Jugement. Le temple de jade derrière lui symbolise la guérison éternelle. Patron de l’amour conjugal, des jeunes, des pharmaciens, des voyageurs et des réfugiés. Souvent représenté avec un pot de médicaments et un poisson, il est le saint patron des pharmaciens, des voyageurs, des réfugiés.",
-        notes: "Son nom signifie 'La médecine de Dieu'."
-    },
-    "Uriel": { 
-        nom: "Uriel — “Lumière de Dieu”", 
-        signif: "Pilier de la connaissance terrestre", 
-        freq: 852, 
-        pierres: "Ambre, Pyrite", 
-        astres: "Uranus, Soleil", 
-        symboles: "Sphère de feu, Parchemin d'or", 
-        role: "Sagesse & Ancrage", 
-        img: "img/Uriel.png",
-        traditions: "<b>Ésotérisme :</b> Archange de la connaissance et de l’été.<br><b>Apocryphes :</b> Interprète des prophéties.<br><b>Occultisme :</b> Alchimiste céleste.",
-        description: "Uriel est le feu incarné. Associé à la sagesse, à la révélation divine et à la lumière de Dieu. Uriel serait ainsi l'ange qui apporte aux êtres humains les lumières de la connaissance de Dieu. Interprète des prophéties, visionnaire, juge et bourreau. Uriel est un des quatre archanges associés aux saisons. Il est associé à l'été. Présent dans plusieurs traditions pseudépigraphiques ou apocryphes, il est considéré comme le quatrième archange et vénéré comme saint par plusieurs courants chrétiens comme l'église anglicane, ou l'Église copte, éthiopienne et érythréenne. Il est révéré par l'Église orthodoxe, comme l'un des sept archanges majeurs et figure en haute place dans les hiérarchies angélologiques de l'ésotérisme chrétien européen, médiéval et moderne. ",
-        notes: "Son nom signifie également 'Flamme de Dieu'."
-    },
-    "Métatron": { 
-        nom: "Métatron — “Trône Divin”", 
-        signif: "Scribe des mondes supérieurs", 
-        freq: 999, 
-        pierres: "Platine, Diamant", 
-        astres: "Sirius, Cosmos", 
-        symboles: "Cube sacré, Rayon blanc", 
-        role: "Ascension & Géométrie Sacrée", 
-        img: "img/Métatron.png",
-        traditions: "<b>Kabbale :</b> Ancien prophète Hénoch transformé.<br><b>Mystique :</b> Scribe céleste, gardien du trône divin.",
-        description: "Architecte du cosmos. Il incarne la vibration sacrée du monde, fusionnant les traditions percussives mandingues avec une esthétique afro-spirituelle puissante. Guide Rabbi Ishmael à travers les mondes célestes. Il incarne la vibration sacrée du monde, fusionnant les traditions et la géométrie divine.",
-        notes: "L'archange du monde divin selon la tradition juive."
-    },
-    "Azraël": { 
-        nom: "Azraël — “Aide de Dieu”", 
-        signif: "Guide des passages invisibles", 
-        freq: 396, 
-        pierres: "Rose des sables", 
-        astres: "Pluton", 
-        symboles: "Ombre lumineuse", 
-        role: "Transition & Paix de l'âme", 
-        img: "img/Azraël_2.png",
-        traditions: "<b>Islam :</b> Ange de la mort, chargé de recueillir les âmes.<br><b>Mystique :</b> Guide des âmes vers la lumière.<br><b>Sikhisme :</b> Ange de la transition.",
-        description: "Guide des passages. Il n'y a pas de référence à Azraël dans la Bible. Azra rencontre l'archange Uriel qui lui dicte une liste de lois et de punitions qu'il devait appliquer. La suite du texte explique que le juge alla au Paradis « sans goûter à la flétrissure de la mort ». Il sépare l’âme du corps avec sagesse. Considéré comme le plus malin et sage des archanges dans certaines traditions orientales.",
-        notes: "Signifie 'celui que Dieu aide'."
-    },
-    "Raziel": { 
-        nom: "Raziel — “Secret de Dieu”", 
-        signif: "Gardien des mystères cachés", 
-        freq: 888, 
-        pierres: "Labradorite, Cristal", 
-        astres: "Uranus", 
-        symboles: "Arc-en-ciel, Livre des secrets", 
-        role: "Ésotérisme & Intuition profonde", 
-        img: "img/Raziel.png",
-        traditions: "<b>Kabbale :</b> Auteur du Livre de Raziel transmis à Adam.<br><b>Ésotérisme :</b> Maître des codes sacrés.",
-        description: "Explorateur des réalités. Révèle les secrets de Dieu et montre la sagesse divine de la Torah. Protège les anges serviteurs des créatures vivantes qui soutiennent l'univers. Il représente la sagesse ésotérique et les vérités spirituelles profondes, et est associé à la sephirah Chokmah..",
-        notes: "Représente la sagesse ésotérique et les vérités spirituelles."
-    },
-    "Sandalphon": { 
-        nom: "Sandalphon — “Frère céleste”", 
-        signif: "Vibration de la Terre nourricière", 
-        freq: 285, 
-        pierres: "Turquoise, Quartz fumé", 
-        astres: "Terre", 
-        symboles: "Notes de musique, Racines d'argent", 
-        role: "Prière & Manifestation", 
-        img: "img/Sandalphon.png",
-        traditions: "<b>Kabbale :</b> Ancien prophète Élie métamorphosé.<br><b>Mystique :</b> Tisseur des prières humaines vers le divin.",
-        description: "Le battement du monde. Certaines des toutes premières sources sur Sandalphon le mentionnent comme étant le prophète Élie métamorphosé et élevé au statut angélique[.  Sandalphon (Hébreu : סָנְדַלְפוֹן ; Grec ancien : Σανδαλφών ; Arabe : سندلفون) est un archange dans les écrits juifs, chrétiens et un ange dans l'islam .Chaque rythme qu’il joue réveille les mémoires ancestrales. ",
-        notes: "Veilleur des racines et des chants terrestres."
-    },
-    "Chamuel": { 
-        nom: "Chamuel — “Vision de Dieu”", 
-        signif: "Rayon de l'amour inconditionnel", 
-        freq: 639, 
-        pierres: "Quartz Rose, Kunzite", 
-        astres: "Vénus", 
-        symboles: "Colombe de paix, Cœur ailé", 
-        role: "Relations & Paix intérieure", 
-        img: "img/Chamuel.png",
-        traditions: "<b>Mystique :</b> Protecteur des relations, guérisseur du cœur.<br><b>Ésotérisme :</b> Guide des âmes vers l’amour divin.",
-        description: "Essence de l’amour et de la nature. Soutient les quêtes humaines et est associé à la recherche de Dieu. Camaël, Chamael ou Chamuel, est un des archanges appartenant à l'angéologie et aux mythologies juive et chrétienne où il est traditionnellement considéré comme étant le dirigeant du chœur des puissances. Il est associé à la justice, à la réussite et au courage. Sa mission est de pacifier les relations humaines.Il n'est point reconnu par l'Église catholique ou la plupart des Dénominations chrétiennes mais est néanmoins reconnu par de nombreuses traditions populaires. Son rôle et son importance rappellent celui de l'archange Uriel au sein des religions chrétiennes.",
-        notes: "Associé à la planète Mars (force) et Vénus (amour)."
-    },
-    "Haniel": { 
-        nom: "Haniel — “Grâce de Dieu”", 
-        signif: "Reine lunaire intuitive", 
-        freq: 417, 
-        pierres: "Pierre de lune, Sélénite", 
-        astres: "Lune, Vénus", 
-        symboles: "Croissant lunaire, Miroir d’eau", 
-        role: "Féminité sacrée", 
-        img: "img/Haniel.png",
-        traditions: "<b>Kabbale :</b> Guide des rituels lunaires.<br><b>Mystique :</b> Ange de la joie et de la grâce.",
-        description: "Souveraine de l’invisible. Elle incarne l’intuition pure. Haniel, également connu sous le nom de Annaël, est un des sept Anges de la Création, dans la tradition et l'angélologie juive. Son aile de sélénite capte les murmures des étoiles. En lien avec la planète Vénus et la séphira Netzach. Elle s’occupe des humains sur le plan sentimental et sexuel. Il est le gouverneur de la seconde terre et est responsable des personnes venant de la première.Haniel est souvent apparenté à l’émeraude et associé à la rose (symbole des qualités de la beauté). Il est la plupart du temps représenté sous une forme androgyne avec de large ailes grises. Il revêt une robe vert émeraude et porte une lanterne brune. Il est mentionné dans la Bible en Nombres 34:23 et en 1 Chroniques 7:39",
-        notes: "Représentée souvent sous forme androgyne avec une robe émeraude."
-    },
-    "Jophiel": { 
-        nom: "Jophiel — “Beauté de Dieu”", 
-        signif: "Illumination de la pensée juste", 
-        freq: 963, 
-        pierres: "Citrine, Topaze jaune", 
-        astres: "Jupiter", 
-        symboles: "Lumière dorée, Miroir d'or", 
-        role: "Éveil & Clarté mentale", 
-        img: "img/Jophiel.png",
-        traditions: "<b>Kabbale :</b> Gardienne de la Torah et de la sagesse.<br><b>Mystique :</b> Guide des artistes et des penseurs.",
-        description: "Vision d’harmonie cosmique. Jophiel (de l'hébreu יופיאל - la beauté de Dieu) est un archange aussi connu sous les noms de Iophiel, Iofiel, Jofiel, Yofiel, Youfiel et Zophiel. Jophiel est l'archange qui aurait expulsé Adam et Ève du Paradis, selon la tradition biblique. Les formes géométriques sacrées révèlent des vérités universelles. Inspire la créativité et aide à transformer les pensées négatives en énergie positive.",
-        notes: "Patronne des artistes et de l'illumination mentale."
-    },
-    "Zadkiel": { 
-        nom: "Zadkiel — “Justice de Dieu”", 
-        signif: "Alchimiste de la flamme violette", 
-        freq: 432, 
-        pierres: "Améthyste", 
-        astres: "Saturne, Jupiter", 
-        symboles: "Flamme violette, Calice d'argent", 
-        role: "Transformation & Pardon", 
-        img: "img/Zadkiel.png",
-        traditions: "<b>Mystique :</b> Ange du pardon et de la transformation.<br><b>New Age :</b> Gardien de la flamme violette.",
-        description: "Gardien des secrets spirituels. Zadkiel ou Hesediel (Hébreu : צדקיאל Tzadqiel) est l'archange de la liberté, de la bienveillance, et de la compassion. Il est également le saint patron de la miséricorde. Il est aussi connu sous les noms de Tsadqiel, Sachiel, Zedekiel, Zadakiel, Tzadkiel, Zedekul et Hesediel.Zadkiel appartient à l'ordre des Hashmalim (ou les Dominations), et il est considéré par certaines sources comme étant le chef de cet ordre. Zadkiel peut aussi être vu comme un ange de la Hiérarchie des Archanges permettant d'accéder aux bénédictions de la séphira Hésed, les autres hiérarchies angéliques (ici les Hashmalim-Dominations) étant plus difficilement accessible à l'homme.. D'après la tradition juive, c'est lui qui aurait empêché Abraham de sacrifier son fils.",
-        notes: "Incarne la purification et la transmutation alchimique."
-    }
-};
-    const chakras = [
-        { 
-            nom: "Racine (Muladhara)", 
-            freq: 396, 
-            mantra: "Je suis en sécurité, je suis ancré.", 
-            img: "img/Chakra 1 Racine.png",
-            signification: "Ce centre est ta fondation terrestre. Situé au bas de ta colonne, il est ton lien à la Terre et à ta survie.",
-            enseignement: "Quand il est équilibré, la peur disparaît. Tu maîtrises ton souffle et ton mental. Si tu ressens de l'insécurité ou des blocages matériels, c'est que ta racine appelle ton attention.",
-            rituel: "Résonne avec la note DO. Visualise le rouge ardent. Porte un Grenat ou une Tourmaline rubélite pour tonifier ton corps et réguler ton énergie vitale."
-        },
-        { 
-            nom: "Sacré (Svadhisthana)", 
-            freq: 417, 
-            mantra: "Je suis créatif, je coule avec la vie.", 
-            img: "img/Chakra 2 Sacré.png",
-            signification: "Ici réside le flot de tes émotions et de ta sensualité, juste sous ton nombril. C'est le gardien de ton passé et de ta famille.",
-            enseignement: "Maîtriser ce centre, c'est ne plus être victime de sentiments contradictoires. Si tu te sens possessive ou que tu refoules tes émotions, laisse l'énergie orange circuler à nouveau.",
-            rituel: "Chante la note RÉ. Utilise une Topaze champagne pour évacuer l'anxiété et retrouver la maîtrise de tes sens. Laisse ta créativité s'exprimer pleinement."
-        },
-        { 
-            nom: "Plexus Solaire (Manipura)", 
-            freq: 528, 
-            mantra: "Je suis puissant, j'agis avec volonté.", 
-            img: "img/Chakra 3 Plexus Solaire.png",
-            signification: "C'est ton soleil intérieur. Ton pouvoir personnel et ton affirmation de soi rayonnent depuis ton estomac.",
-            enseignement: "Le Feu est ton élément ici. Il te libère de la douleur. Si tu ressens le besoin de dominer ou que ton ego te dicte ta conduite, ton soleil a besoin de douceur.",
-            rituel: "La note MI est ta clé. Le jaune de la Citrine t'aidera à lutter contre le stress et à stimuler ton système digestif. Brille sans écraser, rayonne simplement."
-        },
-        { 
-            nom: "Cœur (Anahata)", 
-            freq: 639, 
-            mantra: "Je suis amour, je donne et je reçois.", 
-            img: "img/Chakra 4 Coeur.png",
-            signification: "Au centre de ta poitrine bat l'amour inconditionnel. C'est le pont entre ton corps et ton esprit, porté par l'élément Air.",
-            enseignement: "Le yogi qui maîtrise son cœur acquiert le pouvoir de voler comme un oiseau, libre et léger. Si tu es fermée à ton intuition, ton cœur demande à s'ouvrir.",
-            rituel: "Vibre sur la note FA. Le vert de l'Épidote ou de la Verdélite apaisera tes angoisses et régulera ton rythme cardiaque. Respire l'harmonie."
-        },
-        { 
-            nom: "Gorge (Vishuddha)", 
-            freq: 741, 
-            mantra: "Je parle ma vérité avec clarté.", 
-            img: "img/Chakra 5 Gorge.png",
-            signification: "Ta voix est ton outil de création. Ce centre gère ta communication et ta capacité à guider les autres, par-delà le temps.",
-            enseignement: "Ici, tu vis en dehors du temps. Si tu as peur du changement ou que tu peines à t'exprimer, c'est que ta vérité intérieure cherche son chemin vers l'extérieur.",
-            rituel: "La note SOL et le bleu azur t'accompagnent. La Kunzite favorisera tes cordes vocales et ta thyroïde. Parle avec douceur et fermeté."
-        },
-        { 
-            nom: "3e Œil (Ajna)", 
-            freq: 852, 
-            mantra: "Je vois au-delà des apparences.", 
-            img: "img/Chakra 6 Troisieme Oeil.png",
-            signification: "Entre tes sourcils se trouve ta vision intérieure, ton discernement et la porte de tes rêves.",
-            enseignement: "En ouvrant ce troisième œil, tu accèdes à la connaissance de soi profonde. Si ta vision est trop négative ou que tu manques d'imagination, éveille ta conscience.",
-            rituel: "Porte ton attention sur la note LA et la couleur Indigo. L'Aigue-marine ouvrira les portes de ta spiritualité et calmera tes migraines. Vois l'invisible."
-        },
-        { 
-            nom: "Couronne (Sahasrara)", 
-            freq: 963, 
-            mantra: "Je suis un avec le Tout.", 
-            img: "img/Chakra 7 Couronne.png",
-            signification: "Au sommet de ton crâne, tu es connectée à l'Univers. C'est le siège de la sagesse absolue et de la félicité.",
-            enseignement: "Ici, tu atteins la supra-conscience. Si tu te sens séparée du Divin ou enfermée dans des dogmes rigides, libère ton esprit pour expérimenter l'unité.",
-            rituel: "La note SI et le Violet profond sont tes guides. L'Azurite éveillera tes facultés extrasensorielles. Reste ancrée avec une Hématite lors de tes voyages astraux."
-        }
-    ];
-
-    const cartesVibratoires = {
-    "Protection": {
-        freq: 417, pierres: "Obsidienne, Tourmaline noire", astre: "Mars / Saturne",
-        invocation: "Par la force de Mars et la sagesse de Saturne, J’appelle la vibration de Protection divine. Que l’obsidienne scelle, que le son purifie, Que mon champ soit inviolable, stable et sacré. Je suis entouré(e) d’un cercle de lumière, Nul ne peut pénétrer sans mon accord. Ainsi soit-il.",
-        effet: "Dissout les intrusions, renforce l'aura.", img: "img/Vibratoire Protection.png",
-        livret: "🔮 <b>Rituel :</b> Allume une bougie noire. Visualise une sphère de lumière bleue. Trace un cercle de sel."
-    },
-    "Guérison": {
-        freq: 528, pierres: "Malachite, Fluorite", astre: "Lune / Chiron",
-        invocation: "Par la lumière de la Lune et la médecine de Chiron, J’appelle la vibration sacrée de Guérison. Que la malachite purifie, que le son répare, Que mes cellules se souviennent de leur harmonie. Je suis un temple vivant, Et je choisis la régénération. Ainsi soit-il.",
-        effet: "Libère les mémoires, réparation cellulaire.", img: "img/Vibratoire Guérison.png",
-        livret: "🌱 <b>Rituel :</b> Allume une bougie verte. Place tes mains sur la zone à soulager. Respire la couleur émeraude."
-    },
-    "Guidance": {
-        freq: 852, pierres: "Labradorite, Lapis lazuli", astre: "Mercure / Uranus",
-        invocation: "Par la clarté de Mercure et l’éveil d’Uranus, J’appelle la vibration sacrée de Guidance. Que la labradorite éclaire, que le son révèle, Que mes pas soient guidés par la sagesse intérieure. Je suis prêt(e) à recevoir les signes, Et à suivre le chemin qui s’ouvre devant moi. Ainsi soit-il.",
-        effet: "Active l’intuition, éclaire les choix.", img: "img/Vibratoire Guide.png",
-        livret: "🌀 <b>Rituel :</b> Allume une bougie bleue. Ferme les yeux et pose une question précise. Note la première pensée."
-    },
-    "Amour": {
-        freq: 639, pierres: "Quartz rose, Rhodonite", astre: "Vénus / Terre",
-        invocation: "Par la douceur de Vénus et la tendresse de la Terre, J’appelle la vibration sacrée de l’Amour. Que le quartz rose m’ouvre, que le son m’apaise, Que mon cœur devienne un temple de compassion. Je suis amour, je suis lien, je suis unité. Ainsi soit-il.",
-        effet: "Dissout les blocages affectifs, ouverture du cœur.", img: "img/Vibratoire Amour.png",
-        livret: "🌸 <b>Rituel :</b> Allume une bougie rose. Tiens un quartz rose sur ton cœur. Visualise des fils roses."
-    },
-    "Sagesse": {
-        freq: 963, pierres: "Améthyste, Cristal de roche", astre: "Soleil / Neptune",
-        invocation: "Par la lumière du Soleil et les eaux de Neptune, J’appelle la vibration sacrée de la Sagesse. Que l’améthyste m’élève, que le son m’ouvre, Que ma conscience se souvienne de l’origine. Je suis un canal vivant de vérité, Et je reçois les enseignements du ciel. Ainsi soit-il.",
-        effet: "Accès aux plans supérieurs, mémoire cosmique.", img: "img/Vibratoire Sagesse.png",
-        livret: "🌌 <b>Rituel :</b> Allume une bougie violette. Médite en silence. Imagine un rayon blanc descendant du ciel."
-    }
-};
-
-const messages = ["Alignement éthérique...", "Lecture des archives...", "Harmonisation sonore...", "Ouverture du portail..."];
-
-    let audioCtx = null; 
-    let ambianceOsc = null;
-    let ambianceOsc2 = null;
-
-   function playFreq(f) {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.frequency.setValueAtTime(f, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 0.1);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 6);
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.start(); osc.stop(audioCtx.currentTime + 6);
+    async function updateWeather() {
+        try {
+            const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=45.50&longitude=-73.56&current=temperature_2m&daily=sunrise,sunset&timezone=auto`);
+            const data = await response.json();
+            const temp = Math.round(data.current.temperature_2m);
+            const sunrise = data.daily.sunrise[0].split("T")[1];
+            const sunset = data.daily.sunset[0].split("T")[1];
+            if(document.getElementById('temp-real')) document.getElementById('temp-real').innerText = `${temp}°C`;
+            if(document.getElementById('sun-times')) document.getElementById('sun-times').innerText = `${sunrise} • ${sunset}`;
+        } catch (e) { console.log("Météo non dispo"); }
     }
     
-// =====================================================================
-//  GUIDANCE QUOTIDIENNE – version immersive (4 à 5 phrases par élément)
-//  HTML à ajouter dans ta carte (avant #daily-resonance) :
-//     <div id="daily-intro"></div>
-// =====================================================================
-
-function obtenirSigneSolaire(date) {
-    const debuts = [
-        [1, 20, "Verseau"], [2, 19, "Poissons"], [3, 21, "Bélier"], [4, 20, "Taureau"],
-        [5, 21, "Gémeaux"], [6, 21, "Cancer"], [7, 23, "Lion"], [8, 23, "Vierge"],
-        [9, 23, "Balance"], [10, 23, "Scorpion"], [11, 22, "Sagittaire"], [12, 22, "Capricorne"]
-    ];
-    const m = date.getMonth() + 1;
-    const d = date.getDate();
-    let signe = "Capricorne"; // du 1er au 19 janvier
-    for (const [mois, jourDebut, nom] of debuts) {
-        if (m > mois || (m === mois && d >= jourDebut)) signe = nom;
-    }
-    return signe;
-}
-
-function categoriePhaseLune(phaseLune) {
-    const p = String(phaseLune || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    if (p.includes("nouvelle")) return "nouvelle";
-    if (p.includes("pleine")) return "pleine";
-    if (p.includes("premier quartier")) return "premierQuartier";
-    if (p.includes("dernier quartier")) return "dernierQuartier";
-    if (p.includes("decroissant")) return "decroissante";
-    if (p.includes("croissant")) return "croissante";
-    return "neutre";
-}
-
-function genererGuidanceQuotidienne(phaseLune) {
-    const maintenant = new Date();
-    const jourAnnee = Math.floor((maintenant - new Date(maintenant.getFullYear(), 0, 0)) / 86400000);
-    const signe = obtenirSigneSolaire(maintenant);
-
-    // ------------------------------------------------------------------
-    //  1. INTRO : dépend du signe solaire du jour
-    // ------------------------------------------------------------------
-    const introsParSigne = {
-        "Balance": [
-            `Ton Soleil traverse la Balance, le signe qui cherche la beauté dans chaque rencontre et la justesse dans chaque parole. Aujourd'hui, l'air semble plus léger autour de toi, comme si les tensions acceptaient enfin de se dénouer. Regarde où tu peux remplacer l'effort par la douceur : c'est souvent là que la vraie harmonie se cache. Tes échanges sont des miroirs, et ce que tu offres avec sincérité te revient avec élégance.`,
-            `La vibration de la Balance t'invite à tenir le fil délicat entre ce que tu désires et ce que tu donnes. Ce signe d'Air aime les conversations qui éclairent, les compromis qui honorent chacun et les gestes qui apaisent. Ton regard est aujourd'hui plus clair, plus juste, capable de voir les deux côtés d'une situation sans perdre ton centre. Fais confiance à cette clarté nouvelle : elle sait où se trouve ton équilibre.`
-        ],
-        "Scorpion": [
-            `Le Soleil entre dans le Scorpion, et avec lui monte une énergie d'eau profonde, silencieuse et magnétique. Ce signe ne se contente jamais de la surface : il t'invite à descendre là où vivent tes vérités les plus intimes. Ce que tu ressens peut sembler intense, mais c'est le signe que quelque chose en toi est prêt à se transformer. Accueille cette profondeur sans la fuir, car elle contient exactement la force dont tu as besoin.`,
-            `L'énergie du Scorpion en progression t'invite à sonder tes profondeurs, là où dorment tes désirs véritables et tes blessures en voie de guérison. Comme le phénix, ce signe connaît l'art de renaître de ce qu'il laisse derrière lui. Aujourd'hui, une part de toi cherche à lâcher une vieille peau pour laisser place à plus de vérité. Avance avec courage : tout ce qui se transforme dans l'ombre finit par briller à la lumière.`
-        ],
-        "Sagittaire": [
-            `Le Soleil traverse le Sagittaire, signe de feu tourné vers l'horizon, la quête de sens et la joie d'explorer. Ton esprit aspire aujourd'hui à voir plus loin, à comprendre pourquoi les choses arrivent plutôt que simplement comment. Laisse ta curiosité te guider vers une idée, un lieu ou une conversation qui élargit ton regard. L'optimisme est une boussole fiable : il t'indique la direction où ta vie veut grandir.`
-        ]
-    };
-
-    const introGenerique = [
-        `Ton Soleil traverse aujourd'hui le signe du ${signe}, et son énergie colore subtilement chacune de tes journées. Prends un instant pour sentir comment cette vibration résonne en toi : une envie, une tension, un élan peut-être. Chaque signe porte une leçon, et celle d'aujourd'hui se révèle dans les petits détails de ton quotidien. Reste attentif et bienveillant envers toi-même : le ciel te parle à travers ce que tu ressens.`
-    ];
-
-    const variantesIntro = introsParSigne[signe] || introGenerique;
-    const intro = variantesIntro[jourAnnee % variantesIntro.length];
-
-    // ------------------------------------------------------------------
-    //  2. RÉSONANCES : un message de fond + une nuance liée à la phase de lune
-    // ------------------------------------------------------------------
-    const resonances = [
-        `Sous cette ${phaseLune}, ta diplomatie naturelle devient ton plus beau talent. Tu sais écouter ce qui se dit entre les mots, et les autres le sentent. Aujourd'hui, une parole mesurée aura plus de poids que mille arguments. Choisis la douceur sans renoncer à ta vérité : c'est ainsi que tu désarmes les conflits avant même qu'ils naissent.`,
-        `Le mouvement céleste réveille ta transformation intérieure, comme une marée lente qui change le paysage sans bruit. Quelque chose en toi a déjà commencé à muer, même si tu ne le vois pas encore clairement. Ose laisser partir ce qui ne te ressemble plus : une habitude, une croyance, une attente trop lourde. Sous la ${phaseLune}, ce que tu libères fait de la place pour ce qui est vrai.`,
-        `L'équilibre entre donner et recevoir est la clé de ta paix aujourd'hui. Tu as peut-être l'habitude d'offrir beaucoup, parfois au-delà de ce que ton cœur peut porter. Permets-toi d'accepter une aide, un compliment ou simplement un moment de repos sans te justifier. La ${phaseLune} rappelle que le flux de la vie circule dans les deux sens.`,
-        `Une résonance cristalline traverse ta journée et affine ton discernement spirituel. Les signes, les coïncidences et les intuitions soudaines ne sont pas du hasard : ils sont des invitations à regarder plus loin. Prends le temps de noter ce qui te frappe, même si cela te semble anodin. Sous la ${phaseLune}, ta perception devient un instrument précis, à condition de lui laisser du silence.`,
-        `Aujourd'hui, ton cœur et ta raison cherchent à parler la même langue. Si une décision te pèse, demande-toi ce que tu choisirais sans peur, puis observe ce que ton corps répond. Une sensation d'ouverture est souvent plus fiable qu'une longue liste d'arguments. La ${phaseLune} soutient cette alliance entre intuition et lucidité.`,
-        `Une énergie de renouveau circule autour de toi, discrète mais bien réelle. Elle se glisse dans les détails : une lumière sur un mur, un sourire inattendu, une idée qui surgit au bon moment. Ne cherche pas à tout comprendre, contente-toi d'accueillir ce qui se présente avec gratitude. Sous la ${phaseLune}, la vie te montre que les commencements n'ont pas besoin d'être spectaculaires.`,
-        `Ta sensibilité est aujourd'hui une boussole, pas une fragilité. Ce que tu perçois chez les autres, ce que tu devines avant qu'on te le dise, tout cela nourrit ta sagesse. Protège ton énergie en choisissant les lieux et les personnes qui te font du bien. La ${phaseLune} t'enseigne que se préserver n'est pas se fermer, c'est rester fidèle à soi.`
-    ];
-
-    const nuancesLune = {
-        nouvelle: `La Nouvelle Lune, en particulier, est un terrain fertile pour planter une intention : formule-la simplement, comme une graine confiée à la nuit.`,
-        croissante: `Cette lune croissante amplifie ton élan, c'est le bon moment pour passer à l'action, même par de petits pas.`,
-        premierQuartier: `Le Premier Quartier met ta détermination à l'épreuve, et te rappelle qu'un obstacle franchi aujourd'hui renforce ta confiance pour la suite.`,
-        pleine: `La Pleine Lune éclaire tout ce qui était dans l'ombre : accueille ce qui se révèle, sans jugement, comme un cadeau de lucidité.`,
-        decroissante: `Cette lune décroissante favorise le lâcher-prise : c'est le moment idéal pour clarifier, ranger et pardonner.`,
-        dernierQuartier: `Le Dernier Quartier invite au bilan tendre : remercie ce qui s'achève et garde ce qui a de la valeur.`,
-        neutre: `Laisse le rythme de la Lune guider ton souffle et rappelle-toi que chaque phase a sa sagesse.`
-    };
-
-    // ------------------------------------------------------------------
-    //  3. RITUELS : 3 gestes bien décrits + une affirmation
-    // ------------------------------------------------------------------
-    const rituels = [
-        `✨ Installe-toi confortablement, le dos droit, et inspire une lumière dorée pendant 4 secondes en imaginant qu'elle remplit ta poitrine. Retiens ce souffle un instant, puis expire lentement tes doutes comme une brume qui se dissipe.<br>✨ Pose tes deux mains sur ton cœur et sens sa chaleur et son rythme tranquille. Reste ainsi pendant trois respirations complètes, sans rien chercher à changer.<br>✨ Affirmation à répéter lentement, trois fois : « Je suis en harmonie avec moi-même et avec ce qui m'entoure. »`,
-        `✨ Ferme les yeux et allume dans ton esprit une bougie à la flamme calme et stable. Observe sa lumière grandir jusqu'à éclairer l'espace autour de toi.<br>✨ Visualise ensuite une lumière bleue qui t'enveloppe comme un manteau de protection, des pieds jusqu'au sommet de la tête. Respire profondément et sens que rien de ce qui ne te convient pas ne peut y entrer.<br>✨ Affirmation à répéter lentement, trois fois : « Mon espace est sacré, et je choisis ce que j'y accueille. »`,
-        `✨ Masse doucement tes tempes avec le bout des doigts, en petits cercles, pendant une minute. Mets dans ce geste l'intention de relâcher les pensées qui tournent en boucle.<br>✨ Respire l'élément Air, symbole de la Balance : inspire par le nez en imaginant une brise fraîche, expire par la bouche comme si tu dispersais des nuages. Répète sept fois, à ton rythme.<br>✨ Affirmation à répéter lentement, trois fois : « Mes pensées sont fluides, légères et bienveillantes. »`,
-        `✨ Tiens-toi debout, les pieds bien posés au sol, et imagine des racines qui descendent de tes plantes vers la terre. Sens l'énergie remonter lentement le long de tes jambes, stable et rassurante.<br>✨ Visualise un quartz rose lumineux au niveau de ton plexus solaire, juste sous les côtes. Laisse sa douceur apaiser les tensions de ton ventre et de ton souffle.<br>✨ Affirmation à répéter lentement, trois fois : « Je rayonne l'Amour, et je le reçois en retour. »`,
-        `✨ Prends un verre d'eau, tiens-le entre tes deux mains et dépose-y l'intention de te purifier et de t'hydrater en profondeur. Bois-le par petites gorgées, en savourant chacune comme une bénédiction.<br>✨ Pendant ce temps, imagine que cette eau lave tes fatigues et tes préoccupations, puis rejoint la terre qui les transforme. Observe la sensation de légèreté qui s'installe.<br>✨ Affirmation à répéter lentement, trois fois : « Je me libère de ce qui n'est plus nécessaire. »`,
-        `✨ Place-toi près d'une fenêtre ou à l'extérieur, et lève doucement les yeux vers le ciel, qu'il soit dégagé ou nuageux. Prends trois grandes respirations en laissant ton regard s'adoucir.<br>✨ Imagine un fil de lumière argentée qui relie ton cœur à la Lune. Sens-le te transmettre calme, intuition et confiance dans le rythme des cycles.<br>✨ Affirmation à répéter lentement, trois fois : « Je fais confiance au temps juste de ma vie. »`
-    ];
-
-    // ------------------------------------------------------------------
-    //  4. NOMBRES ANGÉLIQUES : un titre + 4 à 5 phrases
-    // ------------------------------------------------------------------
-    const nombresAngeliques = [
-        { num: "000", titre: "Infini", msg: `Le triple zéro évoque le cercle sans début ni fin, le vide fertile d'où naît toute chose. Il apparaît souvent quand un chapitre se referme et qu'une page blanche s'ouvre devant toi. Rien n'est figé : tu as le droit de recommencer, de choisir autrement, de te réinventer. Accueille cet espace sans l'emplir trop vite, car c'est dans le silence que se dessinent les nouvelles directions. Aujourd'hui, un nouveau départ s'offre à toi.` },
-        { num: "111", titre: "Alignement", msg: `Le 111 est un rappel que tes pensées possèdent un pouvoir de création, surtout quand elles sont claires et sincères. Il apparaît lorsque ton intention et ton énergie s'accordent, comme un portail qui s'entrouvre. Observe ce à quoi tu accordes ton attention : c'est ce qui grandit. Choisis des pensées qui te soutiennent, car elles se manifestent plus vite qu'on ne le croit. Aujourd'hui, formule un souhait précis et garde-le près de ton cœur.` },
-        { num: "222", titre: "Confiance", msg: `Le 222 murmure que tout se met en place, même si le chemin semble lent ou incertain. Comme une graine qui travaille sous la terre, ce qui se prépare n'est pas encore visible mais déjà vivant. Cette séquence invite à la patience, à la coopération et à la foi dans le timing de la vie. Tu es au bon endroit, au bon moment, avec exactement ce qu'il te faut. Respire, relâche le contrôle et laisse les choses éclore.` },
-        { num: "333", titre: "Protection", msg: `Le 333 est souvent associé à la présence des Maîtres Ascensionnés, ces êtres de sagesse qui ont traversé l'expérience humaine et veillent avec bienveillance sur ceux qui cherchent la lumière. Il t'invite à sentir que tu n'es jamais seul(e) dans tes épreuves. Il évoque aussi l'expression de soi : ta voix, ta créativité et ta joie ont leur place. Appuie-toi sur ce soutien invisible pour oser ce que tu hésitais à faire. Aujourd'hui, tu es entouré(e), guidé(e) et protégé(e).` },
-        { num: "444", titre: "Soutien", msg: `Le 444 est le nombre des fondations solides, des racines profondes et de la stabilité qui rassure. Quand il apparaît, tes guides te signalent qu'ils sont à tes côtés et t'offrent leur force. Ce que tu bâtis avec constance, patience et honnêteté repose sur un terrain sûr. N'hésite pas à demander de l'aide, qu'elle soit humaine ou spirituelle : elle est déjà en route. Aujourd'hui, avance pas à pas, tu es soutenu(e) plus que tu ne le crois.` },
-        { num: "555", titre: "Changement", msg: `Le 555 annonce un vent de renouveau qui balaie ce qui ne servait plus. Les changements peuvent d'abord sembler bousculants, mais ils ouvrent des portes que tu n'aurais pas osé pousser seul(e). Cette énergie t'invite à la souplesse, à l'aventure et à la confiance dans l'inconnu. Pose-toi la question : de quoi suis-je prêt(e) à me libérer pour avancer plus léger(e) ? Une transformation positive arrive, accueille-la avec curiosité.` },
-        { num: "666", titre: "Équilibre", msg: `Loin de sa réputation, le 666 est un rappel d'équilibre : il apparaît quand l'attention se concentre trop sur le matériel, les soucis ou les inquiétudes. Il t'invite à replacer ton énergie là où elle nourrit vraiment ton âme. Prends un moment pour te reconnecter à ce qui est essentiel : ton souffle, tes valeurs, les personnes que tu aimes. Quand tu rééquilibres le visible et l'invisible, la tension se dissout. Recentre tes pensées sur le spirituel et laisse la paix revenir.` },
-        { num: "777", titre: "Miracles", msg: `Le 777 est le nombre de la grâce, de la sagesse intérieure et des heureuses synchronicités. Il apparaît lorsque tu es en phase avec ton chemin et que l'univers applaudit tes efforts. Les coïncidences se multiplient : une rencontre, une idée, une porte qui s'ouvre au bon moment. Remercie pour ce qui est déjà là, car la gratitude amplifie la chance. Aujourd'hui, la protection divine t'accompagne et les miracles ordinaires se multiplient.` },
-        { num: "888", titre: "Abondance", msg: `Le 888 symbolise l'infini en mouvement, le flux généreux qui circule entre ce que tu donnes et ce que tu reçois. Il parle d'abondance sous toutes ses formes : financière, bien sûr, mais aussi affective, créative et énergétique. Cette séquence t'encourage à te sentir digne de recevoir, sans culpabilité. Remercie pour tout ce qui est déjà là et sois généreux(se) à ton tour, car l'abondance aime circuler. Un flux d'énergie prospère s'ouvre devant toi.` },
-        { num: "999", titre: "Accomplissement", msg: `Le 999 marque la fin d'un grand cycle, la dernière étape avant le renouveau. Ce que tu as vécu, appris et traversé a fait de toi quelqu'un de plus sage et de plus entier. Honore ce chemin parcouru avec reconnaissance, même pour les passages difficiles. Laisse partir ce qui est complet pour faire de la place à ce qui arrive. Un cycle se termine, et il prépare un renouveau magnifique.` }
-    ];
-
-    const angel = nombresAngeliques[jourAnnee % nombresAngeliques.length];
-
-    // ------------------------------------------------------------------
-    //  5. CHOIX DES VARIANTES (modules différents → combinaisons variées)
-    // ------------------------------------------------------------------
-    const categorie = categoriePhaseLune(phaseLune);
-    const resonanceDuJour = resonances[jourAnnee % resonances.length] + " " + nuancesLune[categorie];
-    const rituelDuJour = rituels[jourAnnee % rituels.length];
-
-    // ------------------------------------------------------------------
-    //  6. MISE EN FORME (espacement aéré, majuscules seulement pour le titre)
-    // ------------------------------------------------------------------
-    const styleTexte = "margin:0 0 18px 0;line-height:1.9;letter-spacing:0.3px;text-transform:none;font-weight:normal;";
-    const para = (txt) => `<p style="${styleTexte}">${txt}</p>`;
-
-    const introHTML = para(intro);
-
-    const resonanceHTML =
-        para(`« ${resonances[jourAnnee % resonances.length]} »`) +
-        `<p style="${styleTexte}font-style:italic;opacity:0.9;">${nuancesLune[categorie]}</p>`;
-
-    const rituelHTML = rituelDuJour
-        .split("<br>")
-        .map(ligne => `<div style="margin:0 0 16px 0;line-height:1.9;letter-spacing:0.3px;text-transform:none;font-weight:normal;">${ligne}</div>`)
-        .join("");
-
-    const angelHTML =
-        `<div style="text-transform:uppercase;letter-spacing:4px;font-weight:600;margin:6px 0 16px 0;">${angel.titre}</div>` +
-        para(angel.msg);
-
-    // ------------------------------------------------------------------
-    //  7. INJECTION DANS LE HTML
-    // ------------------------------------------------------------------
-    const introEl = document.getElementById('daily-intro');
-    if (introEl) introEl.innerHTML = introHTML;
-
-    document.getElementById('angel-number').innerText = angel.num;
-    document.getElementById('angel-message').innerHTML = angelHTML;
-    document.getElementById('daily-resonance').innerHTML = resonanceHTML;
-    document.getElementById('daily-rituel').innerHTML = rituelHTML;
-}
-
-
-// --- NOUVELLE FONCTION MÉTÉO (À AJOUTER ICI) ---
-async function updateWeather() {
-    try {
-        // Coordonnées de Montréal
-        const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=45.50&longitude=-73.56&current=temperature_2m&daily=sunrise,sunset&timezone=auto`);
-        const data = await response.json();
-        
-        const temp = Math.round(data.current.temperature_2m);
-        const sunrise = data.daily.sunrise[0].split("T")[1];
-        const sunset = data.daily.sunset[0].split("T")[1];
-
-        if(document.getElementById('temp-real')) document.getElementById('temp-real').innerText = `${temp}°C`;
-        if(document.getElementById('sun-times')) document.getElementById('sun-times').innerText = `${sunrise} • ${sunset}`;
-    } catch (e) { console.log("Météo non dispo"); }
-}
-    
-function startAmbiance() {
+    function startAmbiance() {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         if (ambianceOsc) return; 
-
-        // Création d'une nappe plus riche (Basse profonde + Harmonique)
         const createDrone = (freq, vol) => {
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
-            osc.type = 'triangle'; // Son beaucoup plus doux que 'sine'
+            osc.type = 'triangle';
             osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
             gain.gain.setValueAtTime(0, audioCtx.currentTime);
-            gain.gain.linearRampToValueAtTime(vol, audioCtx.currentTime + 3); // Montée très lente
+            gain.gain.linearRampToValueAtTime(vol, audioCtx.currentTime + 3);
             osc.connect(gain);
             gain.connect(audioCtx.destination);
             osc.start();
             return osc;
         };
-
-        // On joue deux fréquences qui s'entremêlent
-        ambianceOsc = createDrone(68.05, 0.03); // Une octave en dessous de l'OM (Ancrage)
-        ambianceOsc2 = createDrone(136.1, 0.02); // Fréquence OM (Cœur)
+        ambianceOsc = createDrone(68.05, 0.03);
+        ambianceOsc2 = createDrone(136.1, 0.02);
     }
     
-    // --- LOGIQUE DU PORTAIL ---
     function lancerRituel() {
         startAmbiance();
         document.getElementById('intro-step').style.display = 'none';
@@ -685,23 +46,18 @@ function startAmbiance() {
         if (box) box.style.display = (box.style.display === 'block') ? 'none' : 'block';
     }
 
-function afficherResultats() {
-        // 1. Tirage aléatoire des trois cartes
+    function afficherResultats() {
         const archiKeys = Object.keys(archangesData);
         const arcKey = archiKeys[Math.floor(Math.random() * archiKeys.length)];
         const arc = archangesData[arcKey];
-
         const cha = chakras[Math.floor(Math.random() * chakras.length)];
-        
         const vKeys = Object.keys(cartesVibratoires);
         const vKey = vKeys[Math.floor(Math.random() * vKeys.length)];
         const vib = cartesVibratoires[vKey];
 
-        // 2. Gestion de l'affichage de l'interface
         document.getElementById('loader').style.display = 'none';
         document.getElementById('portal-result').style.display = 'block';
 
-        // 3. Génération du HTML des 3 fiches
         document.getElementById('cards-container').innerHTML = `
             <div class="fiche" style="position: relative; min-height: 500px;">
                 <div id="codex-archange" class="livret-box" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #080c12; z-index: 20; padding: 20px; box-sizing: border-box; border-radius: 15px; border: 2px solid var(--gold); overflow-y: auto;">
@@ -711,18 +67,15 @@ function afficherResultats() {
                     <p style="font-size:0.8rem; color: var(--gold); margin-top: 15px; border-top: 1px solid rgba(212,175,55,0.3); padding-top: 10px;">✨ ${arc.notes}</p>
                     <button class="audio-btn" style="width:100%; margin-top: 20px;" onclick="document.getElementById('codex-archange').style.display='none'">⬅ FERMER</button>
                 </div>
-
                 <h3>🌌 ${arc.nom}</h3>
                 <img src="${arc.img}" style="width:100%; border-radius:10px;">
                 <p class="details-text">💎 <b>Pierres :</b> ${arc.pierres}</p>
                 <p class="details-text">🧭 <b>Rôle :</b> ${arc.role}</p>
-                
                 <div style="margin-top:auto; display: flex; flex-direction: column; gap: 10px;">
                     <button class="audio-btn" onclick="playFreq(${arc.freq})">🔊 ACTIVER (${arc.freq}Hz)</button>
                     <button class="audio-btn" style="background:transparent; color:#fff; border:1px solid #fff;" onclick="document.getElementById('codex-archange').style.display='block'">📖 LIRE LE CODEX</button>
                 </div>
             </div>
-
             <div class="fiche" style="position: relative; min-height: 500px;">
                 <div id="livret-chakra" class="livret-box" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10; padding: 20px; box-sizing: border-box; border-radius: 15px; border: 2px solid var(--gold); overflow-y: auto;">
                     <h3 style="color:var(--gold); text-align:center;">📖 SAGESSE DU CHAKRA</h3>
@@ -731,451 +84,263 @@ function afficherResultats() {
                     <p style="font-size:0.85rem; line-height:1.5; border-top:1px solid var(--gold); padding-top:10px;"><b>🌿 Rituel :</b> ${cha.rituel}</p>
                     <button class="audio-btn" style="width:100%;" onclick="document.getElementById('livret-chakra').style.display='none'">⬅ FERMER</button>
                 </div>
-
                 <h3>🌀 Chakra ${cha.nom}</h3>
                 <img src="${cha.img}" style="width:100%; border-radius:10px;">
                 <p class="details-text">💬 <b>Mantra :</b> "${cha.mantra}"</p>
                 <p class="details-text">🌈 <b>Fréquence :</b> ${cha.freq} Hz</p>
-                
                 <div style="margin-top:auto; display: flex; flex-direction: column; gap: 10px;">
                     <button class="audio-btn" onclick="playFreq(${cha.freq})">🔊 ALIGNER</button>
                     <button class="audio-btn" style="background:transparent; color:#fff; border:1px solid #fff;" onclick="document.getElementById('livret-chakra').style.display='block'">📖 VOIR L'ENSEIGNEMENT</button>
                 </div>
             </div>
-
             <div class="fiche" style="position: relative; min-height: 500px;">
                 <div id="livret-overlay-box" class="livret-box" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #1a1a1a 0%, #000 100%); z-index: 10; padding: 25px; box-sizing: border-box; border-radius: 15px; border: 2px solid var(--gold); overflow-y: auto;">
                     <h3 style="color:var(--gold); margin-top: 0; text-align:center; letter-spacing: 2px;">📖 GRIMOIRE DE ${vKey.toUpperCase()}</h3>
                     <p style="color: #fff; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; text-align: center;">— Invocation Sacrée —</p>
-                    <p id="invocation-text" style="color: var(--gold); font-style: italic; font-size: 1rem; line-height: 1.6; margin: 15px 0; padding: 10px; border: 1px double rgba(212, 175, 55, 0.3); background: rgba(212, 175, 55, 0.05); text-align: center;">
-                        ${vib.invocation}
-                    </p> 
-                    <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size:0.85rem;">
-                        <b style="color: #4CAF50;">⚡ Action Vibratoire :</b><br>${vib.effet}
-                    </div>
-                    <div style="padding: 5px; font-size:0.85rem;">
-                        <b style="color: var(--gold);">🔮 Protocole de Rituel :</b><br>${vib.livret || "Infusion en cours..."}
-                    </div>
+                    <p id="invocation-text" style="color: var(--gold); font-style: italic; font-size: 1rem; line-height: 1.6; margin: 15px 0; padding: 10px; border: 1px double rgba(212, 175, 55, 0.3); background: rgba(212, 175, 55, 0.05); text-align: center;">${vib.invocation}</p> 
+                    <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size:0.85rem;"><b style="color: #4CAF50;">⚡ Action Vibratoire :</b><br>${vib.effet}</div>
+                    <div style="padding: 5px; font-size:0.85rem;"><b style="color: var(--gold);">🔮 Protocole de Rituel :</b><br>${vib.livret || "Infusion en cours..."}</div>
                     <button class="audio-btn" style="background:var(--gold); color:#000; margin-top: 20px; width: 100%;" onclick="toggleLivret()">⬅ REPLIER LE LIVRET</button>
                 </div>
-
                 <h3>✨ Carte de ${vKey}</h3>
                 <img src="${vib.img}" style="width: 100%; border-radius: 10px; margin-bottom: 10px;">
                 <p class="details-text">🌠 <b>Astre :</b> ${vib.astre}</p>
                 <p class="details-text">⚡ <b>Effet :</b> ${vib.effet}</p>
-                
                 <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
                     <button class="audio-btn" style="background:#fff; color:#000;" onclick="playFreq(${vib.freq})">✨ SCELLER LE RITUEL (${vib.freq}Hz)</button>
                     <button class="audio-btn" style="background:transparent; color:#fff; border:1px solid #fff;" onclick="toggleLivret()">📖 VOIR LE LIVRET COMPLET</button>
                 </div>
             </div>
         `;
-        
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     // --- CONFIGURATION ASTRONOMIQUE ---
-const LOCATION = {
-    latitude: 45.5017,
-    longitude: -73.5673,
-    timezone: "America/Toronto"
-};
-
-const moonPhases = [
-    { name: "Nouvelle Lune", icon: "🌑", quality: "Introspection" },
-    { name: "Premier Croissant", icon: "🌒", quality: "Éclosion" },
-    { name: "Premier Quartier", icon: "🌓", quality: "Action" },
-    { name: "Gibbeuse Croissante", icon: "🌔", quality: "Affinage" },
-    { name: "Pleine Lune", icon: "🌕", quality: "Illumination" },
-    { name: "Gibbeuse Décroissante", icon: "🌖", quality: "Gratitude" },
-    { name: "Dernier Quartier", icon: "🌗", quality: "Libération" },
-    { name: "Dernier Croissant", icon: "🌘", quality: "Repos" }
-];
-
-function getMoonPhaseName(phase) {
-    const index = Math.round(phase * 8) % 8;
-    return moonPhases[index];
-}
-
-function formatTime(date) {
-    if (!(date instanceof Date) || Number.isNaN(date.getTime())) {
-        return "--:--";
+    const LOCATION = { latitude: 45.5017, longitude: -73.5673, timezone: "America/Toronto" };
+    const moonPhases = [
+        { name: "Nouvelle Lune", icon: "🌑", quality: "Introspection" },
+        { name: "Premier Croissant", icon: "🌒", quality: "Éclosion" },
+        { name: "Premier Quartier", icon: "🌓", quality: "Action" },
+        { name: "Gibbeuse Croissante", icon: "🌔", quality: "Affinage" },
+        { name: "Pleine Lune", icon: "🌕", quality: "Illumination" },
+        { name: "Gibbeuse Décroissante", icon: "🌖", quality: "Gratitude" },
+        { name: "Dernier Quartier", icon: "🌗", quality: "Libération" },
+        { name: "Dernier Croissant", icon: "🌘", quality: "Repos" }
+    ];
+    function getMoonPhaseName(phase) { const index = Math.round(phase * 8) % 8; return moonPhases[index]; }
+    function formatTime(date) {
+        if (!(date instanceof Date) || Number.isNaN(date.getTime())) return "--:--";
+        return new Intl.DateTimeFormat("fr-CA", { timeZone: LOCATION.timezone, hour: "2-digit", minute: "2-digit", hour12: false }).format(date);
     }
+    function formatDateISO(date) { return new Intl.DateTimeFormat("en-CA", { timeZone: LOCATION.timezone, year: "numeric", month: "2-digit", day: "2-digit" }).format(date); }
 
-    return new Intl.DateTimeFormat("fr-CA", {
-        timeZone: LOCATION.timezone,
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false
-    }).format(date);
-}
-
-function formatDateISO(date) {
-    return new Intl.DateTimeFormat("en-CA", {
-        timeZone: LOCATION.timezone,
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit"
-    }).format(date);
-}
-
-function updateMoonData(date = new Date()) {
-    // Vérifier si SunCalc est chargé
-    if (typeof SunCalc === 'undefined') {
-            
-        // Mode dégradé
+    function updateMoonData(date = new Date()) {
+        if (typeof SunCalc === 'undefined') {
+            const moonIconEl = document.getElementById("moon-icon");
+            const moonNameEl = document.getElementById("moon-name");
+            const moonZodiacEl = document.getElementById("moon-zodiac");
+            const moonDataEl = document.getElementById("moon-data");
+            if (moonIconEl) moonIconEl.innerText = "🌙";
+            if (moonNameEl) moonNameEl.innerText = "Chargement...";
+            if (moonZodiacEl) moonZodiacEl.innerText = "Lune en transit";
+            if (moonDataEl) moonDataEl.innerText = "Données indisponibles";
+            return { name: "Inconnue", icon: "🌙", quality: "Attente", illumination: 0 };
+        }
+        const illumination = SunCalc.getMoonIllumination(date);
+        if (!illumination || typeof illumination.phase === 'undefined') {
+            const moonIconEl = document.getElementById("moon-icon");
+            const moonNameEl = document.getElementById("moon-name");
+            const moonZodiacEl = document.getElementById("moon-zodiac");
+            if (moonIconEl) moonIconEl.innerText = "🌙";
+            if (moonNameEl) moonNameEl.innerText = "Erreur calcul";
+            if (moonZodiacEl) moonZodiacEl.innerText = "Lune en transit";
+            return { name: "Erreur", icon: "🌙", quality: "Erreur", illumination: 0 };
+        }
+        const phase = getMoonPhaseName(illumination.phase);
+        const moonPosition = SunCalc.getMoonPosition(date, LOCATION.latitude, LOCATION.longitude);
+        const moonTimes = SunCalc.getMoonTimes(date, LOCATION.latitude, LOCATION.longitude);
+        const illuminationPercent = Math.round(illumination.fraction * 100);
+        const radM = Math.PI / 180;
+        const dM = date.valueOf() / 86400000 - 0.5 + 2440588 - 2451545;
+        const LM = radM * (218.316 + 13.176396 * dM);
+        const MM = radM * (134.963 + 13.064993 * dM);
+        const eclipticLongitude = ((((LM + radM * 6.289 * Math.sin(MM)) / radM) % 360) + 360) % 360;
+        const zodiacSigns = [
+            { name: "Bélier", symbol: "♈" }, { name: "Taureau", symbol: "♉" }, { name: "Gémeaux", symbol: "♊" },
+            { name: "Cancer", symbol: "♋" }, { name: "Lion", symbol: "♌" }, { name: "Vierge", symbol: "♍" },
+            { name: "Balance", symbol: "♎" }, { name: "Scorpion", symbol: "♏" }, { name: "Sagittaire", symbol: "♐" },
+            { name: "Capricorne", symbol: "♑" }, { name: "Verseau", symbol: "♒" }, { name: "Poissons", symbol: "♓" }
+        ];
+        const signIndex = Math.floor(eclipticLongitude / 30);
+        const currentSign = zodiacSigns[signIndex];
+        const degreeInSign = (eclipticLongitude % 30).toFixed(1);
         const moonIconEl = document.getElementById("moon-icon");
         const moonNameEl = document.getElementById("moon-name");
         const moonZodiacEl = document.getElementById("moon-zodiac");
         const moonDataEl = document.getElementById("moon-data");
-        
-        if (moonIconEl) moonIconEl.innerText = "🌙";
-        if (moonNameEl) moonNameEl.innerText = "Chargement...";
-        if (moonZodiacEl) moonZodiacEl.innerText = "Lune en transit";
-        if (moonDataEl) moonDataEl.innerText = "Données indisponibles";
-        
-        return {
-            name: "Inconnue",
-            icon: "🌙",
-            quality: "Attente",
-            illumination: 0
-        };
+        if (moonIconEl) moonIconEl.innerText = phase.icon;
+        if (moonNameEl) moonNameEl.innerText = `${phase.name} • ${illuminationPercent}%`;
+        if (moonZodiacEl) moonZodiacEl.innerText = `Lune en ${currentSign.name} ${currentSign.symbol} (${degreeInSign}°)`;
+        if (moonDataEl) moonDataEl.innerText = `${phase.name} — ${illuminationPercent}% éclairée`;
+        return { name: phase.name, icon: phase.icon, quality: phase.quality, phaseValue: illumination.phase, illumination: illuminationPercent, altitude: moonPosition.altitude, moonrise: moonTimes.rise ? formatTime(moonTimes.rise) : "--:--", moonset: moonTimes.set ? formatTime(moonTimes.set) : "--:--", zodiacSign: currentSign.name, zodiacSymbol: currentSign.symbol, degreeInSign: degreeInSign, eclipticLongitude: eclipticLongitude.toFixed(2) };
     }
 
-    const illumination = SunCalc.getMoonIllumination(date);
-    
-    // Vérifier si illumination.phase existe
-    if (!illumination || typeof illumination.phase === 'undefined') {
-        console.error('SunCalc.getMoonIllumination a retourné une valeur invalide', illumination);
-        
-        const moonIconEl = document.getElementById("moon-icon");
-        const moonNameEl = document.getElementById("moon-name");
-        const moonZodiacEl = document.getElementById("moon-zodiac");
-        
-        if (moonIconEl) moonIconEl.innerText = "🌙";
-        if (moonNameEl) moonNameEl.innerText = "Erreur calcul";
-        if (moonZodiacEl) moonZodiacEl.innerText = "Lune en transit";
-        
-        return {
-            name: "Erreur",
-            icon: "🌙",
-            quality: "Erreur",
-            illumination: 0
-        };
-    }
-
-    const phase = getMoonPhaseName(illumination.phase);
-
-    const moonPosition = SunCalc.getMoonPosition(
-        date,
-        LOCATION.latitude,
-        LOCATION.longitude
-    );
-
-    const moonTimes = SunCalc.getMoonTimes(
-        date,
-        LOCATION.latitude,
-        LOCATION.longitude
-    );
-
-    const illuminationPercent = Math.round(illumination.fraction * 100);
-
-    // --- CALCUL DE LA LONGITUDE ÉCLIPTIQUE ---
-    const radM = Math.PI / 180;
-    const dM = date.valueOf() / 86400000 - 0.5 + 2440588 - 2451545;
-    const LM = radM * (218.316 + 13.176396 * dM);
-    const MM = radM * (134.963 + 13.064993 * dM);
-    const eclipticLongitude = ((((LM + radM * 6.289 * Math.sin(MM)) / radM) % 360) + 360) % 360;
-    
-    const zodiacSigns = [
-        { name: "Bélier", symbol: "♈", start: 0 },
-        { name: "Taureau", symbol: "♉", start: 30 },
-        { name: "Gémeaux", symbol: "♊", start: 60 },
-        { name: "Cancer", symbol: "♋", start: 90 },
-        { name: "Lion", symbol: "♌", start: 120 },
-        { name: "Vierge", symbol: "♍", start: 150 },
-        { name: "Balance", symbol: "♎", start: 180 },
-        { name: "Scorpion", symbol: "♏", start: 210 },
-        { name: "Sagittaire", symbol: "♐", start: 240 },
-        { name: "Capricorne", symbol: "♑", start: 270 },
-        { name: "Verseau", symbol: "♒", start: 300 },
-        { name: "Poissons", symbol: "♓", start: 330 }
-    ];
-    
-    const signIndex = Math.floor(eclipticLongitude / 30);
-    const currentSign = zodiacSigns[signIndex];
-    const degreeInSign = (eclipticLongitude % 30).toFixed(1);
-    
-    // --- MISE À JOUR DU DOM ---
-    const moonIconEl = document.getElementById("moon-icon");
-    const moonNameEl = document.getElementById("moon-name");
-    const moonZodiacEl = document.getElementById("moon-zodiac");
-    const moonDataEl = document.getElementById("moon-data");
-
-    if (moonIconEl) moonIconEl.innerText = phase.icon;
-
-    if (moonNameEl) {
-        moonNameEl.innerText = `${phase.name} • ${illuminationPercent}%`;
-    }
-
-    if (moonZodiacEl) {
-        moonZodiacEl.innerText = `Lune en ${currentSign.name} ${currentSign.symbol} (${degreeInSign}°)`;
-    }
-
-    if (moonDataEl) {
-        moonDataEl.innerText = `${phase.name} — ${illuminationPercent}% éclairée`;
-    }
-
-    return {
-        name: phase.name,
-        icon: phase.icon,
-        quality: phase.quality,
-        phaseValue: illumination.phase,
-        illumination: illuminationPercent,
-        altitude: moonPosition.altitude,
-        moonrise: moonTimes.rise ? formatTime(moonTimes.rise) : "--:--",
-        moonset: moonTimes.set ? formatTime(moonTimes.set) : "--:--",
-        zodiacSign: currentSign.name,
-        zodiacSymbol: currentSign.symbol,
-        degreeInSign: degreeInSign,
-        eclipticLongitude: eclipticLongitude.toFixed(2)
-    };
-}
     async function updateSunAndWeather() {
-    const today = formatDateISO(new Date());
-
-    const url =
-        "https://api.open-meteo.com/v1/forecast" +
-        `?latitude=${LOCATION.latitude}` +
-        `&longitude=${LOCATION.longitude}` +
-        `&current=temperature_2m` +
-        `&daily=sunrise,sunset` +
-        `&timezone=${encodeURIComponent(LOCATION.timezone)}` +
-        `&start_date=${today}` +
-        `&end_date=${today}`;
-
-    try {
-        const response = await fetch(url);
-
-        if (!response.ok) {
-            throw new Error(`Erreur API: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        const sunrise = data.daily?.sunrise?.[0];
-        const sunset = data.daily?.sunset?.[0];
-
-        if (!sunrise || !sunset) {
-            throw new Error("Heures solaires absentes de la réponse");
-        }
-
-        const sunriseTime = sunrise.split("T")[1].slice(0, 5);
-        const sunsetTime = sunset.split("T")[1].slice(0, 5);
-
-        const temperature = data.current?.temperature_2m;
-
-        const sunElement = document.getElementById("sun-times");
-        const tempElement = document.getElementById("temp-real");
-
-        if (sunElement) {
-            sunElement.innerText = `${sunriseTime} • ${sunsetTime}`;
-        }
-
-        if (tempElement && typeof temperature === "number") {
-            tempElement.innerText = `${Math.round(temperature)}°C`;
-        }
-    } catch (error) {
-        console.error("Impossible de charger les données solaires :", error);
-
-        const sunElement = document.getElementById("sun-times");
-        if (sunElement) {
-            sunElement.innerText = "Indisponible";
-        }
-    }
-}
-
-const SIGNES = ["Bélier","Taureau","Gémeaux","Cancer","Lion","Vierge","Balance","Scorpion","Sagittaire","Capricorne","Verseau","Poissons"];
-const RAD = Math.PI / 180;
-
-const DESC_SOLEIL = [
- "Ton essence est celle du pionnier : élan, courage, besoin d'agir et de relever des défis. Ton défi : la patience.",
- "Ton essence est ancrée et sensuelle : tu construis dans la durée et tu aimes la beauté et la stabilité. Ton défi : accueillir le changement.",
- "Ton essence est curieuse et communicante : tu apprends vite et tu relies les idées comme les personnes. Ton défi : la constance.",
- "Ton essence est sensible et protectrice : ton intuition et ta mémoire émotionnelle te guident. Ton défi : ne pas te replier.",
- "Ton essence est rayonnante et généreuse : tu as besoin de créer, de briller et d'aimer avec cœur. Ton défi : l'humilité.",
- "Ton essence est analytique et dévouée : tu perfectionnes, tu soignes les détails et tu rends service. Ton défi : l'indulgence envers toi-même.",
- "Ton essence est diplomate et esthète : tu cherches l'harmonie, l'équité et la beauté dans tes liens. Ton défi : trancher sans t'effacer.",
- "Ton essence est intense et transformatrice : tu vas au fond des choses et tu renais de tes crises. Ton défi : lâcher le contrôle.",
- "Ton essence est aventurière et philosophe : tu vises loin et tu cherches le sens et la liberté. Ton défi : l'engagement.",
- "Ton essence est ambitieuse et fiable : tu bâtis pas à pas, avec discipline et endurance. Ton défi : t'autoriser la douceur.",
- "Ton essence est originale et humaniste : tu penses autrement et tu rêves d'un monde meilleur. Ton défi : l'intimité émotionnelle.",
- "Ton essence est rêveuse et compatissante : tu perçois l'invisible et tu te nourris d'art et de spiritualité. Ton défi : poser tes limites."
-];
-
-const DESC_ASC = [
- "On te perçoit comme direct, énergique et franc. Tu entres dans la vie avec élan et spontanéité.",
- "On te perçoit comme calme, posé et rassurant. Tu abordes la vie avec lenteur, sens pratique et goût du confort.",
- "On te perçoit comme vif, curieux et sociable. Tu abordes la vie par la parole, l'humour et la découverte.",
- "On te perçoit comme doux, réservé et protecteur. Tu abordes la vie avec prudence et intuition.",
- "On te perçoit comme chaleureux, charismatique et fier. Tu entres dans une pièce avec présence et générosité.",
- "On te perçoit comme discret, attentionné et réfléchi. Tu abordes la vie avec méthode et sens du détail.",
- "On te perçoit comme aimable, élégant et diplomate. Tu abordes les autres avec courtoisie et sens de l'équilibre.",
- "On te perçoit comme magnétique, intense et mystérieux. Tu observes beaucoup et tu te dévoiles lentement.",
- "On te perçoit comme enthousiaste, optimiste et direct. Tu abordes la vie comme une aventure.",
- "On te perçoit comme sérieux, réservé et responsable. Tu inspires le respect et tu avances avec persévérance.",
- "On te perçoit comme original, indépendant et amical. Tu abordes le monde avec recul et singularité.",
- "On te perçoit comme rêveur, empathique et insaisissable. Tu absorbes les ambiances et réponds par l'intuition."
-];
-
-function longitudeSoleil(jd) {
-    const n = jd - 2451545.0;
-    const L = (280.460 + 0.9856474 * n) % 360;
-    const g = (357.528 + 0.9856003 * n) * RAD;
-    return (((L + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g)) % 360) + 360) % 360;
-}
-
-function ascendant(jd, lat, lon) {
-    const T = (jd - 2451545.0) / 36525;
-    const gmst = 280.46061837 + 360.98564736629 * (jd - 2451545.0) + 0.000387933 * T * T;
-    const lst = ((((gmst + lon) % 360) + 360) % 360) * RAD;
-    const eps = 23.4392911 * RAD;
-    const asc = Math.atan2(Math.cos(lst), -(Math.sin(lst) * Math.cos(eps) + Math.tan(lat * RAD) * Math.sin(eps)));
-    return (((asc / RAD) % 360) + 360) % 360;
-}
-
-const fmtSigne = l => `${SIGNES[Math.floor(l / 30)]} (${(l % 30).toFixed(1)}°)`;
-
-// --- Recherche du lieu (nom de ville seulement envoyé à Open-Meteo) ---
-let lieuxTrouves = [];
-
-async function chercherLieu() {
-    const q = document.getElementById('n-lieu').value.trim();
-    if (!q) return;
-    try {
-        const r = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=8&language=fr&format=json`);
-        const data = await r.json();
-        lieuxTrouves = data.results || [];
-    } catch (e) { lieuxTrouves = []; }
-
-    if (!lieuxTrouves.length) {
-        alert("Lieu introuvable. Essaie une grande ville proche, ou entre la latitude et la longitude à la main.");
-        return;
-    }
-    const sel = document.getElementById('n-choix');
-    sel.innerHTML = '';
-    lieuxTrouves.forEach((l, i) => {
-        sel.add(new Option([l.name, l.admin1, l.country].filter(Boolean).join(', '), i));
-    });
-    document.getElementById('n-choix-box').style.display = 'flex';
-    choisirLieu();
-}
-
-function choisirLieu() {
-    const l = lieuxTrouves[document.getElementById('n-choix').value];
-    if (!l) return;
-    document.getElementById('n-lat').value = l.latitude.toFixed(2);
-    document.getElementById('n-lon').value = l.longitude.toFixed(2);
-    document.getElementById('n-tz').value = l.timezone || '';
-}
-
-// --- Décalage UTC réel pour une date et un fuseau donnés (heure d'été incluse) ---
-function offsetTZ(tz, ms) {
-    const p = new Intl.DateTimeFormat('en-US', {
-        timeZone: tz, hourCycle: 'h23', year: 'numeric', month: '2-digit',
-        day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'
-    }).formatToParts(new Date(ms));
-    const g = t => +p.find(x => x.type === t).value;
-    return Date.UTC(g('year'), g('month') - 1, g('day'), g('hour'), g('minute'), g('second')) - ms;
-}
-function utcDepuisLocal(tz, Y, M, D, h, m) {
-    const naive = Date.UTC(Y, M - 1, D, h, m);
-    let ms = naive - offsetTZ(tz, naive);
-    ms = naive - offsetTZ(tz, ms);
-    return ms;
-}
-
-function calculerCielNatal(donnees) {
-    const get = id => document.getElementById(id).value;
-    const d = donnees?.d ?? get('n-date');
-    const t = donnees?.t ?? get('n-time');
-    const tz = donnees?.tz ?? get('n-tz');
-    const utcBrut = donnees?.utc ?? get('n-utc');
-    const lat = parseFloat(donnees?.lat ?? get('n-lat'));
-    const lon = parseFloat(donnees?.lon ?? get('n-lon'));
-
-    if (!d) { alert("Entre au moins ta date de naissance."); return; }
-
-    const [Y, M, D] = d.split('-').map(Number);
-    const [h, m] = (t || "12:00").split(':').map(Number);
-    const ms = tz
-        ? utcDepuisLocal(tz, Y, M, D, h, m)
-        : Date.UTC(Y, M - 1, D, h, m) - parseFloat(String(utcBrut)) * 3600000;
-    const jd = ms / 86400000 + 2440587.5;
-
-    const lonSol = longitudeSoleil(jd);
-    let html = `<b style="color:var(--gold)">☀️ Soleil en ${fmtSigne(lonSol)}</b><br>${DESC_SOLEIL[Math.floor(lonSol / 30)]}`;
-    if (t && !isNaN(lat) && !isNaN(lon)) {
-        const lonAsc = ascendant(jd, lat, lon);
-        html += `<br><br><b style="color:var(--gold)">↑ Ascendant en ${fmtSigne(lonAsc)}</b><br>${DESC_ASC[Math.floor(lonAsc / 30)]}`;
-    } else {
-        html += `<br><br><i>Ajoute l'heure et le lieu de naissance pour obtenir ton ascendant.</i>`;
-    }
-    document.getElementById('natal-result').innerHTML = html;
-
-    if (!donnees && document.getElementById('n-save').checked) {
+        const today = formatDateISO(new Date());
+        const url = "https://api.open-meteo.com/v1/forecast" + `?latitude=${LOCATION.latitude}` + `&longitude=${LOCATION.longitude}` + `&current=temperature_2m` + `&daily=sunrise,sunset` + `&timezone=${encodeURIComponent(LOCATION.timezone)}` + `&start_date=${today}` + `&end_date=${today}`;
         try {
-            localStorage.setItem('natal', JSON.stringify({
-                d, t, utc: get('n-utc'), tz: get('n-tz'), lieu: get('n-lieu'), lat, lon
-            }));
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`Erreur API: ${response.status}`);
+            const data = await response.json();
+            const sunrise = data.daily?.sunrise?.[0];
+            const sunset = data.daily?.sunset?.[0];
+            if (!sunrise || !sunset) throw new Error("Heures solaires absentes");
+            const sunriseTime = sunrise.split("T")[1].slice(0, 5);
+            const sunsetTime = sunset.split("T")[1].slice(0, 5);
+            const temperature = data.current?.temperature_2m;
+            const sunElement = document.getElementById("sun-times");
+            const tempElement = document.getElementById("temp-real");
+            if (sunElement) sunElement.innerText = `${sunriseTime} • ${sunsetTime}`;
+            if (tempElement && typeof temperature === "number") tempElement.innerText = `${Math.round(temperature)}°C`;
+        } catch (error) {
+            console.error("Impossible de charger les données solaires :", error);
+            const sunElement = document.getElementById("sun-times");
+            if (sunElement) sunElement.innerText = "Indisponible";
+        }
+    }
+
+    const SIGNES = ["Bélier","Taureau","Gémeaux","Cancer","Lion","Vierge","Balance","Scorpion","Sagittaire","Capricorne","Verseau","Poissons"];
+    const RAD = Math.PI / 180;
+    const DESC_SOLEIL = [
+        "Ton essence est celle du pionnier : élan, courage, besoin d'agir et de relever des défis. Ton défi : la patience.",
+        "Ton essence est ancrée et sensuelle : tu construis dans la durée et tu aimes la beauté et la stabilité. Ton défi : accueillir le changement.",
+        "Ton essence est curieuse et communicante : tu apprends vite et tu relies les idées comme les personnes. Ton défi : la constance.",
+        "Ton essence est sensible et protectrice : ton intuition et ta mémoire émotionnelle te guident. Ton défi : ne pas te replier.",
+        "Ton essence est rayonnante et généreuse : tu as besoin de créer, de briller et d'aimer avec cœur. Ton défi : l'humilité.",
+        "Ton essence est analytique et dévouée : tu perfectionnes, tu soignes les détails et tu rends service. Ton défi : l'indulgence envers toi-même.",
+        "Ton essence est diplomate et esthète : tu cherches l'harmonie, l'équité et la beauté dans tes liens. Ton défi : trancher sans t'effacer.",
+        "Ton essence est intense et transformatrice : tu vas au fond des choses et tu renais de tes crises. Ton défi : lâcher le contrôle.",
+        "Ton essence est aventurière et philosophe : tu vises loin et tu cherches le sens et la liberté. Ton défi : l'engagement.",
+        "Ton essence est ambitieuse et fiable : tu bâtis pas à pas, avec discipline et endurance. Ton défi : t'autoriser la douceur.",
+        "Ton essence est originale et humaniste : tu penses autrement et tu rêves d'un monde meilleur. Ton défi : l'intimité émotionnelle.",
+        "Ton essence est rêveuse et compatissante : tu perçois l'invisible et tu te nourris d'art et de spiritualité. Ton défi : poser tes limites."
+    ];
+    const DESC_ASC = [
+        "On te perçoit comme direct, énergique et franc. Tu entres dans la vie avec élan et spontanéité.",
+        "On te perçoit comme calme, posé et rassurant. Tu abordes la vie avec lenteur, sens pratique et goût du confort.",
+        "On te perçoit comme vif, curieux et sociable. Tu abordes la vie par la parole, l'humour et la découverte.",
+        "On te perçoit comme doux, réservé et protecteur. Tu abordes la vie avec prudence et intuition.",
+        "On te perçoit comme chaleureux, charismatique et fier. Tu entres dans une pièce avec présence et générosité.",
+        "On te perçoit comme discret, attentionné et réfléchi. Tu abordes la vie avec méthode et sens du détail.",
+        "On te perçoit comme aimable, élégant et diplomate. Tu abordes les autres avec courtoisie et sens de l'équilibre.",
+        "On te perçoit comme magnétique, intense et mystérieux. Tu observes beaucoup et tu te dévoiles lentement.",
+        "On te perçoit comme enthousiaste, optimiste et direct. Tu abordes la vie comme une aventure.",
+        "On te perçoit comme sérieux, réservé et responsable. Tu inspires le respect et tu avances avec persévérance.",
+        "On te perçoit comme original, indépendant et amical. Tu abordes le monde avec recul et singularité.",
+        "On te perçoit comme rêveur, empathique et insaisissable. Tu absorbes les ambiances et réponds par l'intuition."
+    ];
+    function longitudeSoleil(jd) {
+        const n = jd - 2451545.0;
+        const L = (280.460 + 0.9856474 * n) % 360;
+        const g = (357.528 + 0.9856003 * n) * RAD;
+        return (((L + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g)) % 360) + 360) % 360;
+    }
+    function ascendant(jd, lat, lon) {
+        const T = (jd - 2451545.0) / 36525;
+        const gmst = 280.46061837 + 360.98564736629 * (jd - 2451545.0) + 0.000387933 * T * T;
+        const lst = ((((gmst + lon) % 360) + 360) % 360) * RAD;
+        const eps = 23.4392911 * RAD;
+        const asc = Math.atan2(Math.cos(lst), -(Math.sin(lst) * Math.cos(eps) + Math.tan(lat * RAD) * Math.sin(eps)));
+        return (((asc / RAD) % 360) + 360) % 360;
+    }
+    const fmtSigne = l => `${SIGNES[Math.floor(l / 30)]} (${(l % 30).toFixed(1)}°)`;
+    let lieuxTrouves = [];
+    async function chercherLieu() {
+        const q = document.getElementById('n-lieu').value.trim();
+        if (!q) return;
+        try {
+            const r = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=8&language=fr&format=json`);
+            const data = await r.json();
+            lieuxTrouves = data.results || [];
+        } catch (e) { lieuxTrouves = []; }
+        if (!lieuxTrouves.length) { alert("Lieu introuvable. Essaie une grande ville proche."); return; }
+        const sel = document.getElementById('n-choix');
+        sel.innerHTML = '';
+        lieuxTrouves.forEach((l, i) => { sel.add(new Option([l.name, l.admin1, l.country].filter(Boolean).join(', '), i)); });
+        document.getElementById('n-choix-box').style.display = 'flex';
+        choisirLieu();
+    }
+    function choisirLieu() {
+        const l = lieuxTrouves[document.getElementById('n-choix').value];
+        if (!l) return;
+        document.getElementById('n-lat').value = l.latitude.toFixed(2);
+        document.getElementById('n-lon').value = l.longitude.toFixed(2);
+        document.getElementById('n-tz').value = l.timezone || '';
+    }
+    function offsetTZ(tz, ms) {
+        const p = new Intl.DateTimeFormat('en-US', { timeZone: tz, hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).formatToParts(new Date(ms));
+        const g = t => +p.find(x => x.type === t).value;
+        return Date.UTC(g('year'), g('month') - 1, g('day'), g('hour'), g('minute'), g('second')) - ms;
+    }
+    function utcDepuisLocal(tz, Y, M, D, h, m) {
+        const naive = Date.UTC(Y, M - 1, D, h, m);
+        let ms = naive - offsetTZ(tz, naive);
+        ms = naive - offsetTZ(tz, ms);
+        return ms;
+    }
+    function calculerCielNatal(donnees) {
+        const get = id => document.getElementById(id).value;
+        const d = donnees?.d ?? get('n-date');
+        const t = donnees?.t ?? get('n-time');
+        const tz = donnees?.tz ?? get('n-tz');
+        const utcBrut = donnees?.utc ?? get('n-utc');
+        const lat = parseFloat(donnees?.lat ?? get('n-lat'));
+        const lon = parseFloat(donnees?.lon ?? get('n-lon'));
+        if (!d) { alert("Entre au moins ta date de naissance."); return; }
+        const [Y, M, D] = d.split('-').map(Number);
+        const [h, m] = (t || "12:00").split(':').map(Number);
+        const ms = tz ? utcDepuisLocal(tz, Y, M, D, h, m) : Date.UTC(Y, M - 1, D, h, m) - parseFloat(String(utcBrut)) * 3600000;
+        const jd = ms / 86400000 + 2440587.5;
+        const lonSol = longitudeSoleil(jd);
+        let html = `<b style="color:var(--gold)">☀️ Soleil en ${fmtSigne(lonSol)}</b><br>${DESC_SOLEIL[Math.floor(lonSol / 30)]}`;
+        if (t && !isNaN(lat) && !isNaN(lon)) {
+            const lonAsc = ascendant(jd, lat, lon);
+            html += `<br><br><b style="color:var(--gold)">↑ Ascendant en ${fmtSigne(lonAsc)}</b><br>${DESC_ASC[Math.floor(lonAsc / 30)]}`;
+        } else {
+            html += `<br><br><i>Ajoute l'heure et le lieu de naissance pour obtenir ton ascendant.</i>`;
+        }
+        document.getElementById('natal-result').innerHTML = html;
+        if (!donnees && document.getElementById('n-save').checked) {
+            try { localStorage.setItem('natal', JSON.stringify({ d, t, utc: get('n-utc'), tz: get('n-tz'), lieu: get('n-lieu'), lat, lon })); } catch (e) {}
+        }
+    }
+    function restaurerNatal() {
+        try {
+            const s = JSON.parse(localStorage.getItem('natal'));
+            if (!s) return;
+            document.getElementById('n-date').value = s.d || '';
+            document.getElementById('n-time').value = s.t || '';
+            document.getElementById('n-utc').value = s.utc;
+            document.getElementById('n-tz').value = s.tz || '';
+            document.getElementById('n-lieu').value = s.lieu || '';
+            document.getElementById('n-lat').value = isNaN(s.lat) ? '' : s.lat;
+            document.getElementById('n-lon').value = isNaN(s.lon) ? '' : s.lon;
+            document.getElementById('n-save').checked = true;
+            calculerCielNatal(s);
         } catch (e) {}
     }
-}
 
-function restaurerNatal() {
-    try {
-        const s = JSON.parse(localStorage.getItem('natal'));
-        if (!s) return;
-        document.getElementById('n-date').value = s.d || '';
-        document.getElementById('n-time').value = s.t || '';
-        document.getElementById('n-utc').value = s.utc;
-        document.getElementById('n-tz').value = s.tz || '';
-        document.getElementById('n-lieu').value = s.lieu || '';
-        document.getElementById('n-lat').value = isNaN(s.lat) ? '' : s.lat;
-        document.getElementById('n-lon').value = isNaN(s.lon) ? '' : s.lon;
-        document.getElementById('n-save').checked = true;
-        calculerCielNatal(s);
-    } catch (e) {}
-}   
-    
-   // --- INITIALISATION ---
-window.onload = () => {
-    // 1. Lune calculée astronomiquement
-    const moonData = updateMoonData(new Date());
-
-    // 2. Utilise la vraie phase lunaire dans la guidance
-    genererGuidanceQuotidienne(moonData.name);
-
-    // 3. Soleil et température pour Montréal
-    updateSunAndWeather();
-
-    // 4. Date complète affichée
-    const dateElement = document.getElementById("moon-data");
-
-    if (dateElement) {
-        const dateText = new Intl.DateTimeFormat("fr-FR", {
-            timeZone: LOCATION.timezone,
-            weekday: "long",
-            day: "numeric",
-            month: "long",
-            year: "numeric"
-        }).format(new Date());
-
-        dateElement.innerText =
-            `${moonData.name} — ${moonData.illumination}% éclairée — ${dateText}`;
-    }
-restaurerNatal();
-};
+    window.onload = () => {
+        const moonData = updateMoonData(new Date());
+        genererGuidanceQuotidienne(moonData.name);
+        updateSunAndWeather();
+        const dateElement = document.getElementById("moon-data");
+        if (dateElement) {
+            const dateText = new Intl.DateTimeFormat("fr-FR", { timeZone: LOCATION.timezone, weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(new Date());
+            dateElement.innerText = `${moonData.name} — ${moonData.illumination}% éclairée — ${dateText}`;
+        }
+        restaurerNatal();
+    };
 </script>
 </body>
 </html>

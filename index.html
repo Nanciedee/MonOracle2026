@@ -931,21 +931,42 @@ function calculerCielNatal(donnees) {
     const ms = Date.UTC(Y, M - 1, D, h, m) - utc * 3600000;
     const jd = ms / 86400000 + 2440587.5;
 
-    let txt = `☀️ Soleil en ${fmtSigne(longitudeSoleil(jd))}`;
-    if (t && !isNaN(lat) && !isNaN(lon)) txt += ` · ↑ Ascendant en ${fmtSigne(ascendant(jd, lat, lon))}`;
-    document.getElementById('natal-result').innerText = txt;
+    const lonSol = longitudeSoleil(jd);
+    let html = `<b style="color:var(--gold)">☀️ Soleil en ${fmtSigne(lonSol)}</b><br>${DESC_SOLEIL[Math.floor(lonSol / 30)]}`;
+    if (t && !isNaN(lat) && !isNaN(lon)) {
+        const lonAsc = ascendant(jd, lat, lon);
+        html += `<br><br><b style="color:var(--gold)">↑ Ascendant en ${fmtSigne(lonAsc)}</b><br>${DESC_ASC[Math.floor(lonAsc / 30)]}`;
+    } else {
+        html += `<br><br><i>Ajoute l'heure et le lieu de naissance pour obtenir ton ascendant.</i>`;
+    }
+    document.getElementById('natal-result').innerHTML = html;
 
     if (!donnees && document.getElementById('n-save').checked) {
         try { localStorage.setItem('natal', JSON.stringify({ d, t, utc, lat, lon })); } catch (e) {}
     }
 }
 
+function choisirVille() {
+    const v = document.getElementById('n-ville').value;
+    if (!v) return;
+    const [la, lo] = v.split(',');
+    document.getElementById('n-lat').value = la;
+    document.getElementById('n-lon').value = lo;
+}
+
 function restaurerNatal() {
     try {
         const s = JSON.parse(localStorage.getItem('natal'));
-        if (s) calculerCielNatal(s);
+        if (!s) return;
+        document.getElementById('n-date').value = s.d || '';
+        document.getElementById('n-time').value = s.t || '';
+        document.getElementById('n-utc').value = s.utc;
+        document.getElementById('n-lat').value = isNaN(s.lat) ? '' : s.lat;
+        document.getElementById('n-lon').value = isNaN(s.lon) ? '' : s.lon;
+        document.getElementById('n-save').checked = true;
+        calculerCielNatal(s);
     } catch (e) {}
-}    
+}   
     
    // --- INITIALISATION ---
 window.onload = () => {

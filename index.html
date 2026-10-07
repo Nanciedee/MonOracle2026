@@ -170,9 +170,8 @@
 <label style="font-size:0.75rem; display:block; margin-bottom:10px;"><input type="checkbox" id="n-save"> Mémoriser sur cet appareil</label>
 <button class="audio-btn" style="width:auto" onclick="calculerCielNatal()">Calculer mon ciel natal</button>
 <div id="natal-result" style="margin-top:15px; padding:12px;"></div>
-    <p id="natal-result" style="color:var(--gold); font-size:0.9rem;"></p>
 
-    <div id="daily-resonance" ...></div>
+    <div id="daily-resonance" style="margin: 15px 0; padding: 10px; border-left: 3px solid var(--gold); background: rgba(212, 175, 55, 0.05); font-style: italic; font-size: 0.85rem;"></div>
 
     <div id="angel-number" style="text-align: center; color: var(--gold); font-size: 1.8rem; font-weight: bold; margin: 15px 0 5px 0; text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); letter-spacing: 5px;"></div>
     <p id="angel-message" style="text-align: center; color: var(--gold); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; opacity: 0.9;"></p>
@@ -898,6 +897,36 @@ function updateMoonData(date = new Date()) {
 const SIGNES = ["Bélier","Taureau","Gémeaux","Cancer","Lion","Vierge","Balance","Scorpion","Sagittaire","Capricorne","Verseau","Poissons"];
 const RAD = Math.PI / 180;
 
+const DESC_SOLEIL = [
+ "Ton essence est celle du pionnier : élan, courage, besoin d'agir et de relever des défis. Ton défi : la patience.",
+ "Ton essence est ancrée et sensuelle : tu construis dans la durée et tu aimes la beauté et la stabilité. Ton défi : accueillir le changement.",
+ "Ton essence est curieuse et communicante : tu apprends vite et tu relies les idées comme les personnes. Ton défi : la constance.",
+ "Ton essence est sensible et protectrice : ton intuition et ta mémoire émotionnelle te guident. Ton défi : ne pas te replier.",
+ "Ton essence est rayonnante et généreuse : tu as besoin de créer, de briller et d'aimer avec cœur. Ton défi : l'humilité.",
+ "Ton essence est analytique et dévouée : tu perfectionnes, tu soignes les détails et tu rends service. Ton défi : l'indulgence envers toi-même.",
+ "Ton essence est diplomate et esthète : tu cherches l'harmonie, l'équité et la beauté dans tes liens. Ton défi : trancher sans t'effacer.",
+ "Ton essence est intense et transformatrice : tu vas au fond des choses et tu renais de tes crises. Ton défi : lâcher le contrôle.",
+ "Ton essence est aventurière et philosophe : tu vises loin et tu cherches le sens et la liberté. Ton défi : l'engagement.",
+ "Ton essence est ambitieuse et fiable : tu bâtis pas à pas, avec discipline et endurance. Ton défi : t'autoriser la douceur.",
+ "Ton essence est originale et humaniste : tu penses autrement et tu rêves d'un monde meilleur. Ton défi : l'intimité émotionnelle.",
+ "Ton essence est rêveuse et compatissante : tu perçois l'invisible et tu te nourris d'art et de spiritualité. Ton défi : poser tes limites."
+];
+
+const DESC_ASC = [
+ "On te perçoit comme direct, énergique et franc. Tu entres dans la vie avec élan et spontanéité.",
+ "On te perçoit comme calme, posé et rassurant. Tu abordes la vie avec lenteur, sens pratique et goût du confort.",
+ "On te perçoit comme vif, curieux et sociable. Tu abordes la vie par la parole, l'humour et la découverte.",
+ "On te perçoit comme doux, réservé et protecteur. Tu abordes la vie avec prudence et intuition.",
+ "On te perçoit comme chaleureux, charismatique et fier. Tu entres dans une pièce avec présence et générosité.",
+ "On te perçoit comme discret, attentionné et réfléchi. Tu abordes la vie avec méthode et sens du détail.",
+ "On te perçoit comme aimable, élégant et diplomate. Tu abordes les autres avec courtoisie et sens de l'équilibre.",
+ "On te perçoit comme magnétique, intense et mystérieux. Tu observes beaucoup et tu te dévoiles lentement.",
+ "On te perçoit comme enthousiaste, optimiste et direct. Tu abordes la vie comme une aventure.",
+ "On te perçoit comme sérieux, réservé et responsable. Tu inspires le respect et tu avances avec persévérance.",
+ "On te perçoit comme original, indépendant et amical. Tu abordes le monde avec recul et singularité.",
+ "On te perçoit comme rêveur, empathique et insaisissable. Tu absorbes les ambiances et réponds par l'intuition."
+];
+
 function longitudeSoleil(jd) {
     const n = jd - 2451545.0;
     const L = (280.460 + 0.9856474 * n) % 360;
@@ -942,7 +971,7 @@ function calculerCielNatal(donnees) {
     document.getElementById('natal-result').innerHTML = html;
 
     if (!donnees && document.getElementById('n-save').checked) {
-        try { localStorage.setItem('natal', JSON.stringify({ d, t, utc, lat, lon })); } catch (e) {}
+        try { localStorage.setItem('natal', JSON.stringify({ d, t, utc: get('n-utc'), lat, lon })); } catch (e) {}
     }
 }
 
@@ -994,6 +1023,7 @@ window.onload = () => {
         dateElement.innerText =
             `${moonData.name} — ${moonData.illumination}% éclairée — ${dateText}`;
     }
+restaurerNatal();
 };
 </script>
 </body>

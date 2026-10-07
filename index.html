@@ -117,9 +117,17 @@
     <h3 style="color:var(--gold); margin-top:0; font-size: 1.1rem;">🌌 Ton Ciel Vibratoire</h3>
     <p id="daily-intro" style="font-size: 0.9rem; line-height: 1.6; color: #e2e8f0;">Bienvenue dans ton calendrier vibratoire. ✨🌙</p>
 
+    <div id="natal-form" style="display:flex; flex-wrap:wrap; gap:12px; margin:15px 0;">
+    <label class="champ-natal">📅 Date de naissance
+        <input type="date" id="n-date">
+    </label>
+    <label class="champ-natal">🕐 Heure de naissance (si connue)
+        <input type="time" id="n-time">
+    </label>
+
     <div class="champ-natal" style="flex:1 1 100%">📍 Lieu de naissance (ville, pays)
         <div style="display:flex; gap:8px;">
-            <input type="text" id="n-lieu" placeholder="ex. Fort-de-France, Dakar, Lyon, Shanghai" style="flex:1" onkeydown="if(event.key==='Enter'){event.preventDefault();chercherLieu();}">
+            <input type="text" id="n-lieu" placeholder="ex. Port-au-Prince, Fort-de-France, Dakar, Lyon, Shanghai" style="flex:1" onkeydown="if(event.key==='Enter'){event.preventDefault();chercherLieu();}">
             <button type="button" class="audio-btn" style="width:auto; margin-top:0" onclick="chercherLieu()">Rechercher</button>
         </div>
     </div>
@@ -127,6 +135,7 @@
         <select id="n-choix" onchange="choisirLieu()"></select>
     </label>
     <input type="hidden" id="n-tz">
+
     <label class="champ-natal">Latitude
         <input type="number" id="n-lat" step="any" placeholder="rempli automatiquement" oninput="document.getElementById('n-tz').value=''">
     </label>
@@ -151,33 +160,8 @@
             <option value="8|CST">Chine (UTC+8)</option>
         </select>
     </label>
-    <label class="champ-natal">📍 Lieu de naissance
-        <select id="n-ville" onchange="choisirVille()">
-            <option value="">Autre lieu (écris la latitude et la longitude)</option>
-            <option value="45.50,-73.57">Montréal</option>
-            <option value="45.61,-73.71">Laval</option>
-            <option value="46.81,-71.21">Québec</option>
-            <option value="45.40,-71.89">Sherbrooke</option>
-            <option value="46.34,-72.54">Trois-Rivières</option>
-            <option value="45.48,-75.70">Gatineau</option>
-            <option value="45.42,-75.70">Ottawa</option>
-            <option value="43.65,-79.38">Toronto</option>
-            <option value="40.71,-74.01">New York</option>
-            <option value="42.36,-71.06">Boston</option>
-            <option value="41.88,-87.63">Chicago</option>
-            <option value="25.76,-80.19">Miami</option>
-            <option value="34.05,-118.24">Los Angeles</option>
-            <option value="48.86,2.35">Paris</option>
-        </select>
-    </label>
-    <label class="champ-natal">Latitude
-        <input type="number" id="n-lat" step="any" placeholder="ex. 45.50">
-    </label>
-    <label class="champ-natal">Longitude
-        <input type="number" id="n-lon" step="any" placeholder="ex. -73.57">
-    </label>
 </div>
-<p style="font-size:0.7rem; opacity:0.8; margin:0 0 10px 0;">Heure d'été : environ d'avril à octobre. Pour un autre lieu, fais un clic droit sur la ville dans Google Maps pour copier ses coordonnées.</p>
+
 <label style="font-size:0.75rem; display:block; margin-bottom:10px;"><input type="checkbox" id="n-save"> Mémoriser sur cet appareil</label>
 <button class="audio-btn" style="width:auto" onclick="calculerCielNatal()">Calculer mon ciel natal</button>
 <div id="natal-result" style="margin-top:15px; padding:12px;"></div>
@@ -956,19 +940,71 @@ function ascendant(jd, lat, lon) {
 
 const fmtSigne = l => `${SIGNES[Math.floor(l / 30)]} (${(l % 30).toFixed(1)}°)`;
 
+// --- Recherche du lieu (nom de ville seulement envoyé à Open-Meteo) ---
+let lieuxTrouves = [];
+
+async function chercherLieu() {
+    const q = document.getElementById('n-lieu').value.trim();
+    if (!q) return;
+    try {
+        const r = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=8&language=fr&format=json`);
+        const data = await r.json();
+        lieuxTrouves = data.results || [];
+    } catch (e) { lieuxTrouves = []; }
+
+    if (!lieuxTrouves.length) {
+        alert("Lieu introuvable. Essaie une grande ville proche, ou entre la latitude et la longitude à la main.");
+        return;
+    }
+    const sel = document.getElementById('n-choix');
+    sel.innerHTML = '';
+    lieuxTrouves.forEach((l, i) => {
+        sel.add(new Option([l.name, l.admin1, l.country].filter(Boolean).join(', '), i));
+    });
+    document.getElementById('n-choix-box').style.display = 'flex';
+    choisirLieu();
+}
+
+function choisirLieu() {
+    const l = lieuxTrouves[document.getElementById('n-choix').value];
+    if (!l) return;
+    document.getElementById('n-lat').value = l.latitude.toFixed(2);
+    document.getElementById('n-lon').value = l.longitude.toFixed(2);
+    document.getElementById('n-tz').value = l.timezone || '';
+}
+
+// --- Décalage UTC réel pour une date et un fuseau donnés (heure d'été incluse) ---
+function offsetTZ(tz, ms) {
+    const p = new Intl.DateTimeFormat('en-US', {
+        timeZone: tz, hourCycle: 'h23', year: 'numeric', month: '2-digit',
+        day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'
+    }).formatToParts(new Date(ms));
+    const g = t => +p.find(x => x.type === t).value;
+    return Date.UTC(g('year'), g('month') - 1, g('day'), g('hour'), g('minute'), g('second')) - ms;
+}
+function utcDepuisLocal(tz, Y, M, D, h, m) {
+    const naive = Date.UTC(Y, M - 1, D, h, m);
+    let ms = naive - offsetTZ(tz, naive);
+    ms = naive - offsetTZ(tz, ms);
+    return ms;
+}
+
 function calculerCielNatal(donnees) {
     const get = id => document.getElementById(id).value;
     const d = donnees?.d ?? get('n-date');
     const t = donnees?.t ?? get('n-time');
-    const utc = parseFloat(donnees?.utc ?? get('n-utc'));
+    const tz = donnees?.tz ?? get('n-tz');
+    const utcBrut = donnees?.utc ?? get('n-utc');
     const lat = parseFloat(donnees?.lat ?? get('n-lat'));
     const lon = parseFloat(donnees?.lon ?? get('n-lon'));
 
-    if (!d || isNaN(utc)) { alert("Entre au moins ta date de naissance."); return; }
+    if (!d) { alert("Entre au moins ta date de naissance."); return; }
 
     const [Y, M, D] = d.split('-').map(Number);
     const [h, m] = (t || "12:00").split(':').map(Number);
-    const ms = Date.UTC(Y, M - 1, D, h, m) - utc * 3600000;
+    const ms = tz
+        ? utcDepuisLocal(tz, Y, M, D, h, m)
+        : Date.UTC(Y, M - 1, D, h, m) - parseFloat(String(utcBrut)) * 3600000;
     const jd = ms / 86400000 + 2440587.5;
 
     const lonSol = longitudeSoleil(jd);
@@ -982,16 +1018,12 @@ function calculerCielNatal(donnees) {
     document.getElementById('natal-result').innerHTML = html;
 
     if (!donnees && document.getElementById('n-save').checked) {
-        try { localStorage.setItem('natal', JSON.stringify({ d, t, utc: get('n-utc'), lat, lon })); } catch (e) {}
+        try {
+            localStorage.setItem('natal', JSON.stringify({
+                d, t, utc: get('n-utc'), tz: get('n-tz'), lieu: get('n-lieu'), lat, lon
+            }));
+        } catch (e) {}
     }
-}
-
-function choisirVille() {
-    const v = document.getElementById('n-ville').value;
-    if (!v) return;
-    const [la, lo] = v.split(',');
-    document.getElementById('n-lat').value = la;
-    document.getElementById('n-lon').value = lo;
 }
 
 function restaurerNatal() {
@@ -1001,6 +1033,8 @@ function restaurerNatal() {
         document.getElementById('n-date').value = s.d || '';
         document.getElementById('n-time').value = s.t || '';
         document.getElementById('n-utc').value = s.utc;
+        document.getElementById('n-tz').value = s.tz || '';
+        document.getElementById('n-lieu').value = s.lieu || '';
         document.getElementById('n-lat').value = isNaN(s.lat) ? '' : s.lat;
         document.getElementById('n-lon').value = isNaN(s.lon) ? '' : s.lon;
         document.getElementById('n-save').checked = true;

@@ -613,56 +613,182 @@ function afficherResultats() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-   // --- INITIALISATION ---
-    window.onload = () => {
-        const phases = [
-            {n: "Nouvelle Lune", i: "🌑", f: "Introspection"},
-            {n: "Premier Croissant", i: "🌙", f: "Éclosion"},
-            {n: "Premier Quartier", i: "🌓", f: "Action"},
-            {n: "Gibbeuse Croissante", i: "🌔", f: "Affinage"},
-            {n: "Pleine Lune", i: "🌕", f: "Illumination"},
-            {n: "Gibbeuse Décroissante", i: "🌖", f: "Gratitude"},
-            {n: "Dernier Quartier", i: "🌗", f: "Libération"},
-            {n: "Dernier Croissant", i: "🌘", f: "Repos"}
-        ];
-        const day = new Date().getDate() % 8;
-        const currentPhase = phases[day];
-        
-        // 1. Phase Lunaire & Icône
-        if(document.getElementById('moon-icon')) document.getElementById('moon-icon').innerText = currentPhase.i;
-        if(document.getElementById('moon-name')) document.getElementById('moon-name').innerText = currentPhase.n + " • " + currentPhase.f;
-        
-        // 2. Signe du Zodiaque
-        const signesZodiaque = ["Bélier ♈", "Taureau ♉", "Gémeaux ♊", "Cancer ♋", "Lion ♌", "Vierge ♍", "Balance ♎", "Scorpion ♏", "Sagittaire ♐", "Capricorne ♑", "Verseau ♒", "Poissons ♓"];
-        const luneSigne = signesZodiaque[new Date().getDate() % 12];
-        if(document.getElementById('moon-zodiac')) {
-            document.getElementById('moon-zodiac').innerText = "Lune en " + luneSigne;
-        }
+    // --- CONFIGURATION ASTRONOMIQUE ---
+const LOCATION = {
+    latitude: 45.5017,
+    longitude: -73.5673,
+    timezone: "America/Toronto"
+};
 
-        // 3. Soleil (Valeur par défaut avant mise à jour réelle)
-        if(document.getElementById('sun-times')) {
-            document.getElementById('sun-times').innerText = "07:34 • 16:58";
-        }
+const moonPhases = [
+    { name: "Nouvelle Lune", icon: "🌑", quality: "Introspection" },
+    { name: "Premier Croissant", icon: "🌒", quality: "Éclosion" },
+    { name: "Premier Quartier", icon: "🌓", quality: "Action" },
+    { name: "Gibbeuse Croissante", icon: "🌔", quality: "Affinage" },
+    { name: "Pleine Lune", icon: "🌕", quality: "Illumination" },
+    { name: "Gibbeuse Décroissante", icon: "🌖", quality: "Gratitude" },
+    { name: "Dernier Quartier", icon: "🌗", quality: "Libération" },
+    { name: "Dernier Croissant", icon: "🌘", quality: "Repos" }
+];
 
-        // 4. Température Simulée (Vibration)
-        const tempSimulee = Math.floor(Math.random() * (2 - (-10) + 1)) + (-10); 
-        if(document.getElementById('temp-vibe')) {
-            document.getElementById('temp-vibe').innerText = tempSimulee + "°C (Vibration Éthérée)";
-        }
+function getMoonPhaseName(phase) {
+    const index = Math.round(phase * 8) % 8;
+    return moonPhases[index];
+}
 
-        // 5. Date complète
-        if(document.getElementById('moon-data')) {
-            document.getElementById('moon-data').innerText = new Date().toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'});
-        }
+function formatTime(date) {
+    if (!(date instanceof Date) || Number.isNaN(date.getTime())) {
+        return "--:--";
+    }
 
-        // 6. Appel des fonctions de calcul
-        genererGuidanceQuotidienne(currentPhase.n);
-        
-        // 7. Lancement de la météo réelle (Écrase les valeurs par défaut si ça marche)
-        if (typeof updateWeather === "function") {
-            updateWeather();
-        }
+    return new Intl.DateTimeFormat("fr-CA", {
+        timeZone: LOCATION.timezone,
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+    }).format(date);
+}
+
+function formatDateISO(date) {
+    return new Intl.DateTimeFormat("en-CA", {
+        timeZone: LOCATION.timezone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+    }).format(date);
+}
+
+function updateMoonData(date = new Date()) {
+    const illumination = SunCalc.getMoonIllumination(date);
+    const phase = getMoonPhaseName(illumination.phase);
+
+    const moonPosition = SunCalc.getMoonPosition(
+        date,
+        LOCATION.latitude,
+        LOCATION.longitude
+    );
+
+    const moonTimes = SunCalc.getMoonTimes(
+        date,
+        LOCATION.latitude,
+        LOCATION.longitude
+    );
+
+    const illuminationPercent = Math.round(illumination.fraction * 100);
+
+    const moonIconEl = document.getElementById("moon-icon");
+    const moonNameEl = document.getElementById("moon-name");
+    const moonZodiacEl = document.getElementById("moon-zodiac");
+    const moonDataEl = document.getElementById("moon-data");
+
+    if (moonIconEl) moonIconEl.innerText = phase.icon;
+
+    if (moonNameEl) {
+        moonNameEl.innerText = `${phase.name} • ${illuminationPercent}%`;
+    }
+
+    if (moonZodiacEl) {
+        moonZodiacEl.innerText = "Cycle lunaire calculé astronomiquement";
+    }
+
+    if (moonDataEl) {
+        moonDataEl.innerText =
+            `${phase.name} — ${illuminationPercent}% éclairée`;
+    }
+
+    return {
+        name: phase.name,
+        icon: phase.icon,
+        quality: phase.quality,
+        phaseValue: illumination.phase,
+        illumination: illuminationPercent,
+        altitude: moonPosition.altitude,
+        moonrise: moonTimes.rise ? formatTime(moonTimes.rise) : "--:--",
+        moonset: moonTimes.set ? formatTime(moonTimes.set) : "--:--"
     };
+}
+
+async function updateSunAndWeather() {
+    const today = formatDateISO(new Date());
+
+    const url =
+        "https://api.open-meteo.com/v1/forecast" +
+        `?latitude=${LOCATION.latitude}` +
+        `&longitude=${LOCATION.longitude}` +
+        `&current=temperature_2m` +
+        `&daily=sunrise,sunset` +
+        `&timezone=${encodeURIComponent(LOCATION.timezone)}` +
+        `&start_date=${today}` +
+        `&end_date=${today}`;
+
+    try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(`Erreur API: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        const sunrise = data.daily?.sunrise?.[0];
+        const sunset = data.daily?.sunset?.[0];
+
+        if (!sunrise || !sunset) {
+            throw new Error("Heures solaires absentes de la réponse");
+        }
+
+        const sunriseTime = sunrise.split("T")[1].slice(0, 5);
+        const sunsetTime = sunset.split("T")[1].slice(0, 5);
+
+        const temperature = data.current?.temperature_2m;
+
+        const sunElement = document.getElementById("sun-times");
+        const tempElement = document.getElementById("temp-real");
+
+        if (sunElement) {
+            sunElement.innerText = `${sunriseTime} • ${sunsetTime}`;
+        }
+
+        if (tempElement && typeof temperature === "number") {
+            tempElement.innerText = `${Math.round(temperature)}°C`;
+        }
+    } catch (error) {
+        console.error("Impossible de charger les données solaires :", error);
+
+        const sunElement = document.getElementById("sun-times");
+        if (sunElement) {
+            sunElement.innerText = "Indisponible";
+        }
+    }
+}
+    
+   // --- INITIALISATION ---
+window.onload = () => {
+    // 1. Lune calculée astronomiquement
+    const moonData = updateMoonData(new Date());
+
+    // 2. Utilise la vraie phase lunaire dans la guidance
+    genererGuidanceQuotidienne(moonData.name);
+
+    // 3. Soleil et température pour Montréal
+    updateSunAndWeather();
+
+    // 4. Date complète affichée
+    const dateElement = document.getElementById("moon-data");
+
+    if (dateElement) {
+        const dateText = new Intl.DateTimeFormat("fr-FR", {
+            timeZone: LOCATION.timezone,
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        }).format(new Date());
+
+        dateElement.innerText =
+            `${moonData.name} — ${moonData.illumination}% éclairée — ${dateText}`;
+    }
+};
 </script>
 </body>
 </html>

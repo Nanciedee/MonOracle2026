@@ -117,9 +117,17 @@
     <h3 style="color:var(--gold); margin-top:0; font-size: 1.1rem;">🌌 Ton Ciel Vibratoire</h3>
     <p id="daily-intro" style="font-size: 0.9rem; line-height: 1.6; color: #e2e8f0;">Bienvenue dans ton calendrier vibratoire. ✨🌙</p>
 
+    <div id="natal-form" style="display:flex; flex-wrap:wrap; gap:12px; margin:15px 0;">
+    <label class="champ-natal">📅 Date de naissance
+        <input type="date" id="n-date">
+    </label>
+    <label class="champ-natal">🕐 Heure de naissance (si connue)
+        <input type="time" id="n-time">
+    </label>
+
     <div class="champ-natal" style="flex:1 1 100%">📍 Lieu de naissance (ville, pays)
         <div style="display:flex; gap:8px;">
-            <input type="text" id="n-lieu" placeholder="ex. Fort-de-France, Dakar, Lyon, Shanghai" style="flex:1" onkeydown="if(event.key==='Enter'){event.preventDefault();chercherLieu();}">
+            <input type="text" id="n-lieu" placeholder="ex. Port-au-Prince, Fort-de-France, Dakar, Lyon, Shanghai" style="flex:1" onkeydown="if(event.key==='Enter'){event.preventDefault();chercherLieu();}">
             <button type="button" class="audio-btn" style="width:auto; margin-top:0" onclick="chercherLieu()">Rechercher</button>
         </div>
     </div>
@@ -127,6 +135,7 @@
         <select id="n-choix" onchange="choisirLieu()"></select>
     </label>
     <input type="hidden" id="n-tz">
+
     <label class="champ-natal">Latitude
         <input type="number" id="n-lat" step="any" placeholder="rempli automatiquement" oninput="document.getElementById('n-tz').value=''">
     </label>
@@ -151,33 +160,8 @@
             <option value="8|CST">Chine (UTC+8)</option>
         </select>
     </label>
-    <label class="champ-natal">📍 Lieu de naissance
-        <select id="n-ville" onchange="choisirVille()">
-            <option value="">Autre lieu (écris la latitude et la longitude)</option>
-            <option value="45.50,-73.57">Montréal</option>
-            <option value="45.61,-73.71">Laval</option>
-            <option value="46.81,-71.21">Québec</option>
-            <option value="45.40,-71.89">Sherbrooke</option>
-            <option value="46.34,-72.54">Trois-Rivières</option>
-            <option value="45.48,-75.70">Gatineau</option>
-            <option value="45.42,-75.70">Ottawa</option>
-            <option value="43.65,-79.38">Toronto</option>
-            <option value="40.71,-74.01">New York</option>
-            <option value="42.36,-71.06">Boston</option>
-            <option value="41.88,-87.63">Chicago</option>
-            <option value="25.76,-80.19">Miami</option>
-            <option value="34.05,-118.24">Los Angeles</option>
-            <option value="48.86,2.35">Paris</option>
-        </select>
-    </label>
-    <label class="champ-natal">Latitude
-        <input type="number" id="n-lat" step="any" placeholder="ex. 45.50">
-    </label>
-    <label class="champ-natal">Longitude
-        <input type="number" id="n-lon" step="any" placeholder="ex. -73.57">
-    </label>
 </div>
-<p style="font-size:0.7rem; opacity:0.8; margin:0 0 10px 0;">Heure d'été : environ d'avril à octobre. Pour un autre lieu, fais un clic droit sur la ville dans Google Maps pour copier ses coordonnées.</p>
+
 <label style="font-size:0.75rem; display:block; margin-bottom:10px;"><input type="checkbox" id="n-save"> Mémoriser sur cet appareil</label>
 <button class="audio-btn" style="width:auto" onclick="calculerCielNatal()">Calculer mon ciel natal</button>
 <div id="natal-result" style="margin-top:15px; padding:12px;"></div>

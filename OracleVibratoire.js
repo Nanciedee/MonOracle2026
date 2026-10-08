@@ -227,9 +227,10 @@ const OracleVibratoire = {
         };
     },
 
-    // 4. RENDU HTML (Injection dans votre interface)
+// 4. RENDU HTML (Injection dans votre interface)
     afficherTirage: function() {
         const resultat = this.tirerCarte();
+        const rituel = this.rituelConnexion.obtenirTexteEtDetails();
         const display = document.getElementById('oracle-display');
 
         display.innerHTML = `
@@ -258,16 +259,53 @@ const OracleVibratoire = {
                     <h3>Chakra ${resultat.tirage.chakra.nom}</h3>
                     <p>Vibration : ${resultat.tirage.chakra.freq}</p>
                 </div>
-   <!-- NOUVELLE CARTE INJECTÉE : RITUEL DE CONNEXION CALENDRIER -->
-                <div class="card card-porte">
-                    <div style="height: 350px; display: flex; align-items: center; justify-content: center; background: rgba(212, 175, 55, 0.03); border-radius: 10px; margin-bottom: 15px; padding: 15px; box-sizing: border-box; overflow-y: auto;">
-                        <p style="font-size: 0.95rem; text-align: left; margin: 0; line-height: 1.6; color: var(--text-light);">${texteConnexionUnique}</p>
+
+                <!-- NOUVELLE CARTE INJECTÉE : RITUEL DE CONNEXION CALENDRIER -->
+                <div class="card card-porte" style="position: relative;">
+                    <!-- LIVRET CACHÉ -->
+                    <div id="livret-rituel-connexion" class="livret-box" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #1a1a1a 0%, #000 100%); z-index: 10; padding: 25px; box-sizing: border-box; border-radius: 15px; border: 2px solid var(--gold); overflow-y: auto;">
+                        <h3 style="color:var(--gold); margin-top: 0; text-align:center; letter-spacing: 2px;">📖 RITUEL DE CONNEXION – ${rituel.titreConnexion}</h3>
+                        <p style="color: #fff; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; text-align: center;">— Jour ${rituel.moisJour} —</p>
+
+                        <div id="rituel-connexion-contenu" style="color: #e2e8f0; font-size: 0.9rem; line-height: 1.7; margin-top: 15px;">
+                            <!-- Le contenu détaillé sera injecté ici -->
+                        </div>
+
+                        <button class="audio-btn" style="background:var(--gold); color:#000; margin-top: 20px; width: 100%;" onclick="document.getElementById('livret-rituel-connexion').style.display='none'">⬅ REPLIER LE RITUEL</button>
                     </div>
-                    <h3>🌿 Rituel de Connexion</h3>
+
+                    <!-- FACE VISIBLE -->
+                    <div style="height: 350px; display: flex; align-items: center; justify-content: center; background: rgba(212, 175, 55, 0.03); border-radius: 10px; margin-bottom: 15px; padding: 15px; box-sizing: border-box; overflow-y: auto;">
+                        <p style="font-size: 0.95rem; text-align: left; margin: 0; line-height: 1.6; color: var(--text-light);">${rituel.texteCourt}</p>
+                    </div>
+                    <h3>${rituel.iconeConnexion} ${rituel.titreConnexion}</h3>
                     <p style="opacity: 0.6; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">Sagesse Cyclique</p>
+
+                    <button class="audio-btn" style="background:transparent; color:#fff; border:1px solid #fff; margin-top: 10px;" onclick="OracleVibratoire.ouvrirLivretRituelConnexion()">📖 VOIR LE RITUEL COMPLET</button>
                 </div>
             </div>
         `;
+    },
+
+    ouvrirLivretRituelConnexion: function() {
+        const rituel = this.rituelConnexion.obtenirTexteEtDetails();
+        const conteneur = document.getElementById("rituel-connexion-contenu");
+        const livret = document.getElementById("livret-rituel-connexion");
+
+        if (!conteneur || !livret) return;
+
+        if (!rituel.texteBrut) {
+            conteneur.innerHTML = `
+                <p style="text-align:center; color:#fff; font-style:italic;">
+                    Aucun rituel spécifique n'est défini pour ce jour.<br>
+                    Utilise ce temps pour simplement respirer, t'ancrer et écouter ce qui se présente.
+                </p>
+            `;
+        } else {
+            conteneur.innerHTML = `<div style="white-space: pre-wrap;">${rituel.texteBrut}</div>`;
+        }
+
+        livret.style.display = "block";
     }
 };
 

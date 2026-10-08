@@ -142,3 +142,10 @@ h1 {
         grid-template-columns: 1fr;
     }
 }
+
+/* --- Style Spécifique : Rituel de Connexion --- */
+#daily-rituel br {
+    content: "";
+    margin: 15px 0;
+    display: block;
+}

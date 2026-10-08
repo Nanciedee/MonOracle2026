@@ -258,6 +258,14 @@ const OracleVibratoire = {
                     <h3>Chakra ${resultat.tirage.chakra.nom}</h3>
                     <p>Vibration : ${resultat.tirage.chakra.freq}</p>
                 </div>
+   <!-- NOUVELLE CARTE INJECTÉE : RITUEL DE CONNEXION CALENDRIER -->
+                <div class="card card-porte">
+                    <div style="height: 350px; display: flex; align-items: center; justify-content: center; background: rgba(212, 175, 55, 0.03); border-radius: 10px; margin-bottom: 15px; padding: 15px; box-sizing: border-box; overflow-y: auto;">
+                        <p style="font-size: 0.95rem; text-align: left; margin: 0; line-height: 1.6; color: var(--text-light);">${texteConnexionUnique}</p>
+                    </div>
+                    <h3>🌿 Rituel de Connexion</h3>
+                    <p style="opacity: 0.6; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">Sagesse Cyclique</p>
+                </div>
             </div>
         `;
     }

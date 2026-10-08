@@ -230,8 +230,10 @@ const OracleVibratoire = {
 // 4. RENDU HTML (Injection dans votre interface)
     afficherTirage: function() {
         const resultat = this.tirerCarte();
-        const rituel = this.rituelConnexion.obtenirTexteEtDetails();
-        const display = document.getElementById('oracle-display');
+const rituel = this.rituelConnexion.obtenirTexteEtDetails();
+const display = document.getElementById('oracle-display');
+
+const { moisJour, texteBrut, texteConnexionUnique, iconeConnexion, titreConnexion } = rituel;
 
         display.innerHTML = `
             <div class="meteo-header">

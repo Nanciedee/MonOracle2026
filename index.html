@@ -775,12 +775,108 @@ function preparerRituelDeConnexion() {
         ...(typeof rituelsEte !== "undefined" ? rituelsEte : {})
     };
 
+ // =====================================================================
+// 🛠️ SÉLECTION AUTOMATIQUE DE VOTRE NOUVEAU RITUEL DE CONNEXION
+// =====================================================================
+
+// Cette fonction sera appelée au moment d'afficher les résultats du portail.
+// Elle suppose que les variables suivantes existent dans le scope global ou
+// ont été définies avant son appel :
+// - intro, resonances, rituels, jourAnnee
+// - archangesData, chakras, cartesVibratoires
+// - rituelsAutomne, rituelsHiver, rituelsPrintemps, rituelsEte (optionnels)
+
+function preparerRituelDeConnexion() {
+    const maintenant = new Date();
+
+    const moisJour =
+        String(maintenant.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(maintenant.getDate()).padStart(2, "0");
+
+    const masterCalendrierConnexion = {
+        ...(typeof rituelsAutomne !== "undefined" ? rituelsAutomne : {}),
+        ...(typeof rituelsHiver !== "undefined" ? rituelsHiver : {}),
+        ...(typeof rituelsPrintemps !== "undefined" ? rituelsPrintemps : {}),
+        ...(typeof rituelsEte !== "undefined" ? rituelsEte : {})
+    };
+
     // On récupère le texte du jour (Ex: Votre rituel spécial si on est le 12-31)
+    const texteBrut = masterCalendrierConnexion[moisJour];
     const texteConnexionUnique =
-        masterCalendrierConnexion[moisJour] ||
+        texteBrut ||
         "Prends un instant pour respirer profondément et te connecter à ton centre.";
 
     const mois = maintenant.getMonth() + 1;
+
+    let iconeConnexion = "✨";
+    let titreConnexion = "Rituel de Connexion";
+
+    if (mois === 12 || mois === 1 || mois === 2) {
+        iconeConnexion = "❄️";
+        titreConnexion = "Rituel de Connexion d'hiver";
+    } else if (mois >= 3 && mois <= 5) {
+        iconeConnexion = "🌸";
+        titreConnexion = "Rituel de Connexion de printemps";
+    } else if (mois >= 6 && mois <= 8) {
+        iconeConnexion = "☀️";
+        titreConnexion = "Rituel de Connexion d'été";
+    } else if (mois >= 9 && mois <= 11) {
+        iconeConnexion = "🍂";
+        titreConnexion = "Rituel de Connexion d'automne";
+    }
+
+    return {
+        moisJour,
+        texteBrut,
+        texteConnexionUnique,
+        iconeConnexion,
+        titreConnexion
+    };
+}
+
+// =====================================================================
+// --- LOGIQUE DU PORTAIL ---
+// =====================================================================
+
+function lancerRituel() {
+    startAmbiance();
+    document.getElementById("intro-step").style.display = "none";
+    document.getElementById("loader").style.display = "block";
+    let i = 0;
+    const interval = setInterval(() => {
+        document.getElementById("loading-msg").innerText = messages[i % messages.length];
+        i++;
+    }, 900);
+    setTimeout(() => {
+        clearInterval(interval);
+        afficherResultats();
+    }, 3500);
+}
+
+function toggleLivret() {
+    const box = document.getElementById("livret-overlay-box");
+    if (box) {
+        box.style.display = box.style.display === "block" ? "none" : "block";
+    }
+}
+
+function afficherResultats() {
+    // 1. Tirage aléatoire des trois cartes
+    const archiKeys = Object.keys(archangesData);
+    const arcKey = archiKeys[Math.floor(Math.random() * archiKeys.length)];
+    const arc = archangesData[arcKey];
+
+    const cha = chakras[Math.floor(Math.random() * chakras.length)];
+
+    const vKeys = Object.keys(cartesVibratoires);
+    const vKey = vKeys[Math.floor(Math.random() * vKeys.length)];
+    const vib = cartesVibratoires[vKey];
+
+    // --- RITUEL DE CONNEXION SAISONNIER ---
+    const rituelConnexion = preparerRituelDeConnexion();
+    const { texteConnexionUnique, iconeConnexion, titreConnexion } = rituelConnexion;
+
 
     let iconeConnexion = "✨";
     let titreConnexion = "Rituel de Connexion";

@@ -184,7 +184,13 @@
 </div>
 </div>
 
+<!-- YOUR EXTERNAL LIBRARIES AND SEASONAL EXTERNAL DATA FILES -->
 <script src="https://cdn.jsdelivr.net/npm/suncalc@1.9.0/suncalc.js"></script>
+<script src="rituel_connexion_automne.js"></script>
+<script src="rituel_connexion_hiver.js"></script>
+<script src="rituel_connexion_printemps.js"></script>
+<script src="rituel_connexion_ete.js"></script>
+
 <script>
     // --- ÉTOILES ---
     const container = document.getElementById('star-container');
@@ -200,6 +206,7 @@
     }
 
     // --- BASE DE DONNÉES COMPLÈTE ---
+    
     const archangesData = {
     "Michaël": { 
         nom: "Michaël — “Qui est comme Dieu ?”", 
@@ -595,6 +602,29 @@ function genererGuidanceQuotidienne(phaseLune) {
         `✨ Place-toi près d'une fenêtre ou à l'extérieur, et lève doucement les yeux vers le ciel, qu'il soit dégagé ou nuageux. Prends trois grandes respirations en laissant ton regard s'adoucir.<br>✨ Imagine un fil de lumière argentée qui relie ton cœur à la Lune. Sens-le te transmettre calme, intuition et confiance dans le rythme des cycles.<br>✨ Affirmation à répéter lentement, trois fois : « Je fais confiance au temps juste de ma vie. »`
     ];
 
+    // =====================================================================
+    // NOUVELLE LOGIQUE INTÉGRÉE : SÉLECTION DU RITUEL DE CONNEXION CALENDRIER
+    // =====================================================================
+    const moisJour = String(maintenant.getMonth() + 1).padStart(2, '0') + '-' + String(maintenant.getDate()).padStart(2, '0');
+    
+    // Compilation dynamique de vos 4 objets de scripts saisonniers externes
+    const masterCalendrierConnexion = {
+        ...(typeof rituelsAutomne !== 'undefined' ? rituelsAutomne : {}),
+        ...(typeof rituelsHiver !== 'undefined' ? rituelsHiver : {}),
+        ...(typeof rituelsPrintemps !== 'undefined' ? rituelsPrintemps : {}),
+        ...(typeof rituelsEte !== 'undefined' ? rituelsEte : {})
+    };
+
+    let rituelHTML = "";
+    
+    // Si la date du jour possède un rituel spécifique, on l'affiche en priorité
+    if (masterCalendrierConnexion[moisJour]) {
+        rituelHTML = masterCalendrierConnexion[moisJour];
+    } else {
+        // Sinon, l'application pioche classiquement dans votre tableau d'origine
+        rituelHTML = rituels[jourAnnee % rituels.length];
+    }
+    
     const nombresAngeliques = [
         { num: "000", titre: "Infini", msg: `Le triple zéro évoque le cercle sans début ni fin, le vide fertile d'où naît toute chose. Il apparaît souvent quand un chapitre se referme et qu'une page blanche s'ouvre devant toi. Rien n'est figé : tu as le droit de recommencer, de choisir autrement, de te réinventer. Accueille cet espace sans l'emplir trop vite, car c'est dans le silence que se dessinent les nouvelles directions. Aujourd'hui, un nouveau départ s'offre à toi.` },
         { num: "111", titre: "Alignement", msg: `Le 111 est un rappel que tes pensées possèdent un pouvoir de création, surtout quand elles sont claires et sincères. Il apparaît lorsque ton intention et ton énergie s'accordent, comme un portail qui s'entrouvre. Observe ce à quoi tu accordes ton attention : c'est ce qui grandit. Choisis des pensées qui te soutiennent, car elles se manifestent plus vite qu'on ne le croit. Aujourd'hui, formule un souhait précis et garde-le près de ton cœur.` },

@@ -830,6 +830,44 @@ function afficherResultats() {
         const vKey = vKeys[Math.floor(Math.random() * vKeys.length)];
         const vib = cartesVibratoires[vKey];
 
+    // --- RITUEL DE CONNEXION SAISONNIER ---
+        const maintenant = new Date();
+
+        const moisJour =
+            String(maintenant.getMonth() + 1).padStart(2, "0") +
+            "-" +
+            String(maintenant.getDate()).padStart(2, "0");
+
+        const masterCalendrierConnexion = {
+            ...(typeof rituelsAutomne !== "undefined" ? rituelsAutomne : {}),
+            ...(typeof rituelsHiver !== "undefined" ? rituelsHiver : {}),
+            ...(typeof rituelsPrintemps !== "undefined" ? rituelsPrintemps : {}),
+            ...(typeof rituelsEte !== "undefined" ? rituelsEte : {})
+        };
+
+        const texteConnexionUnique =
+            masterCalendrierConnexion[moisJour] ||
+            "Prends un instant pour respirer profondément et te connecter à ton centre.";
+
+        const mois = maintenant.getMonth() + 1;
+
+        let iconeConnexion = "✨";
+        let titreConnexion = "Rituel de Connexion";
+
+        if (mois === 12 || mois === 1 || mois === 2) {
+            iconeConnexion = "❄️";
+            titreConnexion = "Rituel de Connexion d'hiver";
+        } else if (mois >= 3 && mois <= 5) {
+            iconeConnexion = "🌸";
+            titreConnexion = "Rituel de Connexion de printemps";
+        } else if (mois >= 6 && mois <= 8) {
+            iconeConnexion = "☀️";
+            titreConnexion = "Rituel de Connexion d'été";
+        } else if (mois >= 9 && mois <= 11) {
+            iconeConnexion = "🍂";
+            titreConnexion = "Rituel de Connexion d'automne";
+        }
+    
         // 2. Gestion de l'affichage de l'interface
         document.getElementById('loader').style.display = 'none';
         document.getElementById('portal-result').style.display = 'block';
@@ -891,6 +929,18 @@ function afficherResultats() {
                     </div>
                     <button class="audio-btn" style="background:var(--gold); color:#000; margin-top: 20px; width: 100%;" onclick="toggleLivret()">⬅ REPLIER LE LIVRET</button>
                 </div>
+
+      <div class="fiche" style="position: relative; min-height: 500px;">
+                <h3>${iconeConnexion} ${titreConnexion}</h3>
+
+                <div style="margin-top: 15px; padding: 18px; border: 1px solid rgba(212,175,55,0.35); border-radius: 12px; background: rgba(212,175,55,0.05); line-height: 1.8; color: #e2e8f0;">
+                    ${texteConnexionUnique}
+                </div>
+
+                <p class="details-text" style="margin-top:auto;">
+                    ✨ Prends ce moment comme un espace de présence, de calme et de recentrage.
+                </p>
+            </div>
 
                 <h3>✨ Carte de ${vKey}</h3>
                 <img src="${vib.img}" style="width: 100%; border-radius: 10px; margin-bottom: 10px;">

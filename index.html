@@ -72,119 +72,109 @@
         </div>
     </div>
 
-    <h1>✨ ORACLE VIBRATOIRE ✨</h1>
+   <h1>✨ ORACLE VIBRATOIRE ✨</h1>
 
-    <div id="intro-step">
-        <div class="lune-header" id="moon-data">Chargement...</div>
+<div id="intro-step">
+    <div class="lune-header" id="moon-data">Chargement...</div>
+    
+    <!-- Section 1 : Ciel Vibratoire (dynamique) -->
+    <div class="section-rituel" style="border-style: dashed; border-color: rgba(212, 175, 55, 0.5); background: rgba(0,0,0,0.4);">
+        <h3 style="color:var(--gold); margin-top:0; font-size: 1.1rem;">🌌 Ton Ciel Vibratoire</h3>
+        <p id="daily-intro" style="font-size: 0.9rem; line-height: 1.6; color: #e2e8f0;"></p>
         
-        <div class="section-rituel" style="border-style: dashed; border-color: rgba(212, 175, 55, 0.5); background: rgba(0,0,0,0.4);">
-            <h3 style="color:var(--gold); margin-top:0; font-size: 1.1rem;">🌌 Ton Ciel Vibratoire</h3>
-            <p id="daily-intro" style="font-size: 0.9rem; line-height: 1.6; color: #e2e8f0;"></p>
-            
-            <div id="daily-resonance" style="margin: 15px 0; padding: 10px; border-left: 3px solid var(--gold); background: rgba(212, 175, 55, 0.05); font-style: italic; font-size: 0.85rem;"></div>
-            
+        <div id="daily-resonance" style="margin: 15px 0; padding: 10px; border-left: 3px solid var(--gold); background: rgba(212, 175, 55, 0.05); font-style: italic; font-size: 0.85rem;"></div>
+        
+        <div class="angel-box">
             <div id="angel-number" style="text-align: center; color: var(--gold); font-size: 1.8rem; font-weight: bold; margin: 15px 0 5px 0; text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); letter-spacing: 5px; animation: pulse 2s infinite alternate;"></div>
             <p id="angel-message" style="text-align: center; color: var(--gold); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; opacity: 0.9;"></p>
-            
-            <h3 style="color:var(--gold); font-size: 1rem;">🌿 Rituel du Jour</h3>
-            <div id="daily-rituel" style="font-size: 0.85rem; text-align: left; line-height: 1.6; color: #cbd5e1;"></div>
         </div>
-
-        <button class="btn-divin" onclick="lancerRituel()">Ouvrir le Portail</button>
-    </div>
-
-    <div id="loader" style="display:none;">
-        <div class="spiral"></div>
-        <div id="loading-msg">Initialisation des fréquences...</div>
-    </div>
-    
-    <div id="portal-result" style="display:none;">
-        <div class="result-grid" id="cards-container"></div>
         
-        <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 40px;">
-            <button class="btn-divin" style="border-color: #4CAF50; color: #4CAF50; margin: 0;" onclick="window.print()">📥 SAUVEGARDER LA GUIDANCE</button>
-            
-            <!-- 🟢 LE NOUVEAU BOUTON VERS L'ANALYSE POUSSÉE EST ICI -->
-            <a href="https://nanciedee.github.io/Horoscope2moi" class="btn-divin" style="text-decoration: none; text-align: center; border-color: var(--gold); color: var(--gold); margin: 0;">
-                🔮 PASSER À L'ANALYSE POUSSÉE
-            </a>
-
-            <button class="btn-divin" style="margin: 0;" onclick="location.reload()">NOUVELLE CONSULTATION</button>
-        </div>
+        <h3 style="color:var(--gold); font-size: 1rem;">🌿 Rituel du Jour</h3>
+        <div id="daily-rituel" style="font-size: 0.85rem; text-align: left; line-height: 1.6; color: #cbd5e1;"></div>
     </div>
-    
-<div class="section-rituel" style="border-style: dashed; border-color: rgba(212, 175, 55, 0.5); background: rgba(0,0,0,0.4);">
-    <h3 style="color:var(--gold); margin-top:0; font-size: 1.1rem;">🌌 Ton Ciel Vibratoire</h3>
-    <p id="daily-intro" style="font-size: 0.9rem; line-height: 1.6; color: #e2e8f0;">Bienvenue dans ton calendrier vibratoire. ✨🌙</p>
 
-    <div id="natal-form" style="display:flex; flex-wrap:wrap; gap:12px; margin:15px 0;">
-    <label class="champ-natal">📅 Date de naissance
-        <input type="date" id="n-date">
-    </label>
-    <label class="champ-natal">🕐 Heure de naissance (si connue)
-        <input type="time" id="n-time">
-    </label>
+    <!-- Section 2 : Rituel de Connexion (formulaire natal) -->
+    <div class="section-rituel" style="border-style: dashed; border-color: rgba(212, 175, 55, 0.5); background: rgba(0,0,0,0.4); margin-top: 25px;">
+        <h3 style="color:var(--gold); margin-top:0; font-size: 1.1rem;">🌿 Rituel de Connexion</h3>
+        
+        <div id="natal-form" style="display:flex; flex-wrap:wrap; gap:12px; margin:15px 0;">
+            <label class="champ-natal">📅 Date de naissance
+                <input type="date" id="n-date">
+            </label>
+            <label class="champ-natal">🕐 Heure de naissance (si connue)
+                <input type="time" id="n-time">
+            </label>
 
-    <div class="champ-natal" style="flex:1 1 100%">📍 Lieu de naissance (ville, pays)
-        <div style="display:flex; gap:8px;">
-            <input type="text" id="n-lieu" placeholder="ex. Port-au-Prince, Fort-de-France, Dakar, Lyon, Shanghai" style="flex:1" onkeydown="if(event.key==='Enter'){event.preventDefault();chercherLieu();}">
-            <button type="button" class="audio-btn" style="width:auto; margin-top:0" onclick="chercherLieu()">Rechercher</button>
+            <div class="champ-natal" style="flex:1 1 100%">📍 Lieu de naissance (ville, pays)
+                <div style="display:flex; gap:8px;">
+                    <input type="text" id="n-lieu" placeholder="ex. Port-au-Prince, Fort-de-France, Dakar, Lyon, Shanghai" style="flex:1" onkeydown="if(event.key==='Enter'){event.preventDefault();chercherLieu();}">
+                    <button type="button" class="audio-btn" style="width:auto; margin-top:0" onclick="chercherLieu()">Rechercher</button>
+                </div>
+            </div>
+            <label class="champ-natal" id="n-choix-box" style="flex:1 1 100%; display:none">Choisis le bon lieu
+                <select id="n-choix" onchange="choisirLieu()"></select>
+            </label>
+            <input type="hidden" id="n-tz">
+
+            <label class="champ-natal">Latitude
+                <input type="number" id="n-lat" step="any" placeholder="rempli automatiquement" oninput="document.getElementById('n-tz').value=''">
+            </label>
+            <label class="champ-natal">Longitude
+                <input type="number" id="n-lon" step="any" placeholder="rempli automatiquement" oninput="document.getElementById('n-tz').value=''">
+            </label>
+            <label class="champ-natal">🌎 Fuseau (seulement si le lieu n'est pas trouvé)
+                <select id="n-utc">
+                    <option value="-3|ADT">Atlantique – heure d'été (ADT)</option>
+                    <option value="-4|AST">Atlantique – heure normale (AST)</option>
+                    <option value="-4|EDT" selected>Est – heure d'été (EDT)</option>
+                    <option value="-5|EST">Est – heure normale (EST)</option>
+                    <option value="-5|CDT">Centre – heure d'été (CDT)</option>
+                    <option value="-6|CST">Centre – heure normale (CST)</option>
+                    <option value="-6|MDT">Montagne – heure d'été (MDT)</option>
+                    <option value="-7|MST">Montagne – heure normale (MST)</option>
+                    <option value="-7|PDT">Pacifique – heure d'été (PDT)</option>
+                    <option value="-8|PST">Pacifique – heure normale (PST)</option>
+                    <option value="0|GMT">Londres / Afrique de l'Ouest – heure normale (GMT)</option>
+                    <option value="1|CET">Europe centrale – heure normale (CET)</option>
+                    <option value="2|CEST">Europe centrale – heure d'été (CEST)</option>
+                    <option value="8|CST">Chine (UTC+8)</option>
+                </select>
+            </label>
         </div>
-    </div>
-    <label class="champ-natal" id="n-choix-box" style="flex:1 1 100%; display:none">Choisis le bon lieu
-        <select id="n-choix" onchange="choisirLieu()"></select>
-    </label>
-    <input type="hidden" id="n-tz">
 
-    <label class="champ-natal">Latitude
-        <input type="number" id="n-lat" step="any" placeholder="rempli automatiquement" oninput="document.getElementById('n-tz').value=''">
-    </label>
-    <label class="champ-natal">Longitude
-        <input type="number" id="n-lon" step="any" placeholder="rempli automatiquement" oninput="document.getElementById('n-tz').value=''">
-    </label>
-    <label class="champ-natal">🌎 Fuseau (seulement si le lieu n'est pas trouvé)
-        <select id="n-utc">
-            <option value="-3|ADT">Atlantique – heure d'été (ADT)</option>
-            <option value="-4|AST">Atlantique – heure normale (AST)</option>
-            <option value="-4|EDT" selected>Est – heure d'été (EDT)</option>
-            <option value="-5|EST">Est – heure normale (EST)</option>
-            <option value="-5|CDT">Centre – heure d'été (CDT)</option>
-            <option value="-6|CST">Centre – heure normale (CST)</option>
-            <option value="-6|MDT">Montagne – heure d'été (MDT)</option>
-            <option value="-7|MST">Montagne – heure normale (MST)</option>
-            <option value="-7|PDT">Pacifique – heure d'été (PDT)</option>
-            <option value="-8|PST">Pacifique – heure normale (PST)</option>
-            <option value="0|GMT">Londres / Afrique de l'Ouest – heure normale (GMT)</option>
-            <option value="1|CET">Europe centrale – heure normale (CET)</option>
-            <option value="2|CEST">Europe centrale – heure d'été (CEST)</option>
-            <option value="8|CST">Chine (UTC+8)</option>
-        </select>
-    </label>
+        <label style="font-size:0.75rem; display:block; margin-bottom:10px;">
+            <input type="checkbox" id="n-save"> Mémoriser sur cet appareil
+        </label>
+        <button class="audio-btn" style="width:auto" onclick="calculerCielNatal()">Calculer mon ciel natal</button>
+        <div id="natal-result" style="margin-top:15px; padding:12px;"></div>
+    </div>
+
+    <!-- Bouton d'ouverture du portail -->
+    <button class="btn-divin" onclick="lancerRituel()">Ouvrir le Portail</button>
 </div>
 
-<label style="font-size:0.75rem; display:block; margin-bottom:10px;"><input type="checkbox" id="n-save"> Mémoriser sur cet appareil</label>
-<button class="audio-btn" style="width:auto" onclick="calculerCielNatal()">Calculer mon ciel natal</button>
-<div id="natal-result" style="margin-top:15px; padding:12px;"></div>
-
-    <div id="daily-resonance" style="margin: 15px 0; padding: 10px; border-left: 3px solid var(--gold); background: rgba(212, 175, 55, 0.05); font-style: italic; font-size: 0.85rem;"></div>
-
-    <div id="angel-number" style="text-align: center; color: var(--gold); font-size: 1.8rem; font-weight: bold; margin: 15px 0 5px 0; text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); letter-spacing: 5px;"></div>
-    <p id="angel-message" style="text-align: center; color: var(--gold); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; opacity: 0.9;"></p>
-
-    <h3 style="color:var(--gold); font-size: 1rem; margin-bottom: 10px;">🌿 Rituel de Connexion</h3>
-    <div id="daily-rituel" ...></div>
+<!-- Loader -->
+<div id="loader" style="display:none;">
+    <div class="spiral"></div>
+    <div id="loading-msg">Initialisation des fréquences...</div>
 </div>
 
+<!-- Résultat du tirage -->
 <div id="portal-result" style="display:none;">
     <div class="result-grid" id="cards-container"></div>
     
-    <button class="btn-divin" style="margin-top:40px; border-color: #4CAF50; color: #4CAF50;" onclick="window.print()">📥 SAUVEGARDER LA GUIDANCE</button>
-    
-    <button class="btn-divin" style="margin-top:10px" onclick="location.reload()">NOUVELLE CONSULTATION</button>
-</div>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 40px;">
+        <button class="btn-divin" style="border-color: #4CAF50; color: #4CAF50; margin: 0;" onclick="window.print()">📥 SAUVEGARDER LA GUIDANCE</button>
+        
+        <a href="https://nanciedee.github.io/Horoscope2moi" class="btn-divin" style="text-decoration: none; text-align: center; border-color: var(--gold); color: var(--gold); margin: 0;">
+            🔮 PASSER À L'ANALYSE POUSSÉE
+        </a>
+
+        <button class="btn-divin" style="margin: 0;" onclick="location.reload()">NOUVELLE CONSULTATION</button>
+    </div>
 </div>
 
-<!-- YOUR EXTERNAL LIBRARIES AND SEASONAL EXTERNAL DATA FILES -->
+<!-- External Libraries -->
 <script src="https://cdn.jsdelivr.net/npm/suncalc@1.9.0/suncalc.js"></script>
 <script src="rituel_connexion_automne.js"></script>
 <script src="rituel_connexion_hiver.js"></script>

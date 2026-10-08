@@ -750,212 +750,196 @@ function startAmbiance() {
     }
 
 // =====================================================================
-    // 🛠️ SÉLECTION AUTOMATIQUE DE VOTRE NOUVEAU RITUEL DE CONNEXION
-    // =====================================================================
-    const moisJour = String(maintenant.getMonth() + 1).padStart(2, '0') + '-' + String(maintenant.getDate()).padStart(2, '0');
-    
+// 🛠️ SÉLECTION AUTOMATIQUE DE VOTRE NOUVEAU RITUEL DE CONNEXION
+// =====================================================================
+
+// Cette fonction sera appelée au moment d'afficher les résultats du portail.
+// Elle suppose que les variables suivantes existent dans le scope global ou
+// ont été définies avant son appel :
+// - intro, resonances, rituels, jourAnnee
+// - archangesData, chakras, cartesVibratoires
+// - rituelsAutomne, rituelsHiver, rituelsPrintemps, rituelsEte (optionnels)
+
+function preparerRituelDeConnexion() {
+    const maintenant = new Date();
+
+    const moisJour =
+        String(maintenant.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(maintenant.getDate()).padStart(2, "0");
+
     const masterCalendrierConnexion = {
-        ...(typeof rituelsAutomne !== 'undefined' ? rituelsAutomne : {}),
-        ...(typeof rituelsHiver !== 'undefined' ? rituelsHiver : {}),
-        ...(typeof rituelsPrintemps !== 'undefined' ? rituelsPrintemps : {}),
-        ...(typeof rituelsEte !== 'undefined' ? rituelsEte : {})
+        ...(typeof rituelsAutomne !== "undefined" ? rituelsAutomne : {}),
+        ...(typeof rituelsHiver !== "undefined" ? rituelsHiver : {}),
+        ...(typeof rituelsPrintemps !== "undefined" ? rituelsPrintemps : {}),
+        ...(typeof rituelsEte !== "undefined" ? rituelsEte : {})
     };
 
     // On récupère le texte du jour (Ex: Votre rituel spécial si on est le 12-31)
-    const texteConnexionUnique = masterCalendrierConnexion[moisJour] || "Prends un instant pour respirer profondément et te connecter à ton centre.";
-    // =====================================================================
+    const texteConnexionUnique =
+        masterCalendrierConnexion[moisJour] ||
+        "Prends un instant pour respirer profondément et te connecter à ton centre.";
 
-    // --- CONSTRUCTION ET RENDU HTML ---
-    const cardsContainer = document.getElementById('cards-container');
-    if (cardsContainer) {
-        // Vider le conteneur avant d'afficher les cartes
-        cardsContainer.innerHTML = "";
+    const mois = maintenant.getMonth() + 1;
 
-        // 1. CARTE : TON CIEL VIBRATOIRE (Intro + Résonance)
-        const carteCiel = document.createElement('div');
-        carteCiel.className = 'card';
-        carteCiel.innerHTML = `
-            <h3>🌌 Ton Ciel Vibratoire</h3>
-            <p><strong>Guidance :</strong> ${intro}</p>
-            <p>${resonances[jourAnnee % resonances.length]}</p>
-        `;
-        cardsContainer.appendChild(carteCiel);
+    let iconeConnexion = "✨";
+    let titreConnexion = "Rituel de Connexion";
 
-        // 2. CARTE : RITUEL DU JOUR (Votre rituel cyclique d'origine de l'application)
-        const carteRituelJour = document.createElement('div');
-        carteRituelJour.className = 'card';
-        carteRituelJour.innerHTML = `
-            <h3>🌿 Rituel du Jour</h3>
-            <p>${rituels[jourAnnee % rituels.length]}</p>
-        `;
-        cardsContainer.appendChild(carteRituelJour);
-
-        // 3. NOUVELLE CARTE : RITUEL DE CONNEXION (Votre nouveau calendrier sur 365 jours sans écriture)
-        const carteConnexion = document.createElement('div');
-        carteConnexion.className = 'card card-porte'; // Utilise votre style mystique .card-porte
-        carteConnexion.innerHTML = `
-            <h3>🍂 Rituel de Connexion</h3>
-            <p>${texteConnexionUnique}</p>
-        `;
-        cardsContainer.appendChild(carteConnexion);
-    }
-    
-    // --- LOGIQUE DU PORTAIL ---
-    function lancerRituel() {
-        startAmbiance();
-        document.getElementById('intro-step').style.display = 'none';
-        document.getElementById('loader').style.display = 'block';
-        let i = 0;
-        const interval = setInterval(() => {
-            document.getElementById('loading-msg').innerText = messages[i % messages.length];
-            i++;
-        }, 900);
-        setTimeout(() => { clearInterval(interval); afficherResultats(); }, 3500);
+    if (mois === 12 || mois === 1 || mois === 2) {
+        iconeConnexion = "❄️";
+        titreConnexion = "Rituel de Connexion d'hiver";
+    } else if (mois >= 3 && mois <= 5) {
+        iconeConnexion = "🌸";
+        titreConnexion = "Rituel de Connexion de printemps";
+    } else if (mois >= 6 && mois <= 8) {
+        iconeConnexion = "☀️";
+        titreConnexion = "Rituel de Connexion d'été";
+    } else if (mois >= 9 && mois <= 11) {
+        iconeConnexion = "🍂";
+        titreConnexion = "Rituel de Connexion d'automne";
     }
 
-    function toggleLivret() {
-        const box = document.getElementById('livret-overlay-box');
-        if (box) box.style.display = (box.style.display === 'block') ? 'none' : 'block';
+    return {
+        texteConnexionUnique,
+        iconeConnexion,
+        titreConnexion
+    };
+}
+
+// =====================================================================
+// --- LOGIQUE DU PORTAIL ---
+// =====================================================================
+
+function lancerRituel() {
+    startAmbiance();
+    document.getElementById("intro-step").style.display = "none";
+    document.getElementById("loader").style.display = "block";
+    let i = 0;
+    const interval = setInterval(() => {
+        document.getElementById("loading-msg").innerText = messages[i % messages.length];
+        i++;
+    }, 900);
+    setTimeout(() => {
+        clearInterval(interval);
+        afficherResultats();
+    }, 3500);
+}
+
+function toggleLivret() {
+    const box = document.getElementById("livret-overlay-box");
+    if (box) {
+        box.style.display = box.style.display === "block" ? "none" : "block";
     }
+}
 
 function afficherResultats() {
-        // 1. Tirage aléatoire des trois cartes
-        const archiKeys = Object.keys(archangesData);
-        const arcKey = archiKeys[Math.floor(Math.random() * archiKeys.length)];
-        const arc = archangesData[arcKey];
+    // 1. Tirage aléatoire des trois cartes
+    const archiKeys = Object.keys(archangesData);
+    const arcKey = archiKeys[Math.floor(Math.random() * archiKeys.length)];
+    const arc = archangesData[arcKey];
 
-        const cha = chakras[Math.floor(Math.random() * chakras.length)];
-        
-        const vKeys = Object.keys(cartesVibratoires);
-        const vKey = vKeys[Math.floor(Math.random() * vKeys.length)];
-        const vib = cartesVibratoires[vKey];
+    const cha = chakras[Math.floor(Math.random() * chakras.length)];
+
+    const vKeys = Object.keys(cartesVibratoires);
+    const vKey = vKeys[Math.floor(Math.random() * vKeys.length)];
+    const vib = cartesVibratoires[vKey];
 
     // --- RITUEL DE CONNEXION SAISONNIER ---
-        const maintenant = new Date();
+    const rituelConnexion = preparerRituelDeConnexion();
+    const { texteConnexionUnique, iconeConnexion, titreConnexion } = rituelConnexion;
 
-        const moisJour =
-            String(maintenant.getMonth() + 1).padStart(2, "0") +
-            "-" +
-            String(maintenant.getDate()).padStart(2, "0");
+    // 2. Gestion de l'affichage de l'interface
+    document.getElementById("loader").style.display = "none";
+    document.getElementById("portal-result").style.display = "block";
 
-        const masterCalendrierConnexion = {
-            ...(typeof rituelsAutomne !== "undefined" ? rituelsAutomne : {}),
-            ...(typeof rituelsHiver !== "undefined" ? rituelsHiver : {}),
-            ...(typeof rituelsPrintemps !== "undefined" ? rituelsPrintemps : {}),
-            ...(typeof rituelsEte !== "undefined" ? rituelsEte : {})
-        };
-
-        const texteConnexionUnique =
-            masterCalendrierConnexion[moisJour] ||
-            "Prends un instant pour respirer profondément et te connecter à ton centre.";
-
-        const mois = maintenant.getMonth() + 1;
-
-        let iconeConnexion = "✨";
-        let titreConnexion = "Rituel de Connexion";
-
-        if (mois === 12 || mois === 1 || mois === 2) {
-            iconeConnexion = "❄️";
-            titreConnexion = "Rituel de Connexion d'hiver";
-        } else if (mois >= 3 && mois <= 5) {
-            iconeConnexion = "🌸";
-            titreConnexion = "Rituel de Connexion de printemps";
-        } else if (mois >= 6 && mois <= 8) {
-            iconeConnexion = "☀️";
-            titreConnexion = "Rituel de Connexion d'été";
-        } else if (mois >= 9 && mois <= 11) {
-            iconeConnexion = "🍂";
-            titreConnexion = "Rituel de Connexion d'automne";
-        }
-    
-        // 2. Gestion de l'affichage de l'interface
-        document.getElementById('loader').style.display = 'none';
-        document.getElementById('portal-result').style.display = 'block';
-
-        // 3. Génération du HTML des 3 fiches
-        document.getElementById('cards-container').innerHTML = `
-            <div class="fiche" style="position: relative; min-height: 500px;">
-                <div id="codex-archange" class="livret-box" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #080c12; z-index: 20; padding: 20px; box-sizing: border-box; border-radius: 15px; border: 2px solid var(--gold); overflow-y: auto;">
-                    <h3 style="color:var(--gold); text-align:center; border-bottom: 1px solid var(--gold); padding-bottom: 10px;">📜 CODEX DE ${arcKey.toUpperCase()}</h3>
-                    <p style="font-size:0.85rem; line-height:1.5; color: #fff; margin-top: 15px;"><b>Traditions :</b><br>${arc.traditions}</p>
-                    <p style="font-size:0.85rem; line-height:1.5; color: #e2e8f0; font-style: italic; margin-top: 15px;"><b>Vision :</b><br>${arc.description}</p>
-                    <p style="font-size:0.8rem; color: var(--gold); margin-top: 15px; border-top: 1px solid rgba(212,175,55,0.3); padding-top: 10px;">✨ ${arc.notes}</p>
-                    <button class="audio-btn" style="width:100%; margin-top: 20px;" onclick="document.getElementById('codex-archange').style.display='none'">⬅ FERMER</button>
-                </div>
-
-                <h3>🌌 ${arc.nom}</h3>
-                <img src="${arc.img}" style="width:100%; border-radius:10px;">
-                <p class="details-text">💎 <b>Pierres :</b> ${arc.pierres}</p>
-                <p class="details-text">🧭 <b>Rôle :</b> ${arc.role}</p>
-                
-                <div style="margin-top:auto; display: flex; flex-direction: column; gap: 10px;">
-                    <button class="audio-btn" onclick="playFreq(${arc.freq})">🔊 ACTIVER (${arc.freq}Hz)</button>
-                    <button class="audio-btn" style="background:transparent; color:#fff; border:1px solid #fff;" onclick="document.getElementById('codex-archange').style.display='block'">📖 LIRE LE CODEX</button>
-                </div>
+    // 3. Génération du HTML des fiches
+    document.getElementById("cards-container").innerHTML = `
+        <!-- FICHE 1 : ARCHANGE -->
+        <div class="fiche" style="position: relative; min-height: 500px;">
+            <div id="codex-archange" class="livret-box" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #080c12; z-index: 20; padding: 20px; box-sizing: border-box; border-radius: 15px; border: 2px solid var(--gold); overflow-y: auto;">
+                <h3 style="color:var(--gold); text-align:center; border-bottom: 1px solid var(--gold); padding-bottom: 10px;">📜 CODEX DE ${arcKey.toUpperCase()}</h3>
+                <p style="font-size:0.85rem; line-height:1.5; color: #fff; margin-top: 15px;"><b>Traditions :</b><br>${arc.traditions}</p>
+                <p style="font-size:0.85rem; line-height:1.5; color: #e2e8f0; font-style: italic; margin-top: 15px;"><b>Vision :</b><br>${arc.description}</p>
+                <p style="font-size:0.8rem; color: var(--gold); margin-top: 15px; border-top: 1px solid rgba(212,175,55,0.3); padding-top: 10px;">✨ ${arc.notes}</p>
+                <button class="audio-btn" style="width:100%; margin-top: 20px;" onclick="document.getElementById('codex-archange').style.display='none'">⬅ FERMER</button>
             </div>
 
-            <div class="fiche" style="position: relative; min-height: 500px;">
-                <div id="livret-chakra" class="livret-box" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10; padding: 20px; box-sizing: border-box; border-radius: 15px; border: 2px solid var(--gold); overflow-y: auto;">
-                    <h3 style="color:var(--gold); text-align:center;">📖 SAGESSE DU CHAKRA</h3>
-                    <p style="font-size:0.85rem; line-height:1.5;">${cha.signification}</p>
-                    <p style="font-size:0.85rem; line-height:1.5; color:var(--gold); font-style:italic;">"${cha.enseignement}"</p>
-                    <p style="font-size:0.85rem; line-height:1.5; border-top:1px solid var(--gold); padding-top:10px;"><b>🌿 Rituel :</b> ${cha.rituel}</p>
-                    <button class="audio-btn" style="width:100%;" onclick="document.getElementById('livret-chakra').style.display='none'">⬅ FERMER</button>
-                </div>
+            <h3>🌌 ${arc.nom}</h3>
+            <img src="${arc.img}" style="width:100%; border-radius:10px;">
+            <p class="details-text">💎 <b>Pierres :</b> ${arc.pierres}</p>
+            <p class="details-text">🧭 <b>Rôle :</b> ${arc.role}</p>
+            
+            <div style="margin-top:auto; display: flex; flex-direction: column; gap: 10px;">
+                <button class="audio-btn" onclick="playFreq(${arc.freq})">🔊 ACTIVER (${arc.freq}Hz)</button>
+                <button class="audio-btn" style="background:transparent; color:#fff; border:1px solid #fff;" onclick="document.getElementById('codex-archange').style.display='block'">📖 LIRE LE CODEX</button>
+            </div>
+        </div>
 
-                <h3>🌀 Chakra ${cha.nom}</h3>
-                <img src="${cha.img}" style="width:100%; border-radius:10px;">
-                <p class="details-text">💬 <b>Mantra :</b> "${cha.mantra}"</p>
-                <p class="details-text">🌈 <b>Fréquence :</b> ${cha.freq} Hz</p>
-                
-                <div style="margin-top:auto; display: flex; flex-direction: column; gap: 10px;">
-                    <button class="audio-btn" onclick="playFreq(${cha.freq})">🔊 ALIGNER</button>
-                    <button class="audio-btn" style="background:transparent; color:#fff; border:1px solid #fff;" onclick="document.getElementById('livret-chakra').style.display='block'">📖 VOIR L'ENSEIGNEMENT</button>
-                </div>
+        <!-- FICHE 2 : CHAKRA -->
+        <div class="fiche" style="position: relative; min-height: 500px;">
+            <div id="livret-chakra" class="livret-box" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10; padding: 20px; box-sizing: border-box; border-radius: 15px; border: 2px solid var(--gold); overflow-y: auto;">
+                <h3 style="color:var(--gold); text-align:center;">📖 SAGESSE DU CHAKRA</h3>
+                <p style="font-size:0.85rem; line-height:1.5;">${cha.signification}</p>
+                <p style="font-size:0.85rem; line-height:1.5; color:var(--gold); font-style:italic;">"${cha.enseignement}"</p>
+                <p style="font-size:0.85rem; line-height:1.5; border-top:1px solid var(--gold); padding-top:10px;"><b>🌿 Rituel :</b> ${cha.rituel}</p>
+                <button class="audio-btn" style="width:100%;" onclick="document.getElementById('livret-chakra').style.display='none'">⬅ FERMER</button>
             </div>
 
-            <div class="fiche" style="position: relative; min-height: 500px;">
-                <div id="livret-overlay-box" class="livret-box" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #1a1a1a 0%, #000 100%); z-index: 10; padding: 25px; box-sizing: border-box; border-radius: 15px; border: 2px solid var(--gold); overflow-y: auto;">
-                    <h3 style="color:var(--gold); margin-top: 0; text-align:center; letter-spacing: 2px;">📖 GRIMOIRE DE ${vKey.toUpperCase()}</h3>
-                    <p style="color: #fff; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; text-align: center;">— Invocation Sacrée —</p>
-                    <p id="invocation-text" style="color: var(--gold); font-style: italic; font-size: 1rem; line-height: 1.6; margin: 15px 0; padding: 10px; border: 1px double rgba(212, 175, 55, 0.3); background: rgba(212, 175, 55, 0.05); text-align: center;">
-                        ${vib.invocation}
-                    </p> 
-                    <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size:0.85rem;">
-                        <b style="color: #4CAF50;">⚡ Action Vibratoire :</b><br>${vib.effet}
-                    </div>
-                    <div style="padding: 5px; font-size:0.85rem;">
-                        <b style="color: var(--gold);">🔮 Protocole de Rituel :</b><br>${vib.livret || "Infusion en cours..."}
-                    </div>
-                    <button class="audio-btn" style="background:var(--gold); color:#000; margin-top: 20px; width: 100%;" onclick="toggleLivret()">⬅ REPLIER LE LIVRET</button>
+            <h3>🌀 Chakra ${cha.nom}</h3>
+            <img src="${cha.img}" style="width:100%; border-radius:10px;">
+            <p class="details-text">💬 <b>Mantra :</b> "${cha.mantra}"</p>
+            <p class="details-text">🌈 <b>Fréquence :</b> ${cha.freq} Hz</p>
+            
+            <div style="margin-top:auto; display: flex; flex-direction: column; gap: 10px;">
+                <button class="audio-btn" onclick="playFreq(${cha.freq})">🔊 ALIGNER</button>
+                <button class="audio-btn" style="background:transparent; color:#fff; border:1px solid #fff;" onclick="document.getElementById('livret-chakra').style.display='block'">📖 VOIR L'ENSEIGNEMENT</button>
+            </div>
+        </div>
+
+        <!-- FICHE 3 : CARTE VIBRATOIRE -->
+        <div class="fiche" style="position: relative; min-height: 500px;">
+            <div id="livret-overlay-box" class="livret-box" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #1a1a1a 0%, #000 100%); z-index: 10; padding: 25px; box-sizing: border-box; border-radius: 15px; border: 2px solid var(--gold); overflow-y: auto;">
+                <h3 style="color:var(--gold); margin-top: 0; text-align:center; letter-spacing: 2px;">📖 GRIMOIRE DE ${vKey.toUpperCase()}</h3>
+                <p style="color: #fff; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; text-align: center;">— Invocation Sacrée —</p>
+                <p id="invocation-text" style="color: var(--gold); font-style: italic; font-size: 1rem; line-height: 1.6; margin: 15px 0; padding: 10px; border: 1px double rgba(212, 175, 55, 0.3); background: rgba(212, 175, 55, 0.05); text-align: center;">
+                    ${vib.invocation}
+                </p> 
+                <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size:0.85rem;">
+                    <b style="color: #4CAF50;">⚡ Action Vibratoire :</b><br>${vib.effet}
                 </div>
-
-      <div class="fiche" style="position: relative; min-height: 500px;">
-                <h3>${iconeConnexion} ${titreConnexion}</h3>
-
-                <div style="margin-top: 15px; padding: 18px; border: 1px solid rgba(212,175,55,0.35); border-radius: 12px; background: rgba(212,175,55,0.05); line-height: 1.8; color: #e2e8f0;">
-                    ${texteConnexionUnique}
+                <div style="padding: 5px; font-size:0.85rem;">
+                    <b style="color: var(--gold);">🔮 Protocole de Rituel :</b><br>${vib.livret || "Infusion en cours..."}
                 </div>
-
-                <p class="details-text" style="margin-top:auto;">
-                    ✨ Prends ce moment comme un espace de présence, de calme et de recentrage.
-                </p>
+                <button class="audio-btn" style="background:var(--gold); color:#000; margin-top: 20px; width: 100%;" onclick="toggleLivret()">⬅ REPLIER LE LIVRET</button>
             </div>
 
-                <h3>✨ Carte de ${vKey}</h3>
-                <img src="${vib.img}" style="width: 100%; border-radius: 10px; margin-bottom: 10px;">
-                <p class="details-text">🌠 <b>Astre :</b> ${vib.astre}</p>
-                <p class="details-text">⚡ <b>Effet :</b> ${vib.effet}</p>
-                
-                <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
-                    <button class="audio-btn" style="background:#fff; color:#000;" onclick="playFreq(${vib.freq})">✨ SCELLER LE RITUEL (${vib.freq}Hz)</button>
-                    <button class="audio-btn" style="background:transparent; color:#fff; border:1px solid #fff;" onclick="toggleLivret()">📖 VOIR LE LIVRET COMPLET</button>
-                </div>
+            <h3>✨ Carte de ${vKey}</h3>
+            <img src="${vib.img}" style="width: 100%; border-radius: 10px; margin-bottom: 10px;">
+            <p class="details-text">🌠 <b>Astre :</b> ${vib.astre}</p>
+            <p class="details-text">⚡ <b>Effet :</b> ${vib.effet}</p>
+            
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <button class="audio-btn" style="background:#fff; color:#000;" onclick="playFreq(${vib.freq})">✨ SCELLER LE RITUEL (${vib.freq}Hz)</button>
+                <button class="audio-btn" style="background:transparent; color:#fff; border:1px solid #fff;" onclick="toggleLivret()">📖 VOIR LE LIVRET COMPLET</button>
             </div>
-        `;
-        
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+        </div>
+
+        <!-- FICHE 4 : RITUEL DE CONNEXION SAISONNIER -->
+        <div class="fiche" style="position: relative; min-height: 500px;">
+            <h3>${iconeConnexion} ${titreConnexion}</h3>
+
+            <div style="margin-top: 15px; padding: 18px; border: 1px solid rgba(212,175,55,0.35); border-radius: 12px; background: rgba(212,175,55,0.05); line-height: 1.8; color: #e2e8f0;">
+                ${texteConnexionUnique}
+            </div>
+
+            <p class="details-text" style="margin-top:auto;">
+                ✨ Prends ce moment comme un espace de présence, de calme et de recentrage.
+            </p>
+        </div>
+    `;
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
 
     // --- CONFIGURATION ASTRONOMIQUE ---
 const LOCATION = {

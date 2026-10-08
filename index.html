@@ -603,11 +603,10 @@ function genererGuidanceQuotidienne(phaseLune) {
     ];
 
     // =====================================================================
-    // 🛠️ EXTRACTION & LOGIQUE DU RITUEL DE CONNEXION SAISONNIER
+    // 🛠️ SÉLECTION AUTOMATIQUE DE VOTRE NOUVEAU RITUEL DE CONNEXION
     // =====================================================================
     const moisJour = String(maintenant.getMonth() + 1).padStart(2, '0') + '-' + String(maintenant.getDate()).padStart(2, '0');
     
-    // Combinaison sécurisée de vos 4 dictionnaires de fichiers externes
     const masterCalendrierConnexion = {
         ...(typeof rituelsAutomne !== 'undefined' ? rituelsAutomne : {}),
         ...(typeof rituelsHiver !== 'undefined' ? rituelsHiver : {}),
@@ -615,30 +614,44 @@ function genererGuidanceQuotidienne(phaseLune) {
         ...(typeof rituelsEte !== 'undefined' ? rituelsEte : {})
     };
 
-    // Sélection de la bonne chaîne de connexion sur mesure
-    const rituelConnexionHTML = masterCalendrierConnexion[moisJour] || "Prends un instant pour respirer profondément et te connecter à ton centre.";
+    // On récupère le texte du jour (Ex: Votre rituel spécial si on est le 12-31)
+    const texteConnexionUnique = masterCalendrierConnexion[moisJour] || "Prends un instant pour respirer profondément et te connecter à ton centre.";
     // =====================================================================
 
-    // RENDU TECHNIQUE DES COMPOSANTS
-    const introHTML = `<h3>Guidance</h3><p>${intro}</p>`;
-    const resonanceHTML = `<p>${resonances[jourAnnee % resonances.length]}</p>`;
-    
-    // Rendu d'origine du Rituel du Jour classique
-    const rituelHTML = rituels[jourAnnee % rituels.length];
+    // --- CONSTRUCTION ET RENDU HTML ---
+    const cardsContainer = document.getElementById('cards-container');
+    if (cardsContainer) {
+        // Vider le conteneur avant d'afficher les cartes
+        cardsContainer.innerHTML = "";
 
-    const introEl = document.getElementById('daily-intro');
-    if (introEl) introEl.innerHTML = introHTML;
+        // 1. CARTE : TON CIEL VIBRATOIRE (Intro + Résonance)
+        const carteCiel = document.createElement('div');
+        carteCiel.className = 'card';
+        carteCiel.innerHTML = `
+            <h3>🌌 Ton Ciel Vibratoire</h3>
+            <p><strong>Guidance :</strong> ${intro}</p>
+            <p>${resonances[jourAnnee % resonances.length]}</p>
+        `;
+        cardsContainer.appendChild(carteCiel);
 
-    document.getElementById('angel-number').innerText = angel.num;
-    document.getElementById('angel-message').innerHTML = angelHTML;
-    document.getElementById('daily-resonance').innerHTML = resonanceHTML;
-    
-    // Injection du Rituel du Jour d'origine
-    document.getElementById('daily-rituel').innerHTML = rituelHTML;
-    
-    // NEW INJECTION: Displays your seasonal text inside the Rituel de Connexion container
-    const connexionEl = document.getElementById('daily-connexion');
-    if (connexionEl) connexionEl.innerHTML = rituelConnexionHTML;
+        // 2. CARTE : RITUEL DU JOUR (Votre rituel cyclique d'origine de l'application)
+        const carteRituelJour = document.createElement('div');
+        carteRituelJour.className = 'card';
+        carteRituelJour.innerHTML = `
+            <h3>🌿 Rituel du Jour</h3>
+            <p>${rituels[jourAnnee % rituels.length]}</p>
+        `;
+        cardsContainer.appendChild(carteRituelJour);
+
+        // 3. NOUVELLE CARTE : RITUEL DE CONNEXION (Votre nouveau calendrier sur 365 jours sans écriture)
+        const carteConnexion = document.createElement('div');
+        carteConnexion.className = 'card card-porte'; // Utilise votre style mystique .card-porte
+        carteConnexion.innerHTML = `
+            <h3>🍂 Rituel de Connexion</h3>
+            <p>${texteConnexionUnique}</p>
+        `;
+        cardsContainer.appendChild(carteConnexion);
+    }
 }
     
     const nombresAngeliques = [
